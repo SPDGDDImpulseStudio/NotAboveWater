@@ -65,11 +65,7 @@ public class GameManager : MonoBehaviour {
         }
         playerCam = Camera.main;
         field = FindObjectOfType<InputField>();
-        Debug.Log(UpdateGame);
         StartCoroutine(NextEvent());
-        //Debug.Log(eventsList[0]);
-        //EventsInterface newEve = new EventA(true);
-        //Debug.Log(newEve);
     }
 
     public IEnumerator NextEvent()
@@ -110,10 +106,11 @@ public class GameManager : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0)) {
 
-            if (UpdateGame != null)
-                eventsList[currInt - 1].Out();
-            else if (UpdateGame == null)
+
+            if (UpdateGame == null)
                 eventsList[currInt].Init();
+            else
+                eventsList[currInt].Out();
         }
         
             //CameraManager.Instance.UpdateCameraPos();
