@@ -100,13 +100,11 @@ public class CameraManager : MonoBehaviour {
 
     public IEnumerator Walk(Vector3 walkTo, float speed)
     {
-        movementBool = true;
         while (this.transform.position != walkTo)
         {
             this.transform.position = Vector3.Lerp(transform.position, walkTo, speed * Time.deltaTime);
             yield return null;
         }
-        movementBool = false;
     } 
 
     public void Wait(float duration)
@@ -116,7 +114,6 @@ public class CameraManager : MonoBehaviour {
 
     public IEnumerator WaitFor(float _duration)
     {
-        Debug.Log("Wait for" + _duration + " seconds.");
         yield return new WaitForSeconds(_duration);
     }
     #endregion

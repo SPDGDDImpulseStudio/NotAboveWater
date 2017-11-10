@@ -10,6 +10,7 @@ public abstract class EventsInterface : ScriptableObject {
     [HideInInspector]
     public bool runningOfEvent = false;
 
+    public bool coroutineAvail = false;
     public abstract void CurrEvent();
 
     public virtual void Init()
@@ -22,4 +23,19 @@ public abstract class EventsInterface : ScriptableObject {
     {
         GameManager.Instance.UpdateGame -= CurrEvent;
     }
+
+    public void CallEvent()
+    {
+        runningOfEvent = true;
+        CurrEvent();
+    }
+    public virtual void Test(string x) { }
+
+    public virtual void EndOfEvent()
+    {
+        runningOfEvent = false;
+        Debug.Log("End Of Event");
+    }
+
+    public abstract IEnumerator EnumEvent();
 }

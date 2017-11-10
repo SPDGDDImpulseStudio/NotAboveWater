@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Name: EventA_ 1
   m_EditorClassIdentifier: 
   runningOfEvent: 0
+  coroutineAvail: 0
   thisPos: {fileID: 0}
   toWhere: Waypoints (1)
+  speed: 3

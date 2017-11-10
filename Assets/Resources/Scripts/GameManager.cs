@@ -37,25 +37,31 @@ public class GameManager : MonoBehaviour {
 
 
     #endregion
-    
+
     //public delegate void Process();
     //public delegate string MsgToTypeIn(string msg);
     //List<MsgToTypeIn> msgs = new List<MsgToTypeIn>();
 
-    public List<EventsInterface> eventsList = new List<EventsInterface>() {
-    };
+    public List<EventsInterface> eventsList = new List<EventsInterface>();
 
     public EventsInterface currEvent;
     
-    public Action UpdateGame;
-
-    public Text text;
     public InputField field;
 
     [Header("[Editor]")]
     public float sizeOfSphere =3;
     public Color colorOfLines = Color.black;
     public bool showTrack = false;
+    
+    public Action UpdateGame;
+
+    public IEnumerator<Action> IAction;
+
+    delegate void EventUpdate(string x);
+
+    EventUpdate _eventUpdate;
+
+    public Action AIEnum;
 
     void Start() {
         if (Instance.GetInstanceID() != this.GetInstanceID())
@@ -65,57 +71,57 @@ public class GameManager : MonoBehaviour {
         }
         playerCam = Camera.main;
         field = FindObjectOfType<InputField>();
-        StartCoroutine(NextEvent());
+        //StartCoroutine(NextEvent());
+        _eventUpdate = new EventUpdate(eventsList[currInt].Test);
+        Debug.Log(_eventUpdate);
+        Debug.Log(eventsList.Count);
+        //_eventUpdate();
+        //_eventUpdate += eventsList[currInt].EnumEvent;
     }
+
 
     public IEnumerator NextEvent()
     {
-        Debug.Log("IN_0");
-        if (currEvent == eventsList[eventsList.Count - 1])
+        //if (currEvent == eventsList[eventsList.Count - 1])
+        if(currInt == eventsList.Count)
+        {
+            Debug.Log("END");
+            currEvent = null;
             yield break;
-        yield return new WaitUntil(() => UpdateGame != null);
-        StartCoroutine(AddInNextEvent());
+        }
+        Debug.Log("currInt =" + currInt);
+        //UpdateGame += eventsList[currInt].CallEvent;
+        //Adding the method into Anonymous Method
+        StartCoroutine(eventsList[currInt].EnumEvent());
 
-        Debug.Log("IN_1");
-        UpdateGame();
+        currEvent = eventsList[currInt];
 
+        eventsList[currInt].runningOfEvent = true;
+        //Turns the bool i check into true;
 
+        //UpdateGame();
+        //Calls the anonymous Method
 
-        yield return new WaitUntil(() => UpdateGame == null);
-        Debug.Log("IN_2");
-        
+        yield return new WaitUntil(() => !eventsList[currInt].runningOfEvent);
+
+        //UpdateGame -= eventsList[currInt].CallEvent;
+        currInt++;
+
+        //Wait till it finish running 
         StartCoroutine(NextEvent());
             
-    }
-
-    public IEnumerator AddInNextEvent()
-    {
-        yield return new WaitUntil(() => UpdateGame == null);
-        currInt++;
-        eventsList[currInt].Init();
-    }
-
-    public IEnumerator RemoveThisEvent()
-    {
-        yield return new WaitUntil(() => UpdateGame != null );
-        eventsList[currInt].Out();
     }
 
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) {
-
-
-            if (UpdateGame == null)
-                eventsList[currInt].Init();
-            else
-                eventsList[currInt].Out();
+        if (Input.GetMouseButtonDown(0) && !showTrack)
+        {
+            StartCoroutine(NextEvent());
+            showTrack = true;
         }
-        
-            //CameraManager.Instance.UpdateCameraPos();
     }
-    
+
 #if UNITY_EDITOR
     public void OnDrawGizmos()
     {

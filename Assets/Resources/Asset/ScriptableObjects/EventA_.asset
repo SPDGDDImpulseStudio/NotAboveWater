@@ -11,6 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f02b1eedcafbb42a18b684472be6c0, type: 3}
   m_Name: EventA_
   m_EditorClassIdentifier: 
-  runningOfEvent: 1
+  runningOfEvent: 0
+  coroutineAvail: 0
   thisPos: {fileID: 0}
   toWhere: Waypoints
+  speed: 2
