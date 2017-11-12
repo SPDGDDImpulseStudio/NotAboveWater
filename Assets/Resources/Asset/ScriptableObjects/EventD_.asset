@@ -8,9 +8,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0232b692d5732134784d24e840d2d89a, type: 3}
-  m_Name: EventB_
+  m_Script: {fileID: 11500000, guid: 944170dab61c37e41a98614b3b9d263e, type: 3}
+  m_Name: EventD_
   m_EditorClassIdentifier: 
   runningOfEvent: 0
   coroutineAvail: 0
-  duration: 3

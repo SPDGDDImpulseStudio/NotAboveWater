@@ -8,9 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0232b692d5732134784d24e840d2d89a, type: 3}
-  m_Name: EventB_
+  m_Script: {fileID: 11500000, guid: ec65d06ea477131479cfe6eac46a25af, type: 3}
+  m_Name: EventC_ 1
   m_EditorClassIdentifier: 
   runningOfEvent: 0
   coroutineAvail: 0
-  duration: 3
+  toType: kek
+  inputField: {fileID: 0}
