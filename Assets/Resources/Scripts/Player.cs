@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
+
+    public Slider slider;
     public static Player Instance
     {
         get
@@ -33,10 +36,12 @@ public class Player : MonoBehaviour {
             Destroy(this.gameObject);
 
         currHealth = maxHealth;
+        slider = FindObjectOfType<Canvas>().GetComponentInChildren<Slider>();
 	}
 
     void Update()
     {
+        slider.value = currHealth / maxHealth;
         if (shootTimerNow < shootEvery)
             shootTimerNow += Time.deltaTime;
         if (allowToShoot)
@@ -60,7 +65,8 @@ public class Player : MonoBehaviour {
                             shootTimerNow = 0;
                             if (hit.transform.GetComponent<AI>())
                                 hit.transform.GetComponent<AI>().currHealth -= bulletDamage;
-                        } Debug.Log(hit.transform.name);
+                        }
+                        Debug.Log(hit.transform.name);
                     }
                     //bookShelf.GetSpecifyBook(hit.transform);
                 }

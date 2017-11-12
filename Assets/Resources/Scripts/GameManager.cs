@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour {
     //public delegate string MsgToTypeIn(string msg);
     //List<MsgToTypeIn> msgs = new List<MsgToTypeIn>();
 
+    public List<GameObject> AIWaypoints = new List<GameObject>();
+
     public List<EventsInterface> eventsList = new List<EventsInterface>();
 
     public EventsInterface currEvent;
@@ -71,21 +73,24 @@ public class GameManager : MonoBehaviour {
         }
         playerCam = Camera.main;
         field = FindObjectOfType<InputField>();
-        //StartCoroutine(NextEvent());
+        StartCoroutine(NextEvent());
         _eventUpdate = new EventUpdate(eventsList[currInt].Test);
-        Debug.Log(_eventUpdate);
-        Debug.Log(eventsList.Count);
+        //Debug.Log(_eventUpdate);
+        //Debug.Log(eventsList.Count);
         //_eventUpdate();
         //_eventUpdate += eventsList[currInt].EnumEvent;
+        
     }
 
 
     public IEnumerator NextEvent()
     {
+        yield return new WaitUntil(() => AI.Instance != null);
+        yield return new WaitUntil(() => AI.Instance.nav != null);
         //if (currEvent == eventsList[eventsList.Count - 1])
         if(currInt == eventsList.Count)
         {
-            Debug.Log("END");
+            Debug.Log("End of All events ");
             currEvent = null;
             yield break;
         }
@@ -127,6 +132,13 @@ public class GameManager : MonoBehaviour {
     {
         if (!showTrack)
             return;
+
+        AIWaypoints = new List<GameObject>();
+        AI ai = FindObjectOfType<AI>();
+        for (int x = 0; x < ai.waypoints. Count; x++)
+        {
+            AIWaypoints.Add(ai.waypoints[x]);
+        }
         for (int i = 0; i < waypoints.Count; i++)
         {
             Gizmos.color = colorOfLines;
@@ -137,6 +149,17 @@ public class GameManager : MonoBehaviour {
             Gizmos.color = Color.red;
             Ray ray = new Ray(waypoints[i].transform.position, (transform.forward - waypoints[i].transform.position));
             Gizmos.DrawRay(ray);
+        }
+
+        for (int j= 0; j < AIWaypoints.Count; j++)
+        {
+            Gizmos.color = Color.black;
+
+            Gizmos.DrawWireSphere(AIWaypoints[j].transform.position, sizeOfSphere);
+            if (j != AIWaypoints.Count && j != AIWaypoints.Count - 1)
+
+                Gizmos.DrawLine(AIWaypoints[j].transform.position, AIWaypoints[j + 1].transform.position);
+
         }
     }
 }

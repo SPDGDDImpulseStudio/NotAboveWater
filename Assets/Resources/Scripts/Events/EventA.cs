@@ -23,7 +23,7 @@ public class EventA : EventsInterface{
     public override IEnumerator EnumEvent()
     {
         Debug.Log("IN");
-        while ( thisPos.gameObject.activeInHierarchy)
+        while (thisPos.gameObject.activeInHierarchy)
         {
             CameraManager.Instance.transform.position = Vector3.Lerp(CameraManager.Instance.transform.position, thisPos.position, speed * Time.deltaTime);
 
