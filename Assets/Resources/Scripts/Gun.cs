@@ -6,9 +6,13 @@ public class Gun : MonoBehaviour {
     public float range = 100f;
 
     public Camera fpsCam;
-	
-	// Update is called once per frame
-	void Update () {
+
+    public GameObject VFX_Hit;
+    GameObject targetHit;
+    public static Vector3 pointHit;
+
+    // Update is called once per frame
+    void Update () {
 		
         if(Input.GetButtonDown("Fire1"))
         {
@@ -24,6 +28,13 @@ public class Gun : MonoBehaviour {
             Debug.Log(hit.transform.name);
 
             Target target = hit.transform.GetComponent<Target>();
+            targetHit = hit.transform.gameObject;
+            pointHit = hit.point;
+
+            Instantiate(VFX_Hit, pointHit, targetHit.transform.rotation);
+            ParticleSystem parts = VFX_Hit.GetComponent<ParticleSystem>();
+            Destroy(VFX_Hit, .5f);
+
             if (target != null)
             {
                 target.TakeDamage(damage);
