@@ -29,6 +29,10 @@ public class Player : MonoBehaviour {
 
     public bool allowToShoot = false;
 
+    GameObject targetHit;
+    public Vector3 pointHit;
+    
+    public GameObject VFX_Hit;
 
     public float shootEvery = 1, shootTimerNow;
     void Start () {
@@ -54,6 +58,14 @@ public class Player : MonoBehaviour {
                 //Debug.DrawRay(transform.position, point,Color.green);
                 if (Physics.Raycast(this.transform.position, point.direction, out hit))
                 {
+
+                    targetHit = hit.transform.gameObject;
+                    pointHit = hit.point;
+
+                    Instantiate(VFX_Hit, pointHit, targetHit.transform.rotation);
+                    ParticleSystem parts = VFX_Hit.GetComponent<ParticleSystem>();
+                    //Destroy(parts, .5f);
+
                     if (hit.transform.GetComponent<Book>())
                     {
                         Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);

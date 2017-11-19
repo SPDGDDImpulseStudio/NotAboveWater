@@ -12,7 +12,6 @@ public class EventA : EventsInterface{
     
     public void OnEnable()
     {
-        thisPos = GameObject.Find(toWhere).transform;
     }
 
     public override void CurrEvent()
@@ -22,6 +21,8 @@ public class EventA : EventsInterface{
 
     public override IEnumerator EnumEvent()
     {
+        thisPos = GameObject.Find(toWhere).transform;
+
         Debug.Log("IN");
         while (thisPos.gameObject.activeInHierarchy)
         {

@@ -38,12 +38,7 @@ public class Underwater : MonoBehaviour
         defaultSkybox = RenderSettings.skybox;
         //underwaterColor = new Color(0.22f, 0.65f, 0.77f, 0.5f);
 
-        //Set the background color
-        //GetComponent<Camera>().backgroundColor = new Color(0, 0.4f, 0.7f, 1);
-    }
-
-    void OnEnable()
-    {
+        #region I Dragged it from OnEnable to get rid of null error
         if (behaviour.profile == null)
         {
             enabled = false;
@@ -52,6 +47,23 @@ public class Underwater : MonoBehaviour
 
         pPProfile = Instantiate(behaviour.profile);
         behaviour.profile = pPProfile;
+        #endregion
+        //Set the background color
+        //GetComponent<Camera>().backgroundColor = new Color(0, 0.4f, 0.7f, 1);
+    }
+
+    void OnEnable()
+    {
+
+        //if (behaviour.profile == null)
+        //{
+        //    enabled = false;
+        //    return;
+        //}
+
+        //pPProfile = Instantiate(behaviour.profile);
+        //behaviour.profile = pPProfile;
+
     }
 
     void Update()

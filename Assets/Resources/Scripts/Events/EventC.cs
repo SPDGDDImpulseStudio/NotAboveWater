@@ -18,7 +18,9 @@ public class EventC : EventsInterface
 
     public override IEnumerator EnumEvent()
     {
-        while(inputField.text != toType)
+        canvas = FindObjectOfType<Canvas>();
+        inputField = canvas.GetComponentInChildren<InputField>();
+        while (inputField.text != toType)
         {
             inputField = canvas.GetComponentInChildren<InputField>();
             Debug.Log("Text is now =" + inputField.text);
@@ -32,8 +34,7 @@ public class EventC : EventsInterface
     void OnEnable()
     {
         //inputField = FindObjectOfType<Canvas>().GetComponentInChildren<InputField>();
-        canvas = FindObjectOfType<Canvas>();
-        inputField = canvas.GetComponentInChildren<InputField>();
+
     }
     
     void OnDisable()

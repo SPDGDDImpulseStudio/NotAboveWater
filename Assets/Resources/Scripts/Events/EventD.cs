@@ -15,17 +15,22 @@ public class EventD : EventsInterface {
     public override IEnumerator EnumEvent()
     {
         Player.Instance.allowToShoot = true;
-        AI ai = FindObjectOfType<AI>();
+        AI ai = AI.Instance;
         //float s = ai.anim.GetFloat("biteTimer");
-        Debug.Log("SA");
         Vector3 pos = ai.GetPos(0);
-        while(Vector3.Distance(ai.transform.position ,pos) > 2)
+        //-Move AI to destinated place
+        ai.nav.speed = 12;
+        ai.nav.destination = pos;
+        while (Vector3.Distance(ai.transform.position, ai.nav.destination) > 2)
         {
-            ai.transform.position = Vector3.LerpUnclamped(ai.transform.position, pos, ai.speed*Time.deltaTime);
+            //ai.transform.position = Vector3.LerpUnclamped(ai.transform.position, pos, ai.speed * Time.deltaTime);
+            //Debug.Log(ai.transform.rotation);
             yield return null;
         }
         float s=0;
         ai.SliderTo(true);
+        
+        //Check if AI/Player dieded
         while (ai.currHealth > 0 && Player.Instance.currHealth > 0)
         {
             s += Time.deltaTime;
@@ -55,19 +60,28 @@ public class EventD : EventsInterface {
         }
 
         pos = ai.GetPos(1);
+        Debug.Log(pos);
+        //Turn around
         while (ai.transform.rotation.y > 0 && ai.transform.rotation.y < 360)
         {
             ai.transform.Rotate(0, 10, 0, Space.Self);
-            Debug.Log(ai.transform.rotation.y);
+            //Debug.Log(ai.transform.rotation.y);
             yield return null;
         }
-        while (Vector3.Distance(ai.transform.position, pos) > 2)
-        {
-            ai.transform.position = Vector3.LerpUnclamped(ai.transform.position, pos, ai.speed * Time.deltaTime);
-            yield return null;
-        }
-        Transform thisPos = GameObject.Find("Waypoints (1)").transform;
+        Debug.Log("SA");
 
+        //To new Pos, exactly same shit but doesnt work
+        ai.nav.destination = pos;
+        while (Vector3.Distance(ai.transform.position, ai.nav.destination) > 2)
+        {
+            //ai.transform.position = Vector3.LerpUnclamped(ai.transform.position, pos, ai.speed * Time.deltaTime);
+            //Debug.Log(ai.transform.rotation);
+            yield return null;
+        }
+        Debug.Log("SA");
+
+        Transform thisPos = GameObject.Find("Waypoints (1)").transform;
+        Debug.Log(thisPos);
         //This condition should be checking if its y rotation is not around 180-ish
         //If it is then just get out
         Debug.Log(ai.transform.rotation.y);
@@ -75,12 +89,12 @@ public class EventD : EventsInterface {
         while (ai.transform.rotation.y < 0.95)
         {
             ai.transform.Rotate(0, -10, 0, Space.Self);
-            Debug.Log(ai.transform.rotation.y);
+            //Debug.Log(ai.transform.rotation.y);
 
             yield return null;
         }
 
-        while (Vector3.Distance(CameraManager.Instance.transform.position, thisPos.position) > 2)
+        while (Vector3.Distance(CameraManager.Instance.transform.position, thisPos.position) > 0.5)
         {
             CameraManager.Instance.transform.position = Vector3.LerpUnclamped(CameraManager.Instance.transform.position, thisPos.position, ai.speed/2 * Time.deltaTime);
 
