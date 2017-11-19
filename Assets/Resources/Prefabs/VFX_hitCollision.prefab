@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198403959202262194}
   - component: {fileID: 199246331356995136}
   m_Layer: 0
-  m_Name: VFX_HitCollision
+  m_Name: VFX_hitCollision
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
