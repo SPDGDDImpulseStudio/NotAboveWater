@@ -17,9 +17,10 @@ public class Waypoints : MonoBehaviour {
     
     void OnTriggerEnter(Collider x) {
 
-        if(x.transform == Camera.main.transform)
+        if(x.transform.GetComponent<CameraManager>())
         {
             this.gameObject.SetActive(false);
+            //Debug.Log("off");
         }
 
     }

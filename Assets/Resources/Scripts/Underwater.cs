@@ -30,6 +30,7 @@ public class Underwater : MonoBehaviour
 
     void Start()
     {
+        //Debug.Log("AH");
         shaft = GetComponent<SunShafts>();
         behaviour = GetComponent<PostProcessingBehaviour>();
         defaultFog = RenderSettings.fog;

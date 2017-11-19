@@ -67,12 +67,12 @@ public class AI : MonoBehaviour {
     {
        
         currWaypoint = waypoints[currInt];
-        Debug.Log(nav.destination + " | " + currWaypoint + " | " + currWaypoint.transform.position);
+        //Debug.Log(nav.destination + " | " + currWaypoint + " | " + currWaypoint.transform.position);
 
         nav.destination = currWaypoint.transform.position;///new Vector3(currWaypoint.transform.position.x, this.transform.position.y, currWaypoint.transform.position.z);
                                                           ///nav.SetDestination(currWaypoint.transform.position);
 
-        Debug.Log(nav.destination +" | " + currWaypoint + " | " +currWaypoint.transform.position);
+        //Debug.Log(nav.destination +" | " + currWaypoint + " | " +currWaypoint.transform.position);
         currInt++;
 
     }
