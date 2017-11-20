@@ -80,8 +80,8 @@ public class Underwater : MonoBehaviour
 
     void AboveWaterSettings()
     {
-        shaft.enabled = false;
-        pPProfile.colorGrading.enabled = false;
+        shaft.enabled = false;                              //Disable Whole Sun Shaft
+        pPProfile.colorGrading.enabled = false;             //Disables Color Grading Settings ONLY. Duplicate and change the settings you want accordingly
         RenderSettings.fog = defaultFog;
         RenderSettings.fogColor = defaultFogColor;
         RenderSettings.fogDensity = defaultFogDensity;
