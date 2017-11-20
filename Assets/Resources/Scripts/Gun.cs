@@ -32,8 +32,6 @@ public class Gun : MonoBehaviour {
             pointHit = hit.point;
 
             Instantiate(VFX_Hit, pointHit, targetHit.transform.rotation);
-            ParticleSystem parts = VFX_Hit.GetComponent<ParticleSystem>();
-            Destroy(VFX_Hit, .5f);
 
             if (target != null)
             {

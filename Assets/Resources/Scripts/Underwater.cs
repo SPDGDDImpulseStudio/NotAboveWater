@@ -25,21 +25,27 @@ public class Underwater : MonoBehaviour
     public float fogDensity;
 
     PostProcessingProfile pPProfile;
-    PostProcessingBehaviour behaviour;
     SunShafts shaft;
 
     void Start()
     {
         //Debug.Log("AH");
         shaft = GetComponent<SunShafts>();
-        behaviour = GetComponent<PostProcessingBehaviour>();
+        //behaviour = GetComponent<PostProcessingBehaviour>();
         defaultFog = RenderSettings.fog;
         defaultFogColor = RenderSettings.fogColor;
         defaultFogDensity = RenderSettings.fogDensity;
         defaultSkybox = RenderSettings.skybox;
         //underwaterColor = new Color(0.22f, 0.65f, 0.77f, 0.5f);
 
-        #region I Dragged it from OnEnable to get rid of null error
+        //Set the background color
+        //GetComponent<Camera>().backgroundColor = new Color(0, 0.4f, 0.7f, 1);
+    }
+
+    void OnEnable()
+    {
+        var behaviour = GetComponent<PostProcessingBehaviour>();
+
         if (behaviour.profile == null)
         {
             enabled = false;
@@ -48,23 +54,6 @@ public class Underwater : MonoBehaviour
 
         pPProfile = Instantiate(behaviour.profile);
         behaviour.profile = pPProfile;
-        #endregion
-        //Set the background color
-        //GetComponent<Camera>().backgroundColor = new Color(0, 0.4f, 0.7f, 1);
-    }
-
-    void OnEnable()
-    {
-
-        //if (behaviour.profile == null)
-        //{
-        //    enabled = false;
-        //    return;
-        //}
-
-        //pPProfile = Instantiate(behaviour.profile);
-        //behaviour.profile = pPProfile;
-
     }
 
     void Update()
@@ -83,7 +72,7 @@ public class Underwater : MonoBehaviour
     void UnderwaterSettings()
     {
         shaft.enabled = true;
-        behaviour.enabled = true;
+        pPProfile.colorGrading.enabled = true;
         RenderSettings.fog = true;
         RenderSettings.fogColor = underwaterColor;
         RenderSettings.fogDensity = fogDensity;
@@ -92,7 +81,7 @@ public class Underwater : MonoBehaviour
     void AboveWaterSettings()
     {
         shaft.enabled = false;
-        behaviour.enabled = false;
+        pPProfile.colorGrading.enabled = false;
         RenderSettings.fog = defaultFog;
         RenderSettings.fogColor = defaultFogColor;
         RenderSettings.fogDensity = defaultFogDensity;
