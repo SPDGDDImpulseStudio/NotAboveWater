@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
-
+    public AudioSource audioSource;
+    public AudioClip Gunshot;
     public Slider slider;
     public static Player Instance
     {
@@ -65,6 +66,11 @@ public class Player : MonoBehaviour {
                     Instantiate(VFX_Hit, pointHit, targetHit.transform.rotation);
                     ParticleSystem parts = VFX_Hit.GetComponent<ParticleSystem>();
                     //Destroy(parts, .5f);
+
+                    audioSource = GetComponent<AudioSource>();
+
+                    audioSource.clip = Gunshot;
+                    audioSource.Play();
 
                     if (hit.transform.GetComponent<Book>())
                     {
