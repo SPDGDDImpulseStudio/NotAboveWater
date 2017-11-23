@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 77b789cc270220f4ca7b48db06241bcc
-timeCreated: 1511399354
+timeCreated: 1511410117
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Box007
+    4300000: Stairs
   externalObjects:
   - first:
       type: UnityEngine:Material
