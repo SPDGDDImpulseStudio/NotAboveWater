@@ -49,11 +49,6 @@ public class GameManager : MonoBehaviour {
     public EventsInterface currEvent;
     
     public InputField field;
-
-    [Header("[Editor]")]
-    public float sizeOfSphere =3;
-    public Color colorOfLines = Color.black;
-    public bool showTrack = false;
     
     public Action UpdateGame;
 
@@ -64,6 +59,14 @@ public class GameManager : MonoBehaviour {
     EventUpdate _eventUpdate;
 
     public Action AIEnum;
+
+    public bool forceStop = false;
+
+    [Header("[Editor]")]
+    public float sizeOfSphere =3;
+    public Color colorOfLines = Color.black;
+    public bool showTrack = false;
+  
 
     void Start() {
         if (Instance.GetInstanceID() != this.GetInstanceID())
@@ -79,7 +82,12 @@ public class GameManager : MonoBehaviour {
         //Debug.Log(eventsList.Count);
         //_eventUpdate();
         //_eventUpdate += eventsList[currInt].EnumEvent;
-        
+        AIWaypoints = new List<GameObject>();
+        AI ai = FindObjectOfType<AI>();
+        for (int x = 0; x < ai.waypoints.Count; x++)
+        {
+            AIWaypoints.Add(ai.waypoints[x]);
+        }
     }
 
 
@@ -88,7 +96,7 @@ public class GameManager : MonoBehaviour {
         yield return new WaitUntil(() => AI.Instance != null);
         yield return new WaitUntil(() => AI.Instance.nav != null);
         //if (currEvent == eventsList[eventsList.Count - 1])
-        if(currInt == eventsList.Count)
+        if(currInt == eventsList.Count || forceStop)
         {
             Debug.Log("End of All events ");
             currEvent = null;

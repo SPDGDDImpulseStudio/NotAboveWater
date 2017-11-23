@@ -24,6 +24,7 @@ public class Underwater : MonoBehaviour
     public Color underwaterColor;
     public float fogDensity;
 
+    public bool TurnOn;
     PostProcessingProfile pPProfile;
     SunShafts shaft;
 
@@ -44,8 +45,24 @@ public class Underwater : MonoBehaviour
 
     void OnEnable()
     {
-        var behaviour = GetComponent<PostProcessingBehaviour>();
+        EnableProf();
+    }
 
+    public void Init()
+    {
+        //Debug.Log("AH");
+        shaft = GetComponent<SunShafts>();
+        //behaviour = GetComponent<PostProcessingBehaviour>();
+        defaultFog = RenderSettings.fog;
+        defaultFogColor = RenderSettings.fogColor;
+        defaultFogDensity = RenderSettings.fogDensity;
+        defaultSkybox = RenderSettings.skybox;
+        //underwaterColor = new Color(0.22f, 0.65f, 0.77f
+    }
+
+    public void EnableProf()
+    {
+        var behaviour = GetComponent<PostProcessingBehaviour>();
         if (behaviour.profile == null)
         {
             enabled = false;
@@ -54,6 +71,7 @@ public class Underwater : MonoBehaviour
 
         pPProfile = Instantiate(behaviour.profile);
         behaviour.profile = pPProfile;
+
     }
 
     void Update()
@@ -68,19 +86,24 @@ public class Underwater : MonoBehaviour
                 AboveWaterSettings();
         }
     }
-
-    void UnderwaterSettings()
+    public void UnderwaterSettings()
     {
+        if (shaft == null) Init();
         shaft.enabled = true;
+        if (pPProfile == null)
+            EnableProf();
         pPProfile.colorGrading.enabled = true;
         RenderSettings.fog = true;
         RenderSettings.fogColor = underwaterColor;
         RenderSettings.fogDensity = fogDensity;
     }
 
-    void AboveWaterSettings()
+    public void AboveWaterSettings()
     {
-        shaft.enabled = false;                              //Disable Whole Sun Shaft
+        if (shaft == null) Init();
+        shaft.enabled = false;
+        if (pPProfile == null)
+            EnableProf();                         //Disable Whole Sun Shaft
         pPProfile.colorGrading.enabled = false;             //Disables Color Grading Settings ONLY. Duplicate and change the settings you want accordingly
         RenderSettings.fog = defaultFog;
         RenderSettings.fogColor = defaultFogColor;

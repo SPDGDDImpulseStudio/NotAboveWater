@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif 
+#endif
+
+[ExecuteInEditMode]
 public class SceneCamera : MonoBehaviour {
     Camera cam;
     // Use this for initialization
@@ -15,7 +17,6 @@ public class SceneCamera : MonoBehaviour {
      
     }
 #if UNITY_EDITOR 
-    [ExecuteInEditMode]
     [MenuItem("Tools/CameraSnapToGO")]
     public static void CameraSnap()
     {
@@ -26,6 +27,23 @@ public class SceneCamera : MonoBehaviour {
             //SceneView.lastActiveSceneView.AlignViewToObject(Selection.activeGameObject.transform);
 
         }
+    }
+    [MenuItem("Tools/TurnOn")]
+    public static void TurnOnProfile()
+    {
+        Underwater underWater = FindObjectOfType<Underwater>();
+      
+        if (underWater == null) return;
+        underWater.UnderwaterSettings();
+    }
+
+    [MenuItem("Tools/TurnOff")]
+    public static void TurnOffProfile()
+    {
+        Underwater underWater = FindObjectOfType<Underwater>();
+        if (underWater == null) return;
+
+        underWater.AboveWaterSettings();
     }
 #endif 
 }
