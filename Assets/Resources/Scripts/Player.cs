@@ -42,7 +42,10 @@ public class Player : MonoBehaviour {
 
         currHealth = maxHealth;
         slider = FindObjectOfType<Canvas>().GetComponentInChildren<Slider>();
-	}
+        audioSource = GetComponent<AudioSource>();
+
+        audioSource.clip = Gunshot;
+    }
 
     void Update()
     {
@@ -67,9 +70,7 @@ public class Player : MonoBehaviour {
                     ParticleSystem parts = VFX_Hit.GetComponent<ParticleSystem>();
                     //Destroy(parts, .5f);
 
-                    audioSource = GetComponent<AudioSource>();
-
-                    audioSource.clip = Gunshot;
+                    
                     audioSource.Play();
 
                     if (hit.transform.GetComponent<Book>())
