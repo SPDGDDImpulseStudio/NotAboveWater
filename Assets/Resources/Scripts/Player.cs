@@ -110,9 +110,7 @@ public class Player : MonoBehaviour {
         //else
         //    currOxygen = maxOxygen;
         StartCoroutine(AddOx(x));
-
         
-
     }
 
     IEnumerator AddOx(float x)
