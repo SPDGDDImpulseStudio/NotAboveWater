@@ -32,8 +32,11 @@ public class Player : MonoBehaviour {
 
     GameObject targetHit;
     public Vector3 pointHit;
+
+    public GameObject VFX_HitShark;
+    public GameObject VFX_BulletMark;
+    public GameObject VFX_BulletSpark;
     
-    public GameObject VFX_Hit;
 
     public float shootEvery = 1, shootTimerNow;
     void Start () {
@@ -42,9 +45,7 @@ public class Player : MonoBehaviour {
 
         currHealth = maxHealth;
         slider = FindObjectOfType<Canvas>().GetComponentInChildren<Slider>();
-        audioSource = GetComponent<AudioSource>();
-
-        audioSource.clip = Gunshot;
+        audioSource = GetComponent<AudioSource>() ? GetComponent<AudioSource>() : gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
@@ -66,13 +67,6 @@ public class Player : MonoBehaviour {
                     targetHit = hit.transform.gameObject;
                     pointHit = hit.point;
 
-                    Instantiate(VFX_Hit, pointHit, targetHit.transform.rotation);
-                    ParticleSystem parts = VFX_Hit.GetComponent<ParticleSystem>();
-                    //Destroy(parts, .5f);
-
-                    
-                    audioSource.Play();
-
                     if (hit.transform.GetComponent<Book>())
                     {
                         Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
@@ -82,8 +76,14 @@ public class Player : MonoBehaviour {
                         if (shootTimerNow > shootEvery)
                         {
                             shootTimerNow = 0;
-                            if (hit.transform.GetComponent<AI>())
-                                hit.transform.GetComponent<AI>().currHealth -= bulletDamage;
+
+                            audioSource.clip = Gunshot;
+                            audioSource.Play();
+
+                            if (targetHit.GetComponent<AI>())
+                                DamageShark(targetHit, pointHit);
+                            else                                       //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                DamageProps(targetHit, pointHit);
                         }
                         Debug.Log(hit.transform.name);
                     }
@@ -92,5 +92,18 @@ public class Player : MonoBehaviour {
 
             }
         }
+    }
+
+    void DamageShark(GameObject targetHitName, Vector3 pointHitPosition)
+    {
+        targetHitName.GetComponent<AI>().currHealth -= bulletDamage;
+        Instantiate(VFX_HitShark, pointHitPosition, targetHitName.transform.rotation);
+    }
+
+    void DamageProps(GameObject targetHitName, Vector3 pointHitPosition)
+    {
+        Quaternion newRotation = Quaternion.FromToRotation(transform.up, pointHitPosition.normalized);
+        Instantiate(VFX_BulletSpark, pointHitPosition, targetHitName.transform.rotation);
+        Instantiate(VFX_BulletMark, pointHitPosition, targetHitName.transform.rotation);
     }
 }
