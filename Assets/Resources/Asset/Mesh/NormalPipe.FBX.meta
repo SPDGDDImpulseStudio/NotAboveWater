@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 409c7454699289d46a5e17fe25952abf
-timeCreated: 1510549755
+guid: 9566e7d71c051d0499fe5d537078e87a
+timeCreated: 1511410441
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -11,6 +11,11 @@ ModelImporter:
     3300000: //RootNode
     4300000: Tube001
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 02 - Default
+    second: {fileID: 2100000, guid: 991d5c553ffe3384d8c2abe19ea0c7ff, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

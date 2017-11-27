@@ -132,7 +132,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c164a354678b8ae45ae85eb9cd097881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioClips:
-  - {fileID: 8300000, guid: f3b594894f4b37549b111ccfea2bd699, type: 3}
-  - {fileID: 8300000, guid: ce222e5a99769c74594c63ed9fccc803, type: 3}
+  loopingAmbienceClips: []
   audioSource: {fileID: 0}
+  _audioSource: {fileID: 0}
