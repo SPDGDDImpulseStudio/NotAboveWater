@@ -47,7 +47,9 @@ public class AI : MonoBehaviour {
             gameObject.transform.position = closestHit.position;
         else
             Debug.LogError("Could not find position on NavMesh!");
-        nav = gameObject.AddComponent<NavMeshAgent>();
+
+        
+        nav = gameObject.GetComponent<NavMeshAgent>()? gameObject.GetComponent<NavMeshAgent>(): gameObject.AddComponent<NavMeshAgent>();
         
         //nav = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();

@@ -10,7 +10,8 @@ public abstract class EventsInterface : ScriptableObject {
     [HideInInspector]
     public bool runningOfEvent = false;
 
-    public bool coroutineAvail = false;
+    public bool coroutineAvail = false, debugThis = false;
+    
     public abstract void CurrEvent();
 
     public virtual void Init()
@@ -29,6 +30,7 @@ public abstract class EventsInterface : ScriptableObject {
         runningOfEvent = true;
         CurrEvent();
     }
+
     public virtual void Test(string x) { }
 
     public virtual void EndOfEvent()
@@ -38,4 +40,18 @@ public abstract class EventsInterface : ScriptableObject {
     }
 
     public abstract IEnumerator EnumEvent();
+
+    #region Abandoned
+
+
+    /*
+     
+     
+     
+     */
+
+
+
+    #endregion
+
 }

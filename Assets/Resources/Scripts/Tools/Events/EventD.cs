@@ -70,7 +70,8 @@ public class EventD : EventsInterface {
         //Turn around
         while (ai.transform.rotation.y > 0 && ai.transform.rotation.y < 360)
         {
-            ai.transform.Rotate(0, 10, 0, Space.Self);
+            //ai.transform.Rotate(0, 10, 0, Space.Self);
+            //ai.transform.rotation = Quaternion.Euler(0, 0, 0);
             //Debug.Log(ai.transform.rotation.y);
             yield return null;
         }
@@ -101,7 +102,6 @@ public class EventD : EventsInterface {
         while (thisPos.gameObject.activeSelf)
         {
             CameraManager.Instance.transform.position = Vector3.LerpUnclamped(CameraManager.Instance.transform.position, thisPos.position, 3 * Time.deltaTime);
-
             yield return null;
 
         }
@@ -144,10 +144,11 @@ public class EventD : EventsInterface {
             while (Vector3.Distance(ai.transform.position, ai.nav.destination) > 2)
             {
                 //ai.transform.position = Vector3.LerpUnclamped(ai.transform.position, pos, ai.speed * Time.deltaTime);
-                Debug.Log(ai.transform.rotation);
+                //Debug.Log(ai.transform.rotation);
                 yield return null;
             }
             thisPos = GameManager.Instance.waypoints[2].transform;
+            ai.GetComponentInChildren<Animator>().SetTrigger("TurnBacked");
             while (ai.transform.rotation.y < 0.95)
             {
                 ai.transform.Rotate(0, -10, 0, Space.Self);

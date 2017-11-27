@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource), typeof(AudioSource))]
 public class AudioManager : MonoBehaviour {
 
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
@@ -91,7 +92,7 @@ public class AudioManager : MonoBehaviour {
                 DontDestroyOnLoad(_instance.gameObject);
             }
             if (!_instance.gameObject.activeSelf) _instance.gameObject.SetActive(true);
-            return _instance;
+            return _instance;               
         }
     }
 
