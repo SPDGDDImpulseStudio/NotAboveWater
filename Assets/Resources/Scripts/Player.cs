@@ -36,9 +36,11 @@ public class Player : MonoBehaviour {
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
-    
+
+    public float maxSuitHealth, currSuitHealth, maxOxygen, currOxygen;
 
     public float shootEvery = 1, shootTimerNow;
+
     void Start () {
         if (Instance.GetInstanceID() != this.GetInstanceID())
             Destroy(this.gameObject);
@@ -46,6 +48,10 @@ public class Player : MonoBehaviour {
         currHealth = maxHealth;
         slider = FindObjectOfType<Canvas>().GetComponentInChildren<Slider>();
         audioSource = GetComponent<AudioSource>() ? GetComponent<AudioSource>() : gameObject.AddComponent<AudioSource>();
+
+        currSuitHealth = maxSuitHealth;
+        currOxygen = maxOxygen;
+
     }
 
     void Update()
@@ -82,7 +88,9 @@ public class Player : MonoBehaviour {
 
                             if (targetHit.GetComponent<AI>())
                                 DamageShark(targetHit, pointHit);
-                            else                                       //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                            else if (targetHit.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                targetHit.GetComponent<InteractableObj>().Interact();
+                            else
                                 DamageProps(targetHit, pointHit);
                         }
                         Debug.Log(hit.transform.name);
@@ -91,6 +99,31 @@ public class Player : MonoBehaviour {
                 }
 
             }
+        }
+    }
+
+    public void AddOxygen(float x)
+    {
+        //currOxygen = ((x + currOxygen) < maxOxygen) ? currOxygen + x : maxOxygen;
+        //if ((x + currOxygen) < maxOxygen)
+        //    currOxygen += x;
+        //else
+        //    currOxygen = maxOxygen;
+        StartCoroutine(AddOx(x));
+
+        
+
+    }
+
+    IEnumerator AddOx(float x)
+    {
+        float toAdd = x;
+
+        while(toAdd > 0)
+        {
+            toAdd -= Time.deltaTime;
+            currOxygen = ((Time.deltaTime + currOxygen) < maxOxygen) ? currOxygen + Time.deltaTime : maxOxygen;
+            yield return null;
         }
     }
 
