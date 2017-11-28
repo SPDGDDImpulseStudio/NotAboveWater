@@ -87,7 +87,7 @@ public class CircleManager : MonoBehaviour {
         Canvas canvas = FindObjectOfType<Canvas>();
         for (int i = 0; i < num; i++)
         {
-            currCircle.Add(Instantiate(circle));
+            currCircle.Add(Instantiate(circle, pos[i], Quaternion.identity));
             currCircle[i].transform.SetParent(canvas.transform);
             CirclePosUpdate x = currCircle[i].GetComponent<CirclePosUpdate>();
             x._ref = refList[0];

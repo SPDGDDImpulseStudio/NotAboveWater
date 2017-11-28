@@ -22,15 +22,16 @@ public class EventA : EventsInterface{
     public override IEnumerator EnumEvent()
     {
         thisPos = GameObject.Find(toWhere).transform;
-
+        CameraManager.Instance.target = thisPos;
         Debug.Log("IN");
         while (thisPos.gameObject.activeInHierarchy)
         {
-            CameraManager.Instance.transform.position = Vector3.Lerp(CameraManager.Instance.transform.position, thisPos.position, speed * Time.deltaTime);
-
+            //CameraManager.Instance.transform.position = Vector3.Lerp(CameraManager.Instance.transform.position, thisPos.position, speed * Time.deltaTime);
+            //Debug.Log(Vector3.Distance(thisPos.position, CameraManager.Instance.transform.position));
             yield return null;
 
         }
+        CameraManager.Instance.target = null;
         EndOfEvent();
     }
 

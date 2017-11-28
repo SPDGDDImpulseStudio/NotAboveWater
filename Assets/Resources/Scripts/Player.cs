@@ -46,9 +46,7 @@ public class Player : MonoBehaviour {
     [Header("Dont+Touch+For+Debug+Purpose")]
     public int  currBullet;
     public float currSuitHealth, currOxygen, currHealth, shootTimerNow;
-
-
-
+    
     float healthBarCount1, healthBarCount2;
     public bool allowToShoot = false;
 
@@ -90,7 +88,7 @@ public class Player : MonoBehaviour {
                 if (shootTimerNow > shootEvery && currBullet != 0)
                 {
                     shootTimerNow = 0;
-
+                   
                     audioSource.clip = gunFire;
                     audioSource.Play();
                     if (Physics.Raycast(this.transform.position, point.direction, out hit))
@@ -111,26 +109,37 @@ public class Player : MonoBehaviour {
                         else
                             DamageProps(targetHit, pointHit);
 
-                        currBullet--;
                     }
+                    if (currBullet - 1 == 0)
+                        StartCoroutine(WorkAroundButton());
+                    else
+                    currBullet--;
                 }
             }
         }
 
         if (Input.GetKeyDown(KeyCode.R))
-        {
+        
             StartCoroutine(Reload());
-        }
+        
+    }
+    public IEnumerator WorkAroundButton()
+    {
+        yield return new WaitForSeconds(shootEvery);
+        currBullet--;
     }
     bool reloading = false, suitUp = true;
 
     public IEnumerator Reload()
     {
-        if (reloading) yield break; ;
+        if (reloading) yield break; 
         reloading = true; 
         yield return new WaitForSeconds(reloadTime);
-        reloading = false;
         currBullet = maxBullet;
+       
+        reloading = false;
+        gunShootingBar.maxValue = 1;
+
     }
 
     public IEnumerator OxyDropping()
@@ -173,16 +182,30 @@ public class Player : MonoBehaviour {
         healthBarCount2 = maxHealth;
         //Here i can set the image for UI too
         StartCoroutine(SuittedUp());
-        
     }
-   
     IEnumerator UIUpdate()
     {
         while (true)
         {
             healthBar.value = healthBarCount1 / healthBarCount2;
             oxygenBar.value = currOxygen / maxOxygen;
-            gunShootingBar.value = shootTimerNow / shootEvery;
+            if (currBullet != 0)
+                gunShootingBar.value = shootTimerNow / shootEvery;
+            else if (reloading)
+            {
+                //if(gunShootingBar.maxValue == 1)
+                gunShootingBar.maxValue = reloadTime;
+                gunShootingBar.value += Time.deltaTime;
+                //Debug.Log((gunShootingBar.value + Time.deltaTime) + " " + gunShootingBar.maxValue);
+                //if ((gunShootingBar.value +Time.deltaTime) >= gunShootingBar.maxValue)
+                //{
+                //    gunShootingBar.maxValue = 1;
+                //    Debug.Log("SET");
+                //}
+            }
+            else
+                gunShootingBar.value = 0;
+
             yield return null;
         }
     }

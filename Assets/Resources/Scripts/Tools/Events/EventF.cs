@@ -186,9 +186,9 @@ ai.SliderTo(false);
 
         
         const int numToSpawn = 3;
-        Vector2 pos1 = new Vector2(),//Screen.height / (int)UnityEngine.Random.Range(1, 7), Screen.width / (int)UnityEngine.Random.Range(1, 7)),
-                pos2 = new Vector2(),//Screen.height / (int)UnityEngine.Random.Range(1, 7), Screen.width / (int)UnityEngine.Random.Range(1, 7)),
-                pos3 = new Vector2(),
+        Vector2 pos1 = new Vector2(3*Screen.height , Screen.width / (int)UnityEngine.Random.Range(1, 7)),
+                pos2 = new Vector2(3*Screen.height , Screen.width / (int)UnityEngine.Random.Range(1, 7)),
+                pos3 = new Vector2(3*Screen.height , Screen.width / (int)UnityEngine.Random.Range(1, 7)),
                 offSet1 = new Vector2(40, 50),
                 offSet2 = new Vector2(-40, -50),
                 offSet3 = new Vector2(40, -50);

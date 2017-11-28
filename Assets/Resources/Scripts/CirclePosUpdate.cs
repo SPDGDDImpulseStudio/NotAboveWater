@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class CirclePosUpdate : MonoBehaviour
+using UnityEngine.UI;
+public class CirclePosUpdate : Button
 {
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         cam = Camera.main;
-        this.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(DestroySelf);
+        onClick.AddListener(DestroySelf);
     }
 
     public GameObject _ref;
@@ -48,8 +49,13 @@ public class CirclePosUpdate : MonoBehaviour
     }
 
     void DestroySelf()
-    {   CircleManager.Instance.RemoveThisBut(this.GetComponent<UnityEngine.UI.Button>());
-        Destroy(this.gameObject);
+    {
+        if (Player.Instance.currBullet != 0)
+        {
+            CircleManager.Instance.RemoveThisBut(this);
+            Destroy(this.gameObject);
+        }
     }
+
     
 }

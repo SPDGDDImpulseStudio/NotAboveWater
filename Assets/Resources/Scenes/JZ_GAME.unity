@@ -234,7 +234,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 58216300}
   m_LocalRotation: {x: -0.20765856, y: -0.014667848, z: 0.0031142978, w: -0.9780865}
-  m_LocalPosition: {x: 0, y: 3.4899998, z: -6.15}
+  m_LocalPosition: {x: 0, y: 4.41, z: -11.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -281,6 +281,8 @@ MonoBehaviour:
   speed: 5
   playerCam: {fileID: 0}
   movementBool: 0
+  target: {fileID: 0}
+  maxDistDel: 2
 --- !u!82 &58216309
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2812,17 +2814,17 @@ Prefab:
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 206.22412
       objectReference: {fileID: 0}
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 111.74844
       objectReference: {fileID: 0}
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 33.543694
       objectReference: {fileID: 0}
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
@@ -2852,12 +2854,12 @@ Prefab:
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 206.22412
       objectReference: {fileID: 0}
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 111.74844
       objectReference: {fileID: 0}
     - target: {fileID: 224307471775773976, guid: ff62abe20ca896c4eb43e7f8dcea5327,
         type: 2}
@@ -2904,7 +2906,8 @@ Prefab:
       propertyPath: _ref
       value: 
       objectReference: {fileID: 1819034536}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114575397302155202, guid: ff62abe20ca896c4eb43e7f8dcea5327, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: ff62abe20ca896c4eb43e7f8dcea5327, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1516310050
