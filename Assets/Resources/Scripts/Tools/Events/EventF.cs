@@ -11,7 +11,10 @@ public class EventF : EventsInterface {
     {
         throw new NotImplementedException();
     }
-
+    Transform target;
+    public string targetName;
+    public List<Vector2> _offSets = new List<Vector2>();
+    public float timeToTake = 3;
     public override IEnumerator EnumEvent()
     {
         AI ai = AI.Instance;
@@ -197,13 +200,6 @@ ai.SliderTo(false);
          pos3,
         };
 
-        List<Vector2> offSets = new List<Vector2>()
-        {
-            offSet1,
-            offSet2,
-            offSet3
-        };
-
 
 
         //If i set the lifespan here do i go to another event or keep it here
@@ -214,14 +210,15 @@ ai.SliderTo(false);
 
 
         //So here im gonna made the shark come to one point 
-        CircleManager.Instance.SpawnButtons(numToSpawn, offSets, vects);
-        
-        ai.nav.speed = speedAIMoveForThisEvent;
-        ai.nav.destination = GameManager.Instance.AIWaypoints[waypointNumber].transform.position;
-     
-        while (Vector3.Distance(ai.transform.position, ai.nav.destination) > 2)
+        CircleManager.Instance.SpawnButtons(numToSpawn, _offSets, vects);
+
+        //ai.nav.speed = speedAIMoveForThisEvent;
+        //ai.nav.destination = GameManager.Instance.AIWaypoints[waypointNumber].transform.position;
+        float timer = 0;
+        while(timer < timeToTake)
         {
-            if (debugThis) Debug.Log("Distance between AI and Dest is now :" + Vector3.Distance(ai.transform.position, ai.nav.destination));
+            if (CircleManager.Instance.SetClear()) break;
+            timer += Time.deltaTime;
             yield return null;
         }
 
@@ -229,11 +226,14 @@ ai.SliderTo(false);
         if (CircleManager.Instance.currCircle.Count == 0)
         {
             //Success
+            Debug.Log("SUC");
             //GameManager.Instance.currInt += //number to next 
         }
         else
         {
             //Fail
+
+            Debug.Log("SUX");
             CircleManager.Instance.ClearSet();
         }
         EndOfEvent();

@@ -25,6 +25,7 @@ public class EventG : EventsInterface {
                 crates_.Add(crates[i].gameObject);
         }
         float timer = 0;
+        Debug.Log(crates_.Count);
         while(crates_.Count != 0)
         {
             timer += Time.deltaTime;
