@@ -32,3 +32,11 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Assets/Standard Assets/Fonts/RockwellFett.ttf.meta
+Assets/Standard Assets/Fonts/RockwellFett.ttf
+Assets/Standard Assets/Fonts/ROCC.ttf.meta
+Assets/Standard Assets/Fonts/ROCC.ttf
+Assets/Resources/Scripts/PauseScript.cs.meta
+Assets/Resources/Scripts/PauseScript.cs
+Assets/Resources/Scripts/LevelLoader.cs.meta
+Assets/Resources/Scripts/LevelLoader.cs

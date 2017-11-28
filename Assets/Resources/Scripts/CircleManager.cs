@@ -36,10 +36,8 @@ public class CircleManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         _instance = this;
-        if (!circle)
-        {
-            circle = Resources.Load<Button>("Prefabs/Circle");
-        }
+        if (!circle)  circle = Resources.Load<Button>("Prefabs/Circle");
+        
 	}
 	
 	// Update is called once per frame
@@ -53,7 +51,11 @@ public class CircleManager : MonoBehaviour {
             ClearSet();
         }
 	}
-
+    public bool SetClear()
+    {
+        if (currCircle.Count == 0) return true;
+        else return false;
+    }
     public void ClearSet()
     {
         if (currCircle.Count == 0) return;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runningOfEvent: 0
   coroutineAvail: 0
+  debugThis: 0
   thisPos: {fileID: 0}
-  toWhere: WP(AI)
+  toWhere: Waypoints (2)
   speed: 3
