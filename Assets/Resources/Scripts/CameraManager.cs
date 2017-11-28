@@ -60,8 +60,9 @@ public class CameraManager : MonoBehaviour {
         //    }
 
         //}
-        
 
+        if (Input.GetKeyDown(KeyCode.Space))
+            ShakeCamera();
     }
     public void UpdateCameraPos()
     {
@@ -115,6 +116,56 @@ public class CameraManager : MonoBehaviour {
     }
     #endregion
 
+
+    Vector3 originPos;
+
+    public void ShakeCamera()
+    {
+        StartCoroutine(Shakey());
+    }
+    bool shakeyBoi = false;
+
+    IEnumerator Shakey()
+    {
+        if (shakeyBoi) yield break;
+        shakeyBoi = true;
+        float currTIme = 0, timer = 5;
+        originPos = this.transform.localPosition;
+        float shakeAmount = 0.7f;
+        while (currTIme < timer)
+        {
+            currTIme += Time.deltaTime;
+            this.transform.localPosition = originPos + UnityEngine.Random.insideUnitSphere * shakeAmount;
+
+            yield return null;
+        }
+        shakeyBoi = false;
+    }
+    public void LookAtWayp(Transform x, out bool z)
+    {
+        z = waitRotate;
+        StartCoroutine(LookAtTarget(x));
+    }
+    bool waitRotate = true;
+    IEnumerator LookAtTarget(Transform target)
+    {
+        //if (waitRotate) yield break;
+        waitRotate = true;
+        float angle = 15;
+        while (!(Vector3.Angle(transform.forward, (target.position - transform.position).normalized) < angle))
+        {
+            Vector3 dir = (target.position - transform.position).normalized;
+
+            Quaternion rotation = Quaternion.LookRotation(dir);
+
+            transform.localRotation = Quaternion.RotateTowards(transform.rotation, rotation, 14 * Time.deltaTime);
+            Debug.Log(angle);
+            Debug.DrawRay(transform.position, target.position - transform.position);
+            yield return null;
+        }
+        waitRotate = false;
+    }
+    
     IEnumerator UpdateBool(Transform _target)
     {
         GameManager.Instance.updating = true;

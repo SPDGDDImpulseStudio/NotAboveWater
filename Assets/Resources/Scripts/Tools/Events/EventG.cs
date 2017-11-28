@@ -3,52 +3,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Tools/EventG", fileName = "EventG_", order = 7)]
+[CreateAssetMenu(menuName = "Tools/EventG", fileName = "EventG_ShootCrates", order = 7)]
 public class EventG : EventsInterface {
     public override void CurrEvent()
     {
         throw new NotImplementedException();
     }
-
-    public float timingItTakes = 5;
+    public List<GameObject> crates_;
+    public float timingItTakes = 5, sizeOfSphereCheck = 10;
+    public bool timerBool = false;
     public override IEnumerator EnumEvent()
     {
 
-        Collider[] crates = Physics.OverlapSphere(Player.Instance.transform.position,10);
+        Collider[] crates = Physics.OverlapSphere(Player.Instance.transform.position, sizeOfSphereCheck);
         
-        List<GameObject> crates_ = new List<GameObject>();
+         //crates_ = new List<GameObject>();
         
         
         for (int i  =0; i < crates.Length; i++)
         {
             if (crates[i].GetComponent<Interact_CompulCrates>())
-                crates_.Add(crates[i].gameObject);
+                CratesManager.Instance.PopulateList(crates[i].GetComponent<Interact_CompulCrates>());
         }
         float timer = 0;
-        Debug.Log(crates_.Count);
-        while(crates_.Count != 0)
-        {
-            timer += Time.deltaTime;
-            if (timer > timingItTakes) break;
 
+        while (CratesManager.Instance.cratesToDestroy.Count != 0)
+        {
+            if (timerBool)
+            {
+                if (timer > timingItTakes) break;
+                timer += Time.deltaTime;
+            }
             yield return null;
 
         }
         EndOfEvent();
     }
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(Player.Instance.transform.position, 10);
-    }
-   
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    
 }

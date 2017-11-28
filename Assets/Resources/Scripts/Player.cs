@@ -45,7 +45,8 @@ public class Player : MonoBehaviour {
 
     [Header("Dont+Touch+For+Debug+Purpose")]
     public int  currBullet;
-    public float currSuitHealth, currOxygen, currHealth, shootTimerNow;
+    public float currSuitHealth, currOxygen, currHealth
+        , shootTimerNow;
     
     float healthBarCount1, healthBarCount2;
     public bool allowToShoot = false;
@@ -68,11 +69,13 @@ public class Player : MonoBehaviour {
 
         StartCoroutine(UIUpdate());
         StartCoroutine(OxyDropping());
-        StartCoroutine(SuittedUp());
+        //StartCoroutine(SuittedUp());
     }
 
     void Update()
     {
+        if (currSuitHealth < 0)
+            Debug.Log("death");
         if (shootTimerNow < shootEvery)
             shootTimerNow += Time.deltaTime;
 
@@ -128,7 +131,7 @@ public class Player : MonoBehaviour {
         yield return new WaitForSeconds(shootEvery);
         currBullet--;
     }
-    bool reloading = false, suitUp = true;
+    bool reloading = false;//, suitUp = true;
 
     public IEnumerator Reload()
     {
@@ -144,9 +147,20 @@ public class Player : MonoBehaviour {
 
     public IEnumerator OxyDropping()
     {
+
+        Image[] x = oxygenBar.GetComponentsInChildren<Image>(); // = Color.blue + new Color(0,0.5f, 0);
+        for(int i = 0; i < x.Length; i++)
+        {
+            x[i].color = Color.blue + new Color(0, 0.5f, 0);
+        }
         while (true)
         {
-            if (currOxygen < 0) {StartCoroutine(HealthDropping()); yield break; }
+            healthBarCount1 = currOxygen;
+            healthBarCount2 = maxOxygen;
+            if (currOxygen < 0) {
+                StartCoroutine(HealthDropping());
+                yield break;
+            }
             currOxygen -= oxyDrop;
             yield return null;
         }
@@ -154,41 +168,52 @@ public class Player : MonoBehaviour {
     bool healthDrop_ = false;
     public IEnumerator HealthDropping()
     {
+        float newNum =96 / 225;
+        Image[] x = oxygenBar.GetComponentsInChildren<Image>(); // = Color.blue + new Color(0,0.5f, 0);
+        for (int i = 0; i < x.Length; i++)
+        {
+            x[i].color = Color.red + new Color(0, 0, newNum);
+        }
+        //oxygenBar.GetComponentsInChildren<Image>().color = Color.red + new Color(0, 0, newNum);
         if (healthDrop_) yield break;
         healthDrop_ = true;
         while (true)
         {
-            if (suitUp && currOxygen > 0) { healthDrop_ = false; yield break; }
+            healthBarCount1 = currHealth;
+            healthBarCount2 = maxHealth;
+            if (currOxygen > 0) { healthDrop_ = false; StartCoroutine(OxyDropping()); yield break; }
             currHealth -= healthDrop;
             yield return null;
         }
     }
-    public IEnumerator SuittedUp()
-    {
-        yield return new WaitUntil(() => currSuitHealth >= 0);
-        suitUp = true;
-        healthBarCount1 = currSuitHealth;
-        healthBarCount2 = maxSuitHealth;
-        //Here i can set the image for UI too
-        StartCoroutine(SuitDown());
-    }
-    public IEnumerator SuitDown()
-    {
-        yield return new WaitUntil(() => currSuitHealth <= 0);
 
-        suitUp = false;
-        StartCoroutine(HealthDropping());
-        healthBarCount1 = currHealth;
-        healthBarCount2 = maxHealth;
-        //Here i can set the image for UI too
-        StartCoroutine(SuittedUp());
-    }
+    //public IEnumerator SuittedUp()
+    //{
+    //    yield return new WaitUntil(() => currSuitHealth >= 0);
+    //    suitUp = true;
+    //    healthBarCount1 = currSuitHealth;
+    //    healthBarCount2 = maxSuitHealth;
+    //    //Here i can set the image for UI too
+    //    StartCoroutine(SuitDown());
+    //}
+    //public IEnumerator SuitDown()
+    //{
+    //    yield return new WaitUntil(() => currSuitHealth <= 0);
+
+    //    suitUp = false;
+    //    //StartCoroutine(HealthDropping());
+    //    //healthBarCount1 = currHealth;
+    //    //healthBarCount2 = maxHealth;
+    //    //Here i can set the image for UI too
+    //    StartCoroutine(SuittedUp());
+    //}
+
     IEnumerator UIUpdate()
     {
         while (true)
         {
-            healthBar.value = healthBarCount1 / healthBarCount2;
-            oxygenBar.value = currOxygen / maxOxygen;
+            healthBar.value = currSuitHealth / maxSuitHealth;
+            oxygenBar.value = healthBarCount1 / healthBarCount2;
             if (currBullet != 0)
                 gunShootingBar.value = shootTimerNow / shootEvery;
             else if (reloading)

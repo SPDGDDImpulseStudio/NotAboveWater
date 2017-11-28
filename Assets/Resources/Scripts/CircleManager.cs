@@ -44,7 +44,7 @@ public class CircleManager : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Spawn2Button();
+            //Spawn2Button();
         }
         else if (Input.GetMouseButtonDown(1))
         {

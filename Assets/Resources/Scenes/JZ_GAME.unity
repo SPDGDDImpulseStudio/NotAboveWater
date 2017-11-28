@@ -650,8 +650,9 @@ GameObject:
   m_Component:
   - component: {fileID: 246086850}
   - component: {fileID: 246086849}
+  - component: {fileID: 246086851}
   m_Layer: 0
-  m_Name: CircleManager
+  m_Name: EventManage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -668,7 +669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75465d171400b7e4f99d3228d008b2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circle: {fileID: 114575397302155202, guid: ff62abe20ca896c4eb43e7f8dcea5327, type: 2}
+  circle: {fileID: 0}
   currCircle: []
   refList:
   - {fileID: 759466120}
@@ -686,6 +687,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &246086851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 246086848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc06aa3bf0a753e41be82f939348a5e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cratesToDestroy: []
 --- !u!1 &277391313
 GameObject:
   m_ObjectHideFlags: 0
@@ -2536,7 +2549,7 @@ Prefab:
     - target: {fileID: 114517828856855730, guid: 37ccb51d824bdfd4d911ce7cb4beda8b,
         type: 2}
       propertyPath: eventsList.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 114517828856855730, guid: 37ccb51d824bdfd4d911ce7cb4beda8b,
         type: 2}
@@ -2662,7 +2675,7 @@ Prefab:
         type: 2}
       propertyPath: eventsList.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: 6e4813b22272fd4409fcd0fe89b61d98,
+      objectReference: {fileID: 11400000, guid: b6b0c4cc6e86f6448a6e0234e78870c9,
         type: 2}
     - target: {fileID: 114517828856855730, guid: 37ccb51d824bdfd4d911ce7cb4beda8b,
         type: 2}
@@ -2906,8 +2919,7 @@ Prefab:
       propertyPath: _ref
       value: 
       objectReference: {fileID: 1819034536}
-    m_RemovedComponents:
-    - {fileID: 114575397302155202, guid: ff62abe20ca896c4eb43e7f8dcea5327, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff62abe20ca896c4eb43e7f8dcea5327, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1516310050

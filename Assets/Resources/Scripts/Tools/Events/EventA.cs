@@ -23,9 +23,22 @@ public class EventA : EventsInterface{
     {
         thisPos = GameObject.Find(toWhere).transform;
         CameraManager.Instance.target = thisPos;
+        //bool x = true;
+        //CameraManager.Instance.LookAtWayp(thisPos, out x);
+        //Debug.Log(x);
+        //yield return new WaitUntil(() => x == false);
+
+        //Debug.Log(x);
         Debug.Log("IN");
         while (thisPos.gameObject.activeInHierarchy)
         {
+            Vector3 dir = (thisPos.position - CameraManager.Instance.transform.position).normalized;
+
+            Quaternion rotation = Quaternion.LookRotation(dir);
+
+            CameraManager.Instance.transform.localRotation = Quaternion.RotateTowards(CameraManager.Instance.transform.rotation, rotation, 14 * Time.deltaTime);
+            //Debug.Log(angle);
+            Debug.DrawRay(CameraManager.Instance.transform.position, thisPos.position - CameraManager.Instance.transform.position);
             //CameraManager.Instance.transform.position = Vector3.Lerp(CameraManager.Instance.transform.position, thisPos.position, speed * Time.deltaTime);
             //Debug.Log(Vector3.Distance(thisPos.position, CameraManager.Instance.transform.position));
             yield return null;
