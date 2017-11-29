@@ -177,6 +177,8 @@ MonoBehaviour:
   VFX_BulletSpark: {fileID: 1395700912471364, guid: 0313bd1570487d8428ae37c406d1dc5c,
     type: 2}
   gunFire: {fileID: 8300000, guid: 1b18170e9a1e68848b039868bcdfe598, type: 3}
+  reloadingClip: {fileID: 0}
+  emptyGunFire: {fileID: 0}
   maxBullet: 10
   maxSuitHealth: 100
   maxOxygen: 100
@@ -1880,6 +1882,8 @@ MonoBehaviour:
   colorOfLines: {r: 0, g: 0, b: 0, a: 0}
   sizeOfDrawnSphere: 2
   anim: {fileID: 0}
+  target: {fileID: 0}
+  maxDistDel: 3
 --- !u!1 &1022124516 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1298188051439482, guid: 2357a17e56661d24d840baed78485792,
@@ -2657,14 +2661,13 @@ Prefab:
         type: 2}
       propertyPath: eventsList.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 5705ac98471cb0540a17a88246f2a8e1,
+      objectReference: {fileID: 11400000, guid: 154cab7c11146364c83353072e8de1e2,
         type: 2}
     - target: {fileID: 114517828856855730, guid: 37ccb51d824bdfd4d911ce7cb4beda8b,
         type: 2}
       propertyPath: eventsList.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: ff83cf5793fc5104f9152a37854d38a2,
-        type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 114517828856855730, guid: 37ccb51d824bdfd4d911ce7cb4beda8b,
         type: 2}
       propertyPath: eventsList.Array.data[2]
@@ -2675,8 +2678,7 @@ Prefab:
         type: 2}
       propertyPath: eventsList.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: b6b0c4cc6e86f6448a6e0234e78870c9,
-        type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 114517828856855730, guid: 37ccb51d824bdfd4d911ce7cb4beda8b,
         type: 2}
       propertyPath: eventsList.Array.data[4]

@@ -5,9 +5,16 @@ using UnityEngine;
 
 public class Interact_SuitHealth : InteractableObj
 {
+    public AudioClip suitClip;
+    public  void Start()
+    {
+
+        suitClip = Resources.Load<AudioClip>("Audio/NewSuitGet");
+    }
     public override void Interact()
     {
-        throw new NotImplementedException();
+        Player.Instance.currSuitHealth = Player.Instance.maxSuitHealth;
+        AudioManager.Instance.backGroundAudioSource.PlayOneShot(suitClip);
     }
 
 }

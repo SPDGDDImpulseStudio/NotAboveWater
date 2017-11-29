@@ -12,6 +12,8 @@ public class EventB : EventsInterface {
     {
         CameraManager.Instance.Wait(5f);
     }
+
+
     public override IEnumerator EnumEvent()
     {
         Debug.Log("IN");

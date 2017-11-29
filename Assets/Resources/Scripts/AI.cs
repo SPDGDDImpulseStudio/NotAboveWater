@@ -18,6 +18,7 @@ public class AI : MonoBehaviour {
     [Range(0.1f, 2.0f)]
     public float sizeOfDrawnSphere;
 
+    public const string AIWaypointName = "AI_Waypoints";
     public static AI Instance
     {
         get
@@ -63,7 +64,16 @@ public class AI : MonoBehaviour {
         slider.value = currHealth / maxHealth;
         //Debug.Log(nav.destination);
     }
-	
+    public Transform target = null;
+    public float maxDistDel = 3;
+    Vector3 velocity = Vector3.zero;
+
+    void LateUpdate()
+    {
+        if (!target) return;
+        //transform.LookAt(target);
+        transform.position = Vector3.SmoothDamp(transform.position, target.position, ref velocity, maxDistDel);
+    }
     //Navmesh not working fuck this shit im out
     public void UpdateWaypoint()
     {

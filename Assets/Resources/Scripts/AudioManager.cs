@@ -6,7 +6,7 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour {
 
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
-    public AudioSource audioSource, _audioSource;
+    public AudioSource audioSource, _audioSource, backGroundAudioSource;
 
     int currInt, rndInt;
     // Use this for initialization

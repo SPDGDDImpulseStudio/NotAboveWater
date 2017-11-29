@@ -34,7 +34,7 @@ public class Player : MonoBehaviour {
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
-    public AudioClip gunFire;
+    public AudioClip gunFire, reloadingClip, emptyGunFire;
 
     [Header("[Player's Attributes]")]
     [Header("Things to Set")]
@@ -66,12 +66,17 @@ public class Player : MonoBehaviour {
         currSuitHealth = maxSuitHealth;
         currOxygen = maxOxygen;
         currBullet = maxBullet;
-
+        reloadTime = reloadingClip.length;
         StartCoroutine(UIUpdate());
         StartCoroutine(OxyDropping());
         //StartCoroutine(SuittedUp());
     }
-
+    public void PlayAudioClip(AudioClip clip, float volume = 1.0f)
+    {
+        audioSource.clip = clip;
+        audioSource.PlayOneShot(clip, volume);
+        //audioSource.
+    }
     void Update()
     {
         if (currSuitHealth < 0)
@@ -88,42 +93,47 @@ public class Player : MonoBehaviour {
             //Debug.DrawRay(transform.position, point,Color.green);
             if (allowToShoot)
             {
-                if (shootTimerNow > shootEvery && currBullet != 0)
+                if (shootTimerNow > shootEvery && !reloading)
                 {
-                    shootTimerNow = 0;
-                   
-                    audioSource.clip = gunFire;
-                    audioSource.Play();
-                    if (Physics.Raycast(this.transform.position, point.direction, out hit))
+                    if (currBullet != 0)
                     {
-                        targetHit = hit.transform.gameObject;
-                        pointHit = hit.point;
 
-                        //if (hit.transform.GetComponent<Book>())
-                        //{
-                        //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
-                        //}
+                        shootTimerNow = 0;
+                        PlayAudioClip(gunFire);
 
 
-                        if (hit.transform.GetComponent<AI>())
-                            DamageShark(targetHit, pointHit);
-                        else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                            hit.transform.GetComponent<InteractableObj>().Interact();
+                        if (Physics.Raycast(this.transform.position, point.direction, out hit))
+                        {
+                            targetHit = hit.transform.gameObject;
+                            pointHit = hit.point;
+
+                            //if (hit.transform.GetComponent<Book>())
+                            //{
+                            //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
+                            //}
+
+
+                            if (hit.transform.GetComponent<AI>())
+                                DamageShark(targetHit, pointHit);
+                            else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                hit.transform.GetComponent<InteractableObj>().Interact();
+                            else
+                                DamageProps(targetHit, pointHit);
+
+                        }
+                        if (currBullet - 1 == 0)
+                            StartCoroutine(WorkAroundButton());
                         else
-                            DamageProps(targetHit, pointHit);
-
+                            currBullet--;
                     }
-                    if (currBullet - 1 == 0)
-                        StartCoroutine(WorkAroundButton());
                     else
-                    currBullet--;
+                    {
+                        PlayAudioClip(emptyGunFire);
+                    }
                 }
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        
-            StartCoroutine(Reload());
+        } 
+        if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
         
     }
     public IEnumerator WorkAroundButton()
@@ -136,10 +146,11 @@ public class Player : MonoBehaviour {
     public IEnumerator Reload()
     {
         if (reloading) yield break; 
-        reloading = true; 
-        yield return new WaitForSeconds(reloadTime);
+        reloading = true;
+        PlayAudioClip(reloadingClip);
+        yield return new WaitForSeconds(reloadingClip.length);
         currBullet = maxBullet;
-       
+     
         reloading = false;
         gunShootingBar.maxValue = 1;
 

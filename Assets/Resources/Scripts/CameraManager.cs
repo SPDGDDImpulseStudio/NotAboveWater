@@ -135,12 +135,12 @@ public class CameraManager : MonoBehaviour {
     {
         if (shakeyBoi) yield break;
         shakeyBoi = true;
-        float currTIme = 0, timer = 5;
+        float currTime = 0, timer = 5;
         originPos = this.transform.localPosition;
         float shakeAmount = 0.7f;
-        while (currTIme < timer)
+        while (currTime < timer)
         {
-            currTIme += Time.deltaTime;
+            currTime += Time.deltaTime;
             this.transform.localPosition = originPos + UnityEngine.Random.insideUnitSphere * shakeAmount;
 
             yield return null;
