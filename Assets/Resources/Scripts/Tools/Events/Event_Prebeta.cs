@@ -42,7 +42,8 @@ public class Event_Prebeta : EventsInterface {
         //AI.Instance.maxDistDel = maxDeltaDistTemp;
         while (true)
         {
-            if(AI.Instance.target == null) {
+            if (AI.Instance.target == null)
+            {
                 currAI_WP++;
                 if (currAI_WP == 2) break;
                 else if (currAI_WP == 1) LookAtThis = Player.Instance.transform;//AI.Instance.waypoints[currWaypoint].GetComponent<LookDirection>().LookAt;
@@ -51,8 +52,8 @@ public class Event_Prebeta : EventsInterface {
 
                 CircleManager.Instance.SpawnButtons(3, _offSets, vects, AI.Instance.gameObject);
 
-                }
-
+            }
+            if(currAI_WP == 1) { if (CircleManager.Instance.SetClear()) { Debug.Log("XD"); currAI_WP++; break; } }
             CameraManager.Instance.RotationCam(AI.Instance.transform, 20);
             AI.Instance.RotationCam(LookAtThis);
           
@@ -79,7 +80,7 @@ public class Event_Prebeta : EventsInterface {
             else break;
             yield return null;
         }
-        #region this can Be one function
+        #region PlainMovemenToNextWaypoint
         currCam_WP++;
         thisPos = GameManager.Instance.waypoints[currCam_WP].transform;
         CameraManager.Instance.target = thisPos;
@@ -103,10 +104,8 @@ public class Event_Prebeta : EventsInterface {
         }
         #endregion
 
-        //Collider[] crates = Physics.OverlapSphere(Player.Instance.transform.position, 20);
-        //crates_ = new List<GameObject>();
         GameObject ThatWall = GameObject.Find("Wall_Window2 (1)");
-        offSet1 = new Vector2(40, 40);
+        offSet1 = new Vector2(Screen.width/2 , Screen.height/2);
         offSet2 = new Vector2(-40, -40);
         List<Vector2> offSett = new List<Vector2>() {
 
@@ -115,7 +114,7 @@ public class Event_Prebeta : EventsInterface {
         
         
         ;
-        CircleManager.Instance.SpawnButtons(1, offSett, offSett, ThatWall);
+        CircleManager.Instance.SpawnButtons(1, offSett, offSett, null);
         //AI.Instance.target = AI.Instance.waypoints[currAI_WP].transform;
         
         yield return new WaitUntil(() => CircleManager.Instance.SetClear());
@@ -225,6 +224,25 @@ public class Event_Prebeta : EventsInterface {
             yield return null;
         }
         #endregion
+
+        Collider[] crates = Physics.OverlapSphere(Player.Instance.transform.position, 20);
+
+        //crates_ = new List<GameObject>();
+
+
+        for (int i = 0; i < crates.Length; i++)
+        {
+            if (crates[i].GetComponent<Interact_CompulCrates>())
+                CratesManager.Instance.PopulateList(crates[i].GetComponent<Interact_CompulCrates>());
+        }
+
+        while (CratesManager.Instance.cratesToDestroy.Count != 0)
+        {
+    
+            yield return null;
+
+        }
+        //CratesManager.
         EndOfEvent();
 
     }

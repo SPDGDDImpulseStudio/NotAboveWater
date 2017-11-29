@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour {
         {
             AIWaypoints.Add(ai.waypoints[x]);
         }
+       
     }
 
 
@@ -185,6 +186,6 @@ public class GameManager : MonoBehaviour {
 
         }
     }
-}
 #endif 
 
+}
