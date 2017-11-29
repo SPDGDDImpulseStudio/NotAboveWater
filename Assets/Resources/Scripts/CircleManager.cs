@@ -44,14 +44,7 @@ public class CircleManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            //Spawn2Button();
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            ClearSet();
-        }
+    
 	}
     public bool SetClear()
     {
