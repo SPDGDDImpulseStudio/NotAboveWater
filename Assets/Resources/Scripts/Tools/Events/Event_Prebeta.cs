@@ -148,7 +148,6 @@ public class Event_Prebeta : EventsInterface {
         }
         #endregion
 
-
         #region PlainMovementToNextWaypoint
 
         currCam_WP++;
@@ -174,6 +173,8 @@ public class Event_Prebeta : EventsInterface {
         }
         #endregion
 
+        Log("here");
+        //Quaternion currRot = CameraManager.Instance.transform.localRotation - Vector3.back;
         #region PlainMovementToNextWaypoint
 
         currCam_WP++;
@@ -198,9 +199,7 @@ public class Event_Prebeta : EventsInterface {
             yield return null;
         }
         #endregion
-
-
-
+        
         CameraManager.Instance.maxDistDel = (int)SPEED.MEDIUM;
         #region PlainMovementToNextWaypoint
 
