@@ -62,6 +62,22 @@ public class SceneCamera : MonoBehaviour {
         underWater.AboveWaterSettings();
     }
 
+    [MenuItem("Tools/Rename")]
+    public static void RenamingGameObject()
+    {
+        if(Selection.gameObjects.Length > 1)
+        {
+            List<GameObject> activeObjects = new List<GameObject>(Selection.gameObjects);
+            string fixedName = activeObjects[0].name;
+            //fixedName = Regex.
+            for (int i = 0; i < activeObjects.Count; i++) {
+
+                activeObjects[i].name = fixedName + " (" + i+ ")" ;
+
+
+            }
+        }
+    }
     //[MenuItem("Tools/Group")]
     //public static void GroupUp()
     //{

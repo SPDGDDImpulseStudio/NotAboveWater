@@ -10,7 +10,8 @@ public class AI : MonoBehaviour {
     public NavMeshAgent nav;
     public UnityEngine.UI.Slider slider;
 
-    public List<GameObject> waypoints = new List<GameObject>();
+    public List<GameObject> waypoints = new List<GameObject>(),
+        waypointsToLookAt = new List<GameObject>();
 
     [Header("[Draw Waypoints]")]
     public Color colorOfLines;
@@ -42,20 +43,20 @@ public class AI : MonoBehaviour {
 
         currHealth = maxHealth;
 
-        NavMeshHit closestHit;
+        //NavMeshHit closestHit;
 
-        if (NavMesh.SamplePosition(gameObject.transform.position, out closestHit, 500f, NavMesh.AllAreas))
-            gameObject.transform.position = closestHit.position;
-        else
-            Debug.LogError("Could not find position on NavMesh!");
+        //if (NavMesh.SamplePosition(gameObject.transform.position, out closestHit, 500f, NavMesh.AllAreas))
+        //    gameObject.transform.position = closestHit.position;
+        //else
+        //    Debug.LogError("Could not find position on NavMesh!");
 
         
-        nav = gameObject.GetComponent<NavMeshAgent>()? gameObject.GetComponent<NavMeshAgent>(): gameObject.AddComponent<NavMeshAgent>();
+        //nav = gameObject.GetComponent<NavMeshAgent>()? gameObject.GetComponent<NavMeshAgent>(): gameObject.AddComponent<NavMeshAgent>();
         
         //nav = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         UpdateWaypoint();
-        nav.speed = speed;
+        //nav.speed = speed;
 
     }
 
@@ -71,8 +72,10 @@ public class AI : MonoBehaviour {
     void LateUpdate()
     {
         if (!target) return;
-        //transform.LookAt(target);
         transform.position = Vector3.SmoothDamp(transform.position, target.position, ref velocity, maxDistDel);
+        if (Vector3.Distance(transform.position, target.position) < 5f) {
+            Debug.Log("Target is Null Now"); target = null;
+    }
     }
     //Navmesh not working fuck this shit im out
     public void UpdateWaypoint()
@@ -81,7 +84,7 @@ public class AI : MonoBehaviour {
         currWaypoint = waypoints[currInt];
         //Debug.Log(nav.destination + " | " + currWaypoint + " | " + currWaypoint.transform.position);
 
-        nav.destination = currWaypoint.transform.position;///new Vector3(currWaypoint.transform.position.x, this.transform.position.y, currWaypoint.transform.position.z);
+        //nav.destination = currWaypoint.transform.position;///new Vector3(currWaypoint.transform.position.x, this.transform.position.y, currWaypoint.transform.position.z);
                                                           ///nav.SetDestination(currWaypoint.transform.position);
 
         //Debug.Log(nav.destination +" | " + currWaypoint + " | " +currWaypoint.transform.position);
@@ -96,6 +99,22 @@ public class AI : MonoBehaviour {
     public Vector3 GetPos(int x)
     {
         return waypoints[x].transform.position;
+    }
+
+    public void RotationCam(Transform target, float rotationSpeed = 14)
+    {
+        Vector3 dir = (target.position - transform.position).normalized;
+
+        Quaternion rotation = Quaternion.LookRotation(dir);
+
+        transform.localRotation = Quaternion.RotateTowards(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+        Debug.DrawRay(transform.position, (target.position - transform.position));
+        //Debug.Log(transform.localRotation);
+    }
+
+    public void PlayAnim(string animName)
+    {
+        anim.Play(animName);
     }
     //For some fucking reason this is not working
 #if UNITY_EDITOR

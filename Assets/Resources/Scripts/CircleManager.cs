@@ -33,10 +33,12 @@ public class CircleManager : MonoBehaviour {
     public List<Button> currCircle = new List<Button>();
 
     public List<GameObject> refList = new List<GameObject>();
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+
+    void Start () {
         _instance = this;
         if (!circle)  circle = Resources.Load<Button>("Prefabs/Circle");
+
         
 	}
 	
@@ -75,22 +77,23 @@ public class CircleManager : MonoBehaviour {
         {
             if (button == currCircle[i])
             {
-                Debug.Log(currCircle[i]);
+                //Debug.Log(currCircle[i]);
 
                 currCircle.RemoveAt(i);
             }
         }
     }
     //int numToSpawn ;
-    public void SpawnButtons(int num, List<Vector2> _offSet, List<Vector2> pos)
+    public void SpawnButtons(int num, List<Vector2> _offSet, List<Vector2> pos, GameObject go)
     {
         Canvas canvas = FindObjectOfType<Canvas>();
         for (int i = 0; i < num; i++)
         {
+
             currCircle.Add(Instantiate(circle, pos[i], Quaternion.identity));
             currCircle[i].transform.SetParent(canvas.transform);
             CirclePosUpdate x = currCircle[i].GetComponent<CirclePosUpdate>();
-            x._ref = refList[0];
+            x._ref = go;
             //Its gonna change to the AI for sure huh
             x.offSet = _offSet[i];
         }
@@ -121,6 +124,6 @@ public class CircleManager : MonoBehaviour {
             offSet2,
             offSet3
         };
-        SpawnButtons(numToSpawn, offSets, vects);
+        SpawnButtons(numToSpawn, offSets, vects,AI.Instance.gameObject);
     }
 }

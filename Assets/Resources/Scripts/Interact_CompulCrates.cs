@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(Collider))]
 public class Interact_CompulCrates : Interact_Crates {
 
     public override void Interact()

@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour {
     public IEnumerator NextEvent()
     {
         yield return new WaitUntil(() => AI.Instance != null);
-        yield return new WaitUntil(() => AI.Instance.nav != null);
+        //yield return new WaitUntil(() => AI.Instance.nav != null);
         //if (currEvent == eventsList[eventsList.Count - 1])
         if(currInt == eventsList.Count || forceStop)
         {
@@ -131,6 +131,22 @@ public class GameManager : MonoBehaviour {
         {
             StartCoroutine(NextEvent());
             showTrack = true;
+        }
+    }
+    string TimeScaleNow;
+    int TimeScaleInt =1;
+    public Rect ButPos;
+    void OnGUI()
+    {
+        if (GUI.Button(ButPos,TimeScaleNow))
+        {
+            if (TimeScaleInt != 4)
+                TimeScaleInt *= 2;
+            else
+                TimeScaleInt = 1;
+
+            Time.timeScale = TimeScaleInt;
+            TimeScaleNow = TimeScaleInt.ToString();
         }
     }
 

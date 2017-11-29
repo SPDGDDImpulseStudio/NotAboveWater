@@ -20,4 +20,5 @@ MonoBehaviour:
   - Waypoints (5)
   - Waypoints (6)
   - Waypoints (7)
-  speed: 2
+  rotationSpeed: 14
+  movementSpeed: 1

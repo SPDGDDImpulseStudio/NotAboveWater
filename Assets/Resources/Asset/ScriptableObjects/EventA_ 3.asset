@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f02b1eedcafbb42a18b684472be6c0, type: 3}
   m_Name: EventA_ 3
   m_EditorClassIdentifier: 
-  runningOfEvent: 0
+  runningOfEvent: 1
   coroutineAvail: 0
   debugThis: 0
   thisPos: {fileID: 0}
@@ -21,4 +21,5 @@ MonoBehaviour:
   - Waypoints (14)
   - Waypoints (15)
   - Waypoints (16)
-  speed: 2
+  rotationSpeed: 14
+  movementSpeed: 1.829

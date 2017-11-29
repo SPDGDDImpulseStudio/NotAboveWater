@@ -8,7 +8,11 @@ public class EventA : EventsInterface{
 
     public Transform thisPos = null;
     public string[] toWhere;
-    public float speed;
+    public float rotationSpeed;
+
+    [Tooltip("The lower the faster")]
+    [Range(1.0f,3.0f)]
+    public float movementSpeed;
     int currInt = 0;
     public void OnEnable()
     {
@@ -22,15 +26,12 @@ public class EventA : EventsInterface{
     public override IEnumerator EnumEvent()
     {
         currInt = 0;
-        //bool x = true;
-        //CameraManager.Instance.LookAtWayp(thisPos, out x);
-        //Debug.Log(x);
-        //yield return new WaitUntil(() => x == false);
 
         thisPos = GameObject.Find(toWhere[currInt]).transform;
         CameraManager.Instance.target = thisPos;
         currInt++;
         Debug.Log(currInt + " " + toWhere.Length);
+        CameraManager.Instance.maxDistDel = movementSpeed;
         while (currInt != toWhere.Length + 1)
         {
             if (thisPos.gameObject.activeInHierarchy) {
@@ -38,7 +39,7 @@ public class EventA : EventsInterface{
 
                 Quaternion rotation = Quaternion.LookRotation(dir);
 
-                CameraManager.Instance.transform.localRotation = Quaternion.RotateTowards(CameraManager.Instance.transform.rotation, rotation, 14 * Time.deltaTime);
+                CameraManager.Instance.transform.localRotation = Quaternion.RotateTowards(CameraManager.Instance.transform.rotation, rotation, rotationSpeed * Time.deltaTime);
                 //Debug.Log(angle);
                 Debug.DrawRay(CameraManager.Instance.transform.position, thisPos.position - CameraManager.Instance.transform.position);
                 //CameraManager.Instance.transform.position = Vector3.Lerp(CameraManager.Instance.transform.position, thisPos.position, speed * Time.deltaTime);

@@ -5,8 +5,8 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Tools/EventF", fileName = "EventF_", order = 6)]
 public class EventF : EventsInterface {
-    public int waypointNumber;
-    public float speedAIMoveForThisEvent = 12;
+
+
     public override void CurrEvent()
     {
         throw new NotImplementedException();
@@ -208,7 +208,7 @@ ai.SliderTo(false);
 
 
         //So here im gonna made the shark come to one point 
-        CircleManager.Instance.SpawnButtons(numToSpawn, _offSets, vects);
+        CircleManager.Instance.SpawnButtons(numToSpawn, _offSets, vects, AI.Instance.gameObject);
 
         //ai.nav.speed = speedAIMoveForThisEvent;
         //ai.nav.destination = GameManager.Instance.AIWaypoints[waypointNumber].transform.position;

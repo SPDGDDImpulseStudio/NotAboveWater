@@ -66,9 +66,10 @@ public class CameraManager : MonoBehaviour {
         //    }
 
         //}
-
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Space))
             ShakeCamera();
+#endif
     }
     public void UpdateCameraPos()
     {
@@ -185,6 +186,8 @@ public class CameraManager : MonoBehaviour {
 
     }
     public Transform target;
+
+    [Tooltip("Lower The Value, the faster.")]
     public float maxDistDel = 3;
     Vector3 velocity = Vector3.zero;
     void LateUpdate()
@@ -194,6 +197,16 @@ public class CameraManager : MonoBehaviour {
         transform.position = Vector3.SmoothDamp(transform.position, target.position, ref velocity, maxDistDel);
     }
 
+    public void RotationCam(Transform target, float rotationSpeed =14)
+    {
+        Vector3 dir = (target.position - transform.position).normalized;
+
+        Quaternion rotation = Quaternion.LookRotation(dir);
+
+       transform.localRotation = Quaternion.RotateTowards(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+       Debug.DrawRay(transform.position, (target.position - transform.position));
+
+    }
     //public Transform target; // Target following
     //public float distance = 3.0f; // Target distance along x-z plane
     //public float height = 1.0f; // Camera height above target
@@ -220,7 +233,7 @@ public class CameraManager : MonoBehaviour {
 
     //    // Convert angle into rotation
     //    Quaternion currentRotation = Quaternion.Euler(0, currentRotationAngle, 0);
-            
+
     //    // Set position of camera on x-z plane to distance behind target
     //    transform.position = target.position;
     //    transform.position -= currentRotation * Vector3.forward * distance;

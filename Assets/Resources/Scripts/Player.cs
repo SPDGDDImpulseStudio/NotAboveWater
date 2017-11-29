@@ -49,7 +49,6 @@ public class Player : MonoBehaviour {
         , shootTimerNow;
     
     float healthBarCount1, healthBarCount2;
-    public bool allowToShoot = false;
 
     #endregion
 
@@ -91,48 +90,47 @@ public class Player : MonoBehaviour {
             Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
             //Debug.DrawRay(point.origin, point.direction);
             //Debug.DrawRay(transform.position, point,Color.green);
-            if (allowToShoot)
+
+            if (shootTimerNow > shootEvery && !reloading)
             {
-                if (shootTimerNow > shootEvery && !reloading)
+                if (currBullet != 0)
                 {
-                    if (currBullet != 0)
+
+                    shootTimerNow = 0;
+                    PlayAudioClip(gunFire);
+
+
+                    if (Physics.Raycast(this.transform.position, point.direction, out hit))
                     {
+                        targetHit = hit.transform.gameObject;
+                        pointHit = hit.point;
 
-                        shootTimerNow = 0;
-                        PlayAudioClip(gunFire);
-
-
-                        if (Physics.Raycast(this.transform.position, point.direction, out hit))
-                        {
-                            targetHit = hit.transform.gameObject;
-                            pointHit = hit.point;
-
-                            //if (hit.transform.GetComponent<Book>())
-                            //{
-                            //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
-                            //}
+                        //if (hit.transform.GetComponent<Book>())
+                        //{
+                        //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
+                        //}
 
 
-                            if (hit.transform.GetComponent<AI>())
-                                DamageShark(targetHit, pointHit);
-                            else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                                hit.transform.GetComponent<InteractableObj>().Interact();
-                            else
-                                DamageProps(targetHit, pointHit);
-
-                        }
-                        if (currBullet - 1 == 0)
-                            StartCoroutine(WorkAroundButton());
+                        if (hit.transform.GetComponent<AI>())
+                            DamageShark(targetHit, pointHit);
+                        else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                            hit.transform.GetComponent<InteractableObj>().Interact();
                         else
-                            currBullet--;
+                            DamageProps(targetHit, pointHit);
+
                     }
+                    if (currBullet - 1 == 0)
+                        StartCoroutine(WorkAroundButton());
                     else
-                    {
-                        PlayAudioClip(emptyGunFire);
-                    }
+                        currBullet--;
+                }
+                else
+                {
+                    PlayAudioClip(emptyGunFire);
                 }
             }
-        } 
+
+        }
         if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
         
     }

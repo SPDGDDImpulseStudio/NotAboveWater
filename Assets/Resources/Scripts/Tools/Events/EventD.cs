@@ -14,7 +14,6 @@ public class EventD : EventsInterface {
 
     public override IEnumerator EnumEvent()
     {
-        Player.Instance.allowToShoot = false;
         AI ai = AI.Instance;
         Transform thisPos = GameManager.Instance.waypoints[0].transform;
         while (thisPos.gameObject.activeSelf)
@@ -36,7 +35,6 @@ public class EventD : EventsInterface {
         float s=0;
         ai.SliderTo(true);
 
-        Player.Instance.allowToShoot = true;
         //Check if AI/Player dieded
         while (ai.currHealth > 0 && Player.Instance.currHealth > 0)
         {
@@ -50,7 +48,6 @@ public class EventD : EventsInterface {
             yield return null;
         }
 
-        Player.Instance.allowToShoot = false;
 
         if(Player.Instance.currHealth <= 0)
         {//if player dies
@@ -105,7 +102,6 @@ public class EventD : EventsInterface {
             yield return null;
 
         }
-        Player.Instance.allowToShoot = true;
 
         ai.currHealth = ai.maxHealth;
         ai.SliderTo(true);
@@ -122,7 +118,6 @@ public class EventD : EventsInterface {
             yield return null;
         }
 
-        Player.Instance.allowToShoot = false;
 
         if (GameManager.Instance.AIWaypoints.Count > 2)
         {
@@ -163,7 +158,6 @@ public class EventD : EventsInterface {
                 yield return null;
             }
          
-            Player.Instance.allowToShoot = true;
 
             ai.currHealth = ai.maxHealth;
             ai.SliderTo(true);
