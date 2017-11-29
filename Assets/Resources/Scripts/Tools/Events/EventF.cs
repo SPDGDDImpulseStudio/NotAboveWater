@@ -183,7 +183,6 @@ ai.SliderTo(false);
 */
         #endregion
 
-
         
         const int numToSpawn = 3;
         Vector2 pos1 = new Vector2(3*Screen.height , Screen.width / (int)UnityEngine.Random.Range(1, 7)),
@@ -200,8 +199,7 @@ ai.SliderTo(false);
          pos3,
         };
 
-
-
+        
         //If i set the lifespan here do i go to another event or keep it here
 
         //Here i can pass a bool or smth to determine which 'next' event is going to?

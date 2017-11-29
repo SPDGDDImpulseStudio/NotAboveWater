@@ -209,7 +209,7 @@ public class Player : MonoBehaviour {
     //}
 
     IEnumerator UIUpdate()
-    {
+    { 
         while (true)
         {
             healthBar.value = currSuitHealth / maxSuitHealth;

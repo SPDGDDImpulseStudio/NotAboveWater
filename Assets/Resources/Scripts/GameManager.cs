@@ -125,7 +125,6 @@ public class GameManager : MonoBehaviour {
             
     }
 
-
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && !showTrack)

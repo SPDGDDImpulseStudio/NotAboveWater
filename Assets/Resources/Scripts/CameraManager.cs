@@ -7,6 +7,12 @@ public class CameraManager : MonoBehaviour {
 
     public float speed = 5;
 
+    [ContextMenu("Do Something")]
+    void DoSomething()
+    {
+        Debug.Log("Perform operation");
+    }
+
     public static CameraManager Instance
     {
         get
@@ -165,7 +171,7 @@ public class CameraManager : MonoBehaviour {
         }
         waitRotate = false;
     }
-    
+
     IEnumerator UpdateBool(Transform _target)
     {
         GameManager.Instance.updating = true;

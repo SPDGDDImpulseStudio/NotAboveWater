@@ -72,7 +72,7 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
     {
         applicationIsQuitting = true;
     }
-    // Update is called once per frame
+
     void Update()
     {
 

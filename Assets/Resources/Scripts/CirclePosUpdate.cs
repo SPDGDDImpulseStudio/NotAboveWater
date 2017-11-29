@@ -16,7 +16,6 @@ public class CirclePosUpdate : Button
 
     public Vector2 offSet;
     
-    // Update is called once per frame
     void Update()
     {
         if (_ref)

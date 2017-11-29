@@ -13,6 +13,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runningOfEvent: 0
   coroutineAvail: 0
+  debugThis: 0
   thisPos: {fileID: 0}
-  toWhere: Waypoints
+  toWhere:
+  - Waypoints
+  - Waypoints (1)
+  - Waypoints (2)
+  - Waypoints (3)
   speed: 2
