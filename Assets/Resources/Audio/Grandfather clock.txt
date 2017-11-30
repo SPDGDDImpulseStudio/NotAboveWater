@@ -1,0 +1,9 @@
+all animations from frame 0 to frame 960
+
+Hands: Idle - 2
+             Running: 10-55 (Transition back to idle from 55-80)
+             Pickup item: 80-120
+             Make something smaller: 120-140
+             make something bigger: 150-160
+
+
