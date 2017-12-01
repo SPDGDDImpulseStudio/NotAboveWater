@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1916449617102918}
+  m_IsPrefabParent: 1
+--- !u!1 &1916449617102918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4928217192117344}
+  - component: {fileID: 114613838226756746}
+  - component: {fileID: 119737622185450204}
+  m_Layer: 0
+  m_Name: CausticProjector_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4928217192117344
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1916449617102918}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 3.33, y: 12.48, z: -30.09}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &114613838226756746
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1916449617102918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 745c4b01ecc194d4f9ec1b05150b2fed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fps: 25
+  frames:
+  - {fileID: 2800000, guid: 6d7a34ce67b1bc344b0e66033208303b, type: 3}
+  - {fileID: 2800000, guid: e118b345971eead4b9851424627b0c1c, type: 3}
+  - {fileID: 2800000, guid: 524d84c92012f5942b895bdf523f873e, type: 3}
+  - {fileID: 2800000, guid: 1071236b3475e584eb49a4561f271586, type: 3}
+  - {fileID: 2800000, guid: f4e26c125fcf10c47bcc001e0b14cf1e, type: 3}
+  - {fileID: 2800000, guid: 4cd3eb61c78b7fb4385d199020aa602c, type: 3}
+  - {fileID: 2800000, guid: c5baa5749f2f6f84fbe561be7bf75907, type: 3}
+  - {fileID: 2800000, guid: 0c8b2cdcd6146ef46b9f2688ec66c788, type: 3}
+  - {fileID: 2800000, guid: 7a340b024a1503e4fa274dea4203eb52, type: 3}
+  - {fileID: 2800000, guid: f598224c6d65302419e43195ebd06b44, type: 3}
+  - {fileID: 2800000, guid: 0c2c4cb3c2aacfe46aefef0c6ace7e83, type: 3}
+  - {fileID: 2800000, guid: e9f73d054f4918842a2aaf9c28cb3b53, type: 3}
+  - {fileID: 2800000, guid: 3c988ae0403eb6b499935aff970fe7c1, type: 3}
+  - {fileID: 2800000, guid: 4b82cae7e1d9fce40b2d8c34899438a2, type: 3}
+  - {fileID: 2800000, guid: 25927e85f2e457246810a93137fceadc, type: 3}
+  - {fileID: 2800000, guid: 36b4e32e9fb0eb642b146a17b23080b5, type: 3}
+  - {fileID: 2800000, guid: c60f1a13d75a40b41b83a93e22bbd5cf, type: 3}
+  - {fileID: 2800000, guid: 3216fa3bac906784c9eb15e4406760e9, type: 3}
+  - {fileID: 2800000, guid: dca116717de077e408a897c41b415f81, type: 3}
+  - {fileID: 2800000, guid: 3f01e567338f23546a75d4c8a24fbb3a, type: 3}
+  - {fileID: 2800000, guid: 10db3ac290e851f469a9972ea8b0117e, type: 3}
+  - {fileID: 2800000, guid: 8c18c4b08c5efe04d84de49fde372883, type: 3}
+  - {fileID: 2800000, guid: 1598fd6ee850a5546897ef3978267eed, type: 3}
+  - {fileID: 2800000, guid: 1d3c42c32a1552448ab91bd947ad4e61, type: 3}
+  - {fileID: 2800000, guid: 98f81e77e743dd6458f1e2a87b192d2f, type: 3}
+--- !u!119 &119737622185450204
+Projector:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1916449617102918}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_NearClipPlane: 0.1
+  m_FarClipPlane: 100
+  m_FieldOfView: 60
+  m_AspectRatio: 1
+  m_Orthographic: 0
+  m_OrthographicSize: 10
+  m_Material: {fileID: 2100000, guid: 3043678ae3907124285afd68a618906d, type: 2}
+  m_IgnoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
