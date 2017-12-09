@@ -9,7 +9,7 @@ public class Interact_Crates : InteractableObj {
     public override void Interact()
     {
         currHealth--;
-        if (currHealth == 0) Destroy(this.gameObject);
+        if (currHealth == 0) DestroySelf();
     }
 
     // Use this for initialization
@@ -21,4 +21,12 @@ public class Interact_Crates : InteractableObj {
 	void Update () {
 		
 	}
+
+    protected void DestroySelf()
+    {
+
+        if (CratesManager.Instance != null)
+            CratesManager.Instance.RemoveThisCrate(this);
+        Destroy(this.gameObject);
+    }
 }

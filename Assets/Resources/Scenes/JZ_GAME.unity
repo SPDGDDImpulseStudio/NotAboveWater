@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -193,7 +193,6 @@ MonoBehaviour:
   currOxygen: 0
   currHealth: 0
   shootTimerNow: 0
-  allowToShoot: 1
 --- !u!20 &58216304
 Camera:
   m_ObjectHideFlags: 0
@@ -971,7 +970,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &398321553
 GameObject:
@@ -1558,7 +1557,7 @@ Transform:
   m_LocalScale: {x: 0.9490973, y: 0.99999475, z: 6.397315}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -1.692, y: 0, z: 0}
 --- !u!1 &759466120 stripped
 GameObject:
@@ -1879,6 +1878,7 @@ MonoBehaviour:
   - {fileID: 2036249443}
   - {fileID: 2096281875}
   - {fileID: 1071225053}
+  waypointsToLookAt: []
   colorOfLines: {r: 0, g: 0, b: 0, a: 0}
   sizeOfDrawnSphere: 2
   anim: {fileID: 0}
@@ -2407,7 +2407,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4267633072893790, guid: 9943902799420df4599bfd03aee0752f, type: 2}
       propertyPath: m_RootOrder
-      value: 20
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 1175276833208342, guid: 9943902799420df4599bfd03aee0752f, type: 2}
       propertyPath: m_Name
@@ -3384,7 +3384,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400018, guid: 4d697302761463548a28b75d68c7b4f4, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 400018, guid: 4d697302761463548a28b75d68c7b4f4, type: 3}
       propertyPath: m_LocalScale.x

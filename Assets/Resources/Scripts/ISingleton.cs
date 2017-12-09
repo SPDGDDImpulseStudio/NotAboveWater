@@ -11,6 +11,8 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
 
     private static bool applicationIsQuitting = false;
 
+    public const string singletonPathing = "Prefabs/";
+
     public static T Instance
     {
         get
@@ -29,13 +31,14 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
                     _instance = FindObjectOfType<T>();
                     if (_instance == null)
                     {
-                        GameObject newGO = new GameObject();
-                        _instance = newGO.AddComponent<T>();
-                        newGO.name = "(singleton) " + typeof(T).ToString();
+                        GameObject newGO2 = Instantiate (Resources.Load<GameObject>(singletonPathing + typeof(T)));
+                        //GameObject newGO = new GameObject();
+                        _instance = newGO2.GetComponent<T>();
+                        //newGO2.name = "(singleton) " + typeof(T).ToString();
 
-                        DontDestroyOnLoad(newGO);
+                        DontDestroyOnLoad(newGO2);
                         Debug.Log("[Singleton] An instance of " + typeof(T) +
-                            " is needed in the scene, so '" + newGO +
+                            " is needed in the scene, so '" + newGO2 +
                             "' was created with DontDestroyOnLoad.");
                     }
                     else

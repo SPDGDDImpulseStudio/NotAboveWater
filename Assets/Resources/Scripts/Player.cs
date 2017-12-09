@@ -35,13 +35,25 @@ public class Player : MonoBehaviour {
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
     public AudioClip gunFire, reloadingClip, emptyGunFire;
+    public GameObject ammoCounterBar;
+
+    public Text reloadText;
+    public Text oxygenText;
+    public Slider compassSlider;
+
+    
+
+    List<Image> bullets = new List<Image>();
 
     [Header("[Player's Attributes]")]
-    [Header("Things to Set")]
-    public int maxBullet = 10;
-    public float maxSuitHealth, maxOxygen, maxHealth,
+
+    [Header("[Things to Set]")]
+
+    public float maxSuitHealth;
+    public float maxOxygen, maxHealth,
         oxyDrop, healthDrop,
         reloadTime = 3, bulletDamage, shootEvery = 1;
+    int maxBullet = 10;
 
     [Header("Dont+Touch+For+Debug+Purpose")]
     public int  currBullet;
@@ -66,6 +78,10 @@ public class Player : MonoBehaviour {
         currOxygen = maxOxygen;
         currBullet = maxBullet;
         reloadTime = reloadingClip.length;
+
+
+        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<UnityEngine.UI.Image>());
+        Debug.Log(bullets.Count);
         StartCoroutine(UIUpdate());
         StartCoroutine(OxyDropping());
         //StartCoroutine(SuittedUp());
@@ -76,6 +92,9 @@ public class Player : MonoBehaviour {
         audioSource.PlayOneShot(clip, volume);
         //audioSource.
     }
+
+    
+
     void Update()
     {
         if (currSuitHealth < 0)
@@ -95,7 +114,7 @@ public class Player : MonoBehaviour {
             {
                 if (currBullet != 0)
                 {
-
+                    ImageUpdate(false);
                     shootTimerNow = 0;
                     PlayAudioClip(gunFire);
 
@@ -132,7 +151,7 @@ public class Player : MonoBehaviour {
 
         }
         if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
-        
+
     }
     public IEnumerator WorkAroundButton()
     {
@@ -147,8 +166,27 @@ public class Player : MonoBehaviour {
         reloading = true;
         PlayAudioClip(reloadingClip);
         yield return new WaitForSeconds(reloadingClip.length);
+
+        for(int i = 0; 0 < maxBullet - 1; i++)
+        {
+            int b = 9 - i;
+            
+            if (b < 0) break;
+            
+            if (!bullets[b].gameObject.activeSelf)
+            {
+                bullets[b].gameObject.SetActive(true);
+            }
+        }
+        //while (!bullets[0].gameObject.activeSelf)
+        //{
+        //        Debug.Log(CurrImage());
+        //    if(!bullets[CurrImage()].gameObject.activeSelf)
+        //    bullets[CurrImage()].gameObject.SetActive(true);
+        //    yield return null;
+        //}
         currBullet = maxBullet;
-     
+
         reloading = false;
         gunShootingBar.maxValue = 1;
 
@@ -216,15 +254,28 @@ public class Player : MonoBehaviour {
     //    //Here i can set the image for UI too
     //    StartCoroutine(SuittedUp());
     //}
+    void ImageUpdate(bool x)
+    {
+        bullets[CurrImage()].gameObject.SetActive(x);
+    }
 
+    int CurrImage()
+    {
+        return  10 - currBullet;
+    }
+  
     IEnumerator UIUpdate()
-    { 
+    {
         while (true)
         {
+          
+            compassSlider.value = (this.transform.localEulerAngles.y/360f);
             healthBar.value = currSuitHealth / maxSuitHealth;
             oxygenBar.value = healthBarCount1 / healthBarCount2;
             if (currBullet != 0)
+            {
                 gunShootingBar.value = shootTimerNow / shootEvery;
+            }
             else if (reloading)
             {
                 //if(gunShootingBar.maxValue == 1)

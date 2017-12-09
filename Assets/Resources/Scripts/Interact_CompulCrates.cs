@@ -13,8 +13,7 @@ public class Interact_CompulCrates : Interact_Crates {
     public void OnDestroy()
     {
         //if(Application.isPlaying)
-        if(CratesManager.Instance != null)
-        CratesManager.Instance.RemoveThisCrate(this);
+        
     }
 
    

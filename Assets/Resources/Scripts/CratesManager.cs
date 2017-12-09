@@ -16,7 +16,7 @@ public class CratesManager : ISingleton<CratesManager> {
     }
 
    
-    public void RemoveThisCrate(Interact_CompulCrates x)
+    public void RemoveThisCrate(Interact_Crates x)
     {
         if (cratesToDestroy.Count == 0) return;
         for (int i = 0; i < cratesToDestroy.Count; i++)

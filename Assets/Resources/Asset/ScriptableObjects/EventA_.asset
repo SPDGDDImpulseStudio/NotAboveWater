@@ -16,7 +16,7 @@ MonoBehaviour:
   debugThis: 0
   thisPos: {fileID: 0}
   toWhere:
-  - Waypoints
+  - Waypoints (0)
   - Waypoints (1)
   - Waypoints (2)
   - Waypoints (3)
