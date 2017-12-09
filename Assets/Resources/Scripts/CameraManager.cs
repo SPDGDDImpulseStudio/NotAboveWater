@@ -66,6 +66,7 @@ public class CameraManager : MonoBehaviour {
         //    }
 
         //}
+
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Space))
             ShakeCamera();
