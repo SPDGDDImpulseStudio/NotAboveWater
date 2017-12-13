@@ -31,6 +31,23 @@ public class SceneCamera : MonoBehaviour {
         }
     }
 
+    [MenuItem("Tools/Renames")]
+    public static void Rename()
+    {
+        if(Selection.gameObjects.Length > 0)
+        {
+            string nameFollow = Selection.gameObjects[0].name;
+            for(int i = 1; i < Selection.gameObjects.Length; i++)
+            {
+                Selection.gameObjects[i].name = nameFollow;
+            }
+        }
+    }
+    [MenuItem("Tools/ClearPlayerPrefs")]
+    public static void ClearPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+    }
     [MenuItem("Tools/PlacePos")]
     public static void Placement()
     {

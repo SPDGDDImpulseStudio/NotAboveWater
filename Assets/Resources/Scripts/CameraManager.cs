@@ -129,7 +129,7 @@ public class CameraManager : MonoBehaviour {
 
     public void ShakeCamera()
     {
-        StartCoroutine(Shakey());
+        //StartCoroutine(Shakey());
     }
     bool shakeyBoi = false;
 

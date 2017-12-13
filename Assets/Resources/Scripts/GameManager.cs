@@ -47,9 +47,7 @@ public class GameManager : MonoBehaviour {
     public List<EventsInterface> eventsList = new List<EventsInterface>();
 
     public EventsInterface currEvent;
-    
-    public InputField field;
-    
+        
     public Action UpdateGame;
 
     public IEnumerator<Action> IAction;
@@ -62,20 +60,122 @@ public class GameManager : MonoBehaviour {
 
     public bool forceStop = false;
 
+    //Leaderboard's 
+
+    public InputField saveName;
+
+    public const string leaderboard = "LEADERBOARD";
+
+    public static float playerScore = 0;
+
+    //Editor's
     [Header("[Editor]")]
     public float sizeOfSphere =3;
     public Color colorOfLines = Color.black;
     public bool showTrack = false;
-  
 
-    void Start() {
+
+    string TimeScaleNow;    
+    int TimeScaleInt = 1;
+    public Rect ButPos;
+
+    public void RecordScore(string _name)
+    {
+        Debug.Log("Name= " + _name);
+        for(int i = 0; i < 5; i ++)
+        {
+            if (PlayerPrefs.HasKey(leaderboard + i.ToString()))
+            {
+                if (PlayerPrefs.GetFloat(leaderboard + i.ToString()) > playerScore)   continue;  
+
+                else if (PlayerPrefs.GetFloat(leaderboard + i.ToString()) == playerScore)
+                {
+
+                }
+                else
+                {
+                    //my new scores is higher than i's stored scores
+
+                    string tempName = PlayerPrefs.GetString(leaderboard + i.ToString());
+                    float tempScore = PlayerPrefs.GetFloat(leaderboard + i.ToString());
+                    Debug.Log("tempName =" + tempName);
+                    PlayerPrefs.SetFloat(leaderboard + i.ToString(), playerScore);
+                    PlayerPrefs.SetString(leaderboard + i.ToString(), _name);
+                    PlayerPrefs.Save();
+
+                    //Now i proceed to shift all the others by 1
+
+                    if (i== 4) break;
+                    //this is the last one
+                  
+
+                    else
+                    {
+                        int nextSpot = i+ 1;
+
+                        string _tempName = PlayerPrefs.GetString(leaderboard + nextSpot);
+                        float _tempScore = PlayerPrefs.GetFloat(leaderboard + nextSpot);
+                        for (int j = nextSpot; j < 5; j++)
+                        {
+                            
+                            PlayerPrefs.SetString(leaderboard + j.ToString(), tempName);
+                            PlayerPrefs.SetFloat(leaderboard + j.ToString(), tempScore);
+
+                            tempScore = _tempScore;
+                            tempName = _tempName;
+                            _tempName = PlayerPrefs.GetString(leaderboard + (j.ToString() + 1));
+                            _tempScore = PlayerPrefs.GetFloat(leaderboard + (j.ToString() + 1));
+                            PlayerPrefs.Save();
+
+                        }
+                    }
+                    break;
+                }
+            }else{
+
+                //byte[] bytesArray = new byte[256];
+                //for (byte b = 0; b < 255; b++)
+                //{
+                //    bytesArray[b] = b;
+                //}
+
+                //System.Text.UTF8Encoding ue = new System.Text.UTF8Encoding();
+                //byte[] bytesNew = ue.GetBytes(_name);
+                //string strNew = System.Convert.ToBase64String(bytesNew);
+
+                //Debug.Log("bytes= " + bytesNew.ToString()+ " Length= " +  bytesNew.Length + " " + "string= " + strNew);
+                nameToSave = _name;
+                PlayerPrefs.SetString(leaderboard + i.ToString(), nameToSave);
+
+
+                //string jsonName = JsonUtility.ToJson(_name);
+
+                 //I CAN TRY USING XML INSTEAD OF THIS SHIT CAUSE FUCK THIS SHIT NOW
+                Debug.Log(leaderboard + i.ToString() + " | FUCK THIS USELESS PIECE OF SHIT 1 | " + nameToSave);
+
+                //PlayerPrefs.SetString(leaderboard + i.ToString(), _name);
+                Debug.Log(leaderboard + i.ToString() + " | FUCK THIS USELESS PIECE OF SHIT 2 | " + nameToSave);
+                PlayerPrefs.SetFloat(leaderboard + i.ToString(), playerScore);
+                PlayerPrefs.Save();
+                Debug.Log("THIS BETTER BBE FUCKED UP HERE "+PlayerPrefs.GetString(leaderboard + i.ToString()));
+
+                break;
+            }
+        }
+        playerScore = 0;
+
+    }
+    static string nameToSave = "";  
+
+    void Start()
+    {
         if (Instance.GetInstanceID() != this.GetInstanceID())
         {
             Destroy(gameObject);
             return;
         }
         playerCam = Camera.main;
-        field = FindObjectOfType<InputField>();
+
         StartCoroutine(NextEvent());
         _eventUpdate = new EventUpdate(eventsList[currInt].Test);
         //Debug.Log(_eventUpdate);
@@ -88,10 +188,21 @@ public class GameManager : MonoBehaviour {
         {
             AIWaypoints.Add(ai.waypoints[x]);
         }
-       
+
+        
+
     }
+    public void NameRecorded(string written)
+    {
+        Debug.Log(written);
+        RecordScore(written);
+        //Debug.Log(saveName.text);
 
-
+        //Debug.Log(" | " + (saveName.onEndEdit.ToString()) + " | ");
+        saveName.gameObject.SetActive(false);
+        //Destroy(saveName);
+        //Fade to next screen
+    }
     public IEnumerator NextEvent()
     {
         yield return new WaitUntil(() => AI.Instance != null);
@@ -101,6 +212,17 @@ public class GameManager : MonoBehaviour {
         {
             Debug.Log("End of All events ");
             currEvent = null;
+            //Canvas canvas = FindObjectOfType<Canvas>();
+            saveName.gameObject.SetActive(true);
+            saveName.onEndEdit.AddListener(NameRecorded);
+
+
+            //Instantiate(saveName,canvas.transform);
+            //yield return new WaitUntil(() => SaveName.text != "");
+            //Debug.Log(saveName.text+ " 1 " + (saveName.onEndEdit.ToString()));
+            //saveName.onEndEdit.AddListener(NameRecorded);
+            //RecordScore(SaveName.onEndEdit.ToString());
+            //yield return new WaitUntil(() => SaveName.onEndEdit);
             yield break;
         }
         Debug.Log("currInt =" + currInt);
@@ -128,15 +250,31 @@ public class GameManager : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !showTrack)
+        if (Input.GetMouseButtonDown(1))
         {
-            StartCoroutine(NextEvent());
-            showTrack = true;
+            for (int i = 0; i < 5; i++)
+            {
+                if (PlayerPrefs.HasKey(leaderboard + i.ToString()))
+                    Debug.Log("CurrentKey: " + leaderboard + i.ToString()
+
+                         + " Name: " + PlayerPrefs.GetString(leaderboard + i.ToString())
+
+                        + " Score: " + PlayerPrefs.GetFloat(leaderboard + i.ToString())
+
+                        //+" Jsoned " + JsonUtility.FromJson<string>(PlayerPrefs.GetString(leaderboard + i.ToString()))
+
+                        );
+            }
+            Debug.Log(PlayerPrefs.GetString("FUCK", "XD"));
+            playerScore += 50;
+        }else if (Input.GetMouseButtonDown(0))
+        {
+            PlayerPrefs.SetString("FUCK", "FUUCK");
+            PlayerPrefs.Save();
         }
+
+        
     }
-    string TimeScaleNow;
-    int TimeScaleInt =1;
-    public Rect ButPos;
     void OnGUI()
     {
         if (GUI.Button(ButPos,TimeScaleNow))
