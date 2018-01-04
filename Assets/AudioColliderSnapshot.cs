@@ -7,13 +7,7 @@ public class AudioColliderSnapshot : MonoBehaviour {
 
     public AudioMixerSnapshot InsideColliderSnap;
     public AudioMixerSnapshot OutsideColliderSnap;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
+    public AudioSource inside, outside;
 	void Update () {
 		
 	}
@@ -21,6 +15,7 @@ public class AudioColliderSnapshot : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         InsideColliderSnap.TransitionTo(0.5f);
+        inside.Play();
     }
 
     private void OnTriggerExit(Collider other)
