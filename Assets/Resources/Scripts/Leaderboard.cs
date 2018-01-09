@@ -24,8 +24,8 @@ public class Leaderboard : MonoBehaviour {
         {
             if (PlayerPrefs.HasKey(GameManager.leaderboard + i.ToString()))
             {
-                namesText[i].text = i + 1 + " " + PlayerPrefs.GetString(GameManager.leaderboard + i.ToString());
-                scoresText[i].text = PlayerPrefs.GetFloat(GameManager.leaderboard + i.ToString()).ToString() ;
+                namesText[i].text = i + 1 + " " + PlayerPrefs.GetString(GameManager.leaderboardName + i.ToString());
+                scoresText[i].text = PlayerPrefs.GetFloat(GameManager.leaderboardScore + i.ToString()).ToString() ;
             }
             else scoresText[i].text = "NIL";
         }
