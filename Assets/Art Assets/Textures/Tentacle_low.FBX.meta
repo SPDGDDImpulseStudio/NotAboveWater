@@ -1,15 +1,29 @@
 fileFormatVersion: 2
-guid: afee33bbdf1da9d47b4dce4d54ac4ae2
-timeCreated: 1515039583
+guid: d4d123c480b5d0543822d0a88daae0e3
+timeCreated: 1515500685
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Tentacle_low
+    100000: Bone010
+    100002: Bone011
+    100004: Bone012
+    100006: Bone013
+    100008: Bone014
+    100010: Bone015
+    100012: //RootNode
+    100014: Tentacle_low002
+    400000: Bone010
+    400002: Bone011
+    400004: Bone012
+    400006: Bone013
+    400008: Bone014
+    400010: Bone015
+    400012: //RootNode
+    400014: Tentacle_low002
+    4300000: Tentacle_low002
+    9500000: //RootNode
+    13700000: Tentacle_low002
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -87,7 +101,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
