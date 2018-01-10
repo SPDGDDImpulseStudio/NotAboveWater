@@ -5,7 +5,10 @@ using UnityEngine.Playables;
 public class EventBoxes : MonoBehaviour {
 
     public PlayableAsset asset1, asset2;
-    
+    public GameObject camera1;
+    public GameObject camera2A;
+    public GameObject camera2B;
+
 	void Update () {
 		
 	}
@@ -26,10 +29,16 @@ public class EventBoxes : MonoBehaviour {
                 {
 
                     TimelineManager.Instance.dir.Play(asset1);
+                    camera1.SetActive(false);
+                    camera2A.SetActive(false);
                 }
                 else
+                {
 
                     TimelineManager.Instance.dir.Play(asset2);
+                    camera1.SetActive(false);
+                    camera2B.SetActive(false);
+                }
                 //TimelineManager.Instance.dir.GetGenericBinding()
                 break;
 
