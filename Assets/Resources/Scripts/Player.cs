@@ -103,7 +103,7 @@ public class Player : MonoBehaviour {
             shootTimerNow += Time.deltaTime;
 
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             RaycastHit hit;
             Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);

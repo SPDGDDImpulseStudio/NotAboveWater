@@ -24,4 +24,14 @@ public class TimelineManager : ISingleton<TimelineManager> {
         dir.Resume();
     }
 	
+    public void PlayTL()
+    {
+        dir.Play();
+    }
+
+    public void StopTL()
+    {
+        dir.Stop();
+    }
+
 }
