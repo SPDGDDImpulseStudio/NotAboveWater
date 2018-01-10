@@ -67,7 +67,7 @@ public class Player : MonoBehaviour {
     void Start () {
         if (Instance.GetInstanceID() != this.GetInstanceID())  Destroy(this.gameObject);
 
-        Init();
+        Init(); AssignTentacleList();
     }
 
     public void Init()
@@ -92,7 +92,43 @@ public class Player : MonoBehaviour {
         audioSource.PlayOneShot(clip, volume);
         //audioSource.
     }
+    List<Tentacle> tentacles = new List<Tentacle>();
+    public void AssignTentacleList()
+    {
+        tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
+        
+    }
+    public IEnumerator TriggerAI()
+    {
+        if (tentacles.Count > 0) yield break;
 
+        while (true)
+        {
+            List<float> dist = new List<float>();
+
+            for (int i = 0; i < tentacles.Count; i ++)
+            {
+                float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
+
+                dist.Add(newV3);
+            }
+
+            int chosen = 0;
+            for (int j = chosen; j < tentacles.Count - 1; j++)
+            {
+                if (dist[chosen] < dist[j + 1]) chosen = j + 1;
+            }
+
+            for(int k = 0; k < tentacles.Count; k++)
+            {
+                if (k == chosen) continue;
+
+                tentacles[k].Trigger = false;
+            }
+
+            yield return new WaitForSeconds(2f);
+        }
+    }
     
 
     void Update()
@@ -112,7 +148,7 @@ public class Player : MonoBehaviour {
 
             if (shootTimerNow > shootEvery && !reloading)
             {
-                if (currBullet != 0)
+                if (currBullet > 0)
                 {
                     ImageUpdate(false);
                     shootTimerNow = 0;
@@ -134,9 +170,15 @@ public class Player : MonoBehaviour {
                             DamageShark(targetHit, pointHit);
                         else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                             hit.transform.GetComponent<InteractableObj>().Interact();
-                        else
-                            DamageProps(targetHit, pointHit);
 
+
+                        else
+                        {
+                            if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                hit.transform.GetComponentInParent<Tentacle>().OnHit();
+                            else
+                                DamageProps(targetHit, pointHit);
+                        }
                     }
                     if (currBullet - 1 == 0)
                         StartCoroutine(WorkAroundButton());
@@ -145,7 +187,8 @@ public class Player : MonoBehaviour {
                 }
                 else
                 {
-                    PlayAudioClip(emptyGunFire);
+                    if(!audioSource.isPlaying)
+                    audioSource.PlayOneShot(emptyGunFire);
                 }
             }
 

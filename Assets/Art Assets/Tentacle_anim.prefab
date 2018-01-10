@@ -65,6 +65,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4434941902016998}
+  - component: {fileID: 65133262536726834}
   m_Layer: 0
   m_Name: Bone023
   m_TagString: Untagged
@@ -81,6 +82,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4648706632521850}
   - component: {fileID: 95815396238284616}
+  - component: {fileID: 114834587259108900}
   m_Layer: 0
   m_Name: Tentacle_anim
   m_TagString: Untagged
@@ -281,15 +283,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1324460376722576}
-  m_LocalRotation: {x: -0, y: -0.29544055, z: -0, w: 0.9553611}
-  m_LocalPosition: {x: -14, y: 0, z: -102}
+  m_LocalRotation: {x: -0, y: 0.010572227, z: -0, w: 0.99994415}
+  m_LocalPosition: {x: 0, y: -2, z: 32}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4770717569204894}
   - {fileID: 4548844108252882}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -34.368, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 1.212, z: 0}
 --- !u!4 &4770717569204894
 Transform:
   m_ObjectHideFlags: 1
@@ -332,6 +334,18 @@ Transform:
   m_Father: {fileID: 4147994033607100}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &65133262536726834
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1275836482031260}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4, y: 4, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &95815396238284616
 Animator:
   serializedVersion: 3
@@ -341,7 +355,7 @@ Animator:
   m_GameObject: {fileID: 1324460376722576}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 62c00d4df8e2e834a855d2a773d5bfac, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d975408a245a4124b869683134d2f12a, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -349,6 +363,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114834587259108900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1324460376722576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeb075755b2f08447aad9239ebf41541, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Trigger: 0
 --- !u!137 &137131622118059690
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
