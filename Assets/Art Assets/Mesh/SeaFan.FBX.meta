@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: af5f8126607ff97489b233301d3c24f4
-timeCreated: 1510552591
+timeCreated: 1515559786
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -9,13 +9,13 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Rock003
+    4300000: Sea Fan
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: 02 - Default
-    second: {fileID: 2100000, guid: 72c5752b086b4e44285f6b0ddb21ce54, type: 2}
+      name: 07 - Default
+    second: {fileID: 2100000, guid: 24f5105c2d232fb40a35712760c7c031, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
