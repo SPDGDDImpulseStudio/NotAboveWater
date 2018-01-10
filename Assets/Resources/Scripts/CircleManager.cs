@@ -81,6 +81,7 @@ public class CircleManager : MonoBehaviour {
             currCircle[i].transform.SetParent(canvas.transform);
             CirclePosUpdate x = currCircle[i].GetComponent<CirclePosUpdate>();
             x._ref = go;
+            x.gameObject.name = i + " " + go.name;
             //Its gonna change to the AI for sure huh
             x.offSet = _offSet[i];
         }

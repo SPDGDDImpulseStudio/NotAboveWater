@@ -305,7 +305,7 @@ Transform:
   - {fileID: 4261940589820464}
   m_Father: {fileID: 4648706632521850}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -90.00001, z: -90.00001}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: -90.00001}
 --- !u!4 &4777471788122074
 Transform:
   m_ObjectHideFlags: 1
@@ -375,6 +375,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Trigger: 0
+  stonePrefab: {fileID: 0}
+  tip: {fileID: 0}
 --- !u!137 &137131622118059690
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

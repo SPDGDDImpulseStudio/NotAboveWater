@@ -68,6 +68,7 @@ public class Player : MonoBehaviour {
         if (Instance.GetInstanceID() != this.GetInstanceID())  Destroy(this.gameObject);
 
         Init(); AssignTentacleList();
+        StartCoroutine(TriggerAI());
     }
 
     public void Init()
@@ -81,7 +82,6 @@ public class Player : MonoBehaviour {
 
 
         bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<UnityEngine.UI.Image>());
-        Debug.Log(bullets.Count);
         StartCoroutine(UIUpdate());
         StartCoroutine(OxyDropping());
         //StartCoroutine(SuittedUp());
@@ -95,12 +95,12 @@ public class Player : MonoBehaviour {
     List<Tentacle> tentacles = new List<Tentacle>();
     public void AssignTentacleList()
     {
-        tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
-        
+        tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());        
     }
+
     public IEnumerator TriggerAI()
     {
-        if (tentacles.Count > 0) yield break;
+        if (tentacles.Count < 0) yield break;
 
         while (true)
         {
@@ -119,6 +119,7 @@ public class Player : MonoBehaviour {
                 if (dist[chosen] < dist[j + 1]) chosen = j + 1;
             }
 
+            tentacles[chosen].Trigger = true;
             for(int k = 0; k < tentacles.Count; k++)
             {
                 if (k == chosen) continue;
@@ -126,7 +127,7 @@ public class Player : MonoBehaviour {
                 tentacles[k].Trigger = false;
             }
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.2f);
         }
     }
     
@@ -164,14 +165,12 @@ public class Player : MonoBehaviour {
                         //{
                         //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
                         //}
-
-
                         if (hit.transform.GetComponent<AI>())
                             DamageShark(targetHit, pointHit);
                         else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                             hit.transform.GetComponent<InteractableObj>().Interact();
-
-
+                        else if (hit.transform.GetComponent<Boss>())
+                            hit.transform.GetComponent<Boss>().bossCurrHealth -= 15f;
                         else
                         {
                             if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
@@ -313,7 +312,7 @@ public class Player : MonoBehaviour {
         {
           
             compassSlider.value = (this.transform.localEulerAngles.y/360f);
-            healthBar.value = currSuitHealth / maxSuitHealth;
+            //healthBar.value = currSuitHealth / maxSuitHealth;
             oxygenBar.value = healthBarCount1 / healthBarCount2;
             if (currBullet != 0)
             {
