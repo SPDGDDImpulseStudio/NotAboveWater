@@ -36,6 +36,7 @@ public class Player : MonoBehaviour {
     public GameObject VFX_BulletSpark;
     public AudioClip gunFire, reloadingClip, emptyGunFire;
     public GameObject ammoCounterBar;
+    public Image spr_OxygenBar;
 
     public Text reloadText;
     public Text oxygenText;
@@ -236,11 +237,10 @@ public class Player : MonoBehaviour {
 
     public IEnumerator OxyDropping()
     {
-
         Image[] x = oxygenBar.GetComponentsInChildren<Image>(); // = Color.blue + new Color(0,0.5f, 0);
         for(int i = 0; i < x.Length; i++)
         {
-            x[i].color = Color.blue + new Color(0, 0.5f, 0);
+            //x[i].color = Color.blue + new Color(0, 0.5f, 0);
         }
         while (true)
         {
