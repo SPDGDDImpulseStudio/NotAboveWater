@@ -467,6 +467,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heartRate: {fileID: 114322542420305332}
+  spr_heartRate: {fileID: 0}
+  images: []
 --- !u!114 &114807812945005616
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -545,6 +547,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heartRate: {fileID: 114988927224138738}
+  spr_heartRate: {fileID: 114923757710660006}
+  images:
+  - {fileID: 21300000, guid: 331e6a8edab33ce47a77d70c41d3973a, type: 3}
+  - {fileID: 21300000, guid: ffd75a7dd67c54144b97b3535808554e, type: 3}
+  - {fileID: 21300000, guid: 368fd440e65612d4c8c5546e72671d0b, type: 3}
 --- !u!114 &114988927224138738
 MonoBehaviour:
   m_ObjectHideFlags: 1
