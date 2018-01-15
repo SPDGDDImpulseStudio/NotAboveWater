@@ -54,7 +54,7 @@ public class Player : MonoBehaviour {
     public float maxOxygen, maxHealth,
         oxyDrop, healthDrop,
         reloadTime = 3, bulletDamage, shootEvery = 1;
-    int maxBullet = 10;
+    int maxBullet = 30;
 
     [Header("Dont+Touch+For+Debug+Purpose")]
     public int  currBullet;
@@ -212,7 +212,7 @@ public class Player : MonoBehaviour {
 
         for(int i = 0; 0 < maxBullet - 1; i++)
         {
-            int b = 9 - i;
+            int b = 29 - i;
             
             if (b < 0) break;
             
@@ -303,7 +303,7 @@ public class Player : MonoBehaviour {
 
     int CurrImage()
     {
-        return  10 - currBullet;
+        return  30 - currBullet;
     }
   
     IEnumerator UIUpdate()
