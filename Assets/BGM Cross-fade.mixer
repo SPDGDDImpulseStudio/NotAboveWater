@@ -5,7 +5,7 @@ AudioMixerController:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: NewAudioMixer
+  m_Name: BGM Cross-fade
   m_OutputGroup: {fileID: 0}
   m_MasterGroup: {fileID: 24300002}
   m_Snapshots:
@@ -24,7 +24,7 @@ AudioMixerController:
     - 8231dab47c9a4f24a90e784a0bd6e868
     name: View
   m_CurrentViewIndex: 0
-  m_TargetSnapshot: {fileID: 245510118154694308}
+  m_TargetSnapshot: {fileID: 245827983652657770}
 --- !u!243 &24300002
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -137,7 +137,7 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 667d10818078a4a4588fda29aa76c821
   m_FloatValues:
-    c6ecba36460105b48abbaefd76a56897: 4.648096
+    c6ecba36460105b48abbaefd76a56897: -0.16685188
     490bd988d462a3941823ca37e3a9f0f1: -80
   m_TransitionOverrides: {}
 --- !u!245 &245827983652657770
