@@ -30,6 +30,7 @@ public class Tentacle : MonoBehaviour
     public UnityEngine.UI.Text text;
     IEnumerator DebugUIUpdate()
     {
+        if (!text) yield break;
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
