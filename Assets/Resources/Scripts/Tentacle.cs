@@ -50,7 +50,7 @@ public class Tentacle : MonoBehaviour
         
         if (newA.Length == 0)   return;
 
-        if (newA[0].clip.name == "DamagedNHide") anim.SetBool("DAMAGED", false);
+        if (newA[0].clip.name == "DamagedNHide") { anim.SetBool("DAMAGED", false); NullifyCircle(); }
         
         if (currentTimer > attackTimer)
         {
@@ -120,8 +120,8 @@ public class Tentacle : MonoBehaviour
     }
     void NullifyCircle()
     {
+        if (circle == null) return;
         circle.TurnOff();
-        Debug.Log(circle.name + " IS GONE");
         PoolManager.Instance.EnqCircle(circle);
         circle = null;
     }
@@ -130,7 +130,7 @@ public class Tentacle : MonoBehaviour
         if (attack) yield break;
         attack = true;
         GetCircle();
-       while (true)
+        while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
             if (newA[0].clip.name == "Throw")
@@ -155,12 +155,13 @@ public class Tentacle : MonoBehaviour
 
         Vector3 dir = (Player.Instance.transform.position - tip.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
         bul.GetComponent<Rigidbody>().velocity = dir * 120 * Time.deltaTime;
-        
+        anim.SetBool("DAMAGED", false);
     }
 
     Vector3 offSet;
     void Charge()
     {
+        anim.SetBool("DAMAGED", false);
         Debug.Log("Charge");
     }
 
@@ -176,18 +177,6 @@ public class Tentacle : MonoBehaviour
     public void OnHit()
     {
         anim.SetBool("DAMAGED", true);
-        
-        //    AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
-        //    Debug.Log("1 " + anim.GetBool("DAMAGED") + " " + newA[0].clip.name);
-        //    //PostHit();
-        //    if (newA.Length == 0 || newA[0].clip.name == "Throw") return;
-        //    else
-        //    {
-
-        //    }
-
-        //    Debug.Log(newA[0].clip.name);
-        //}
     }
 
     public void SwitchState(TentacleState state)

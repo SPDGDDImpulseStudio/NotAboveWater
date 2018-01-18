@@ -34,7 +34,7 @@ public class CirclePosUpdate : Button
             if((posOnScreen.y + offSet.y) < Screen.height&& (posOnScreen.y + offSet.y)> 0)  posOnScreen.y += offSet.y;
 
             this.transform.position = posOnScreen;
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
     }
 
