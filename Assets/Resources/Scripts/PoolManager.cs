@@ -4,8 +4,22 @@ using UnityEngine;
 
 public class PoolManager : ISingleton<PoolManager> {
 
-    public GameObject bulletPrefab; 
     void Start()
+    {
+        SpawnBullets();
+        SpawnCircles();
+    }
+
+    int spawnBullets = 10;
+    #region BulletPool
+
+    public GameObject bulletPrefab;
+
+    Queue<BulletScript> bulletQueue = new Queue<BulletScript>();
+
+    List<BulletScript> onUseBulletList = new List<BulletScript>();
+
+    void SpawnBullets()
     {
         GameObject GO = new GameObject();
         for (int i = 0; i < spawnBullets; i++)
@@ -17,17 +31,10 @@ public class PoolManager : ISingleton<PoolManager> {
         }
         GO.name = "Bullet Parent";
     }
-
-    int spawnBullets = 10;
-   
-    Queue<BulletScript> bulletQueue = new Queue<BulletScript>();
-
-    List<BulletScript> onUseBulletList = new List<BulletScript>();
-
     public BulletScript DeqBullet()
     {
-        if (bulletQueue.Count > 0) {
-
+        if (bulletQueue.Count > 0)
+        {
             BulletScript x = bulletQueue.Dequeue();
             onUseBulletList.Add(x);
             return x;
@@ -35,7 +42,6 @@ public class PoolManager : ISingleton<PoolManager> {
         else
         {
             BulletScript x = onUseBulletList[0];
-
             return x;
         }
     }
@@ -52,7 +58,7 @@ public class PoolManager : ISingleton<PoolManager> {
         if (onUseBulletList.Count < 0) return;
         for (int i = 0; i < onUseBulletList.Count; i++)
         {
-            if(onUseBulletList[i] == x)
+            if (onUseBulletList[i] == x)
             {
                 onUseBulletList.RemoveAt(i);
                 break;
@@ -61,10 +67,33 @@ public class PoolManager : ISingleton<PoolManager> {
     }
 
 
-    /*
-     Obj Pooling
+    #endregion
 
-    Queue to refer to use 
-    List of GO that currently in use
-     */
+    Queue<CirclePosUpdate> circleQueue = new Queue<CirclePosUpdate>();
+
+    public void EnqCircle(CirclePosUpdate x)
+    {
+        circleQueue.Enqueue(x);
+    }
+
+    void SpawnCircles() {
+        GameObject GO = new GameObject();
+        GO.transform.SetParent(FindObjectOfType<Canvas>().transform);
+        for (int i = 0; i < spawnBullets; i++)
+        {
+            GameObject newGO = Instantiate(circlePrefab);
+            newGO.name = "Circle " + i;
+            newGO.transform.SetParent(GO.transform);
+            EnqCircle(newGO.GetComponent<CirclePosUpdate>());
+        }
+        GO.name = "Circle Parent";
+    }
+    public GameObject circlePrefab;
+
+    public CirclePosUpdate DeqCircle()
+    {
+        if (circleQueue.Count == 0) return null;
+        else
+        return circleQueue.Dequeue();
+    }
 }
