@@ -8,42 +8,33 @@ public class CirclePosUpdate : Button
     {
         base.Start();
         cam = Camera.main;
-        onClick.AddListener(DestroySelf);
+        TurnOff();
     }
 
+    public Vector2 offSet;
     public GameObject _ref;
     Camera cam;
 
-    public Vector2 offSet;
-    
-    void Update()
+
+    IEnumerator PosUpdate()
     {
-        if (_ref)
+        while (true)
         {
             Vector3 posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
-        
-            //Debug.Log(posOnScreen);
+            
             posOnScreen.x = (0 < posOnScreen.x && posOnScreen.x < Screen.width) ? posOnScreen.x :
                (posOnScreen.x < 0) ? 0 : Screen.width;
 
             posOnScreen.y = (0 < posOnScreen.y && posOnScreen.y < Screen.height) ? posOnScreen.y :
                 (posOnScreen.y < 0) ? 0 : Screen.height;
 
-            //Debug.Log(posOnScreen);
-            //if (posOnScreen.x > Screen.width)
-            //    posOnScreen.x = Screen.width;
-            //else if (posOnScreen.x < 0)
-            //    posOnScreen.x = 0;
-            //if (posOnScreen.y > Screen.height)
-            //    posOnScreen.y = Screen.height;
-            //else if (posOnScreen.y < 0)
-            //    posOnScreen.y = 0;
 
-            posOnScreen.x += offSet.x;
-            posOnScreen.y += offSet.y;
+            if((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x)> 0)  posOnScreen.x += offSet.x;
+
+            if((posOnScreen.y + offSet.y) < Screen.height&& (posOnScreen.y + offSet.y)> 0)  posOnScreen.y += offSet.y;
 
             this.transform.position = posOnScreen;
-
+            yield return new WaitForFixedUpdate();
         }
     }
 
@@ -52,9 +43,28 @@ public class CirclePosUpdate : Button
         if (Player.Instance.currBullet != 0)
         {
             CircleManager.Instance.RemoveThisBut(this);
-            Destroy(this.gameObject);
+            TurnOff();
         }
     }
 
-    
+    public void Init(GameObject obj)
+    {
+        this.gameObject.SetActive(true);
+        onClick.AddListener(DestroySelf);
+        _ref = obj;
+        StartCoroutine(PosUpdate());
+    }
+
+    public void TurnOff()
+    {
+        onClick.RemoveListener(DestroySelf);
+        _ref = null;
+        PoolManager.Instance.EnqCircle(this);
+        this.gameObject.SetActive(false);
+    }
+
+    public void CheckUI()
+    {
+        Debug.Log(this.gameObject.name);
+    }
 }

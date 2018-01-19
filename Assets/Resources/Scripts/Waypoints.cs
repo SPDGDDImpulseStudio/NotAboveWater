@@ -9,11 +9,6 @@ public class Waypoints : MonoBehaviour {
 	void Start () {
         col = this.GetComponent<Collider>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
     
     void OnTriggerEnter(Collider x) {
 

@@ -4,30 +4,30 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : ISingleton<GameManager> {
 
     #region Working Variables
 
-    public static GameManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<GameManager>();
-                if (_instance == null)
-                {
-                    GameObject newGO = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/GameManager"));
-                    _instance = newGO.GetComponent<GameManager>();
-                }
-                DontDestroyOnLoad(_instance.gameObject);
-            }
-            if (!_instance.gameObject.activeSelf) _instance.gameObject.SetActive(true);
-            return _instance;
-        }
-    }
+    //public static GameManager Instance
+    //{
+    //    get
+    //    {
+    //        if (_instance == null)
+    //        {
+    //            _instance = FindObjectOfType<GameManager>();
+    //            if (_instance == null)
+    //            {
+    //                GameObject newGO = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/GameManager"));
+    //                _instance = newGO.GetComponent<GameManager>();
+    //            }
+    //            DontDestroyOnLoad(_instance.gameObject);
+    //        }
+    //        if (!_instance.gameObject.activeSelf) _instance.gameObject.SetActive(true);
+    //        return _instance;
+    //    }
+    //}
 
-    static GameManager _instance;
+    //static GameManager _instance;
 
     public Camera playerCam;
     public List<GameObject> waypoints = new List<GameObject>();
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour {
 
     public const string leaderboardScore = leaderboard + "SCORE";
     
-    public  float playerScore = 0;
+    public float playerScore = 0;
 
     //Editor's
     [Header("[Editor]")]
@@ -179,11 +179,6 @@ public class GameManager : MonoBehaviour {
     #endregion
     void Start()
     {
-        if (Instance.GetInstanceID() != this.GetInstanceID())
-        {
-            Destroy(gameObject);
-            return;
-        }
         playerCam = Camera.main;
         StartCoroutine(NextEvent());
         _eventUpdate = new EventUpdate(eventsList[currInt].Test);
