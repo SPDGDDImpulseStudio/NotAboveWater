@@ -8,14 +8,50 @@ public class CirclePosUpdate : Button
     {
         base.Start();
         cam = Camera.main;
-        TurnOff();
-    }
 
+        if (Application.isPlaying)
+        {
+            originScale = this.transform.localScale;
+            newScale.x = originScale.x * 2;
+            newScale.y = originScale.y / 2;
+            TurnOff();
+        }
+    }
+    Vector3 originScale;
+    Vector2 newScale;
     public Vector2 offSet;
     public GameObject _ref;
     Camera cam;
 
+    IEnumerator RotateBoi()
+    {
+        Vector3 newRot = this.transform.localEulerAngles;
 
+        while (this.transform.localEulerAngles.z < 180)
+        {
+            newRot.z += 15 * Time.deltaTime; ;
+            this.transform.localEulerAngles = newRot;
+
+            yield return null;
+        }
+        Debug.Log("END");
+        this.transform.localEulerAngles = Vector3.zero;
+    }
+    IEnumerator ScaleDown()
+    {
+        Vector3 theScale = this.transform.localScale;
+        int Rnd = Random.Range(1, 5);
+        while (this.transform.localScale.x > 0.01f)
+        {
+
+            theScale.x -= Rnd * Time.deltaTime / 100;
+            theScale.y -= Rnd * Time.deltaTime / 100;
+            this.transform.localScale = theScale;
+            yield return new WaitForFixedUpdate();
+
+        }
+      
+    }
     IEnumerator PosUpdate()
     {
         while (true)
@@ -53,6 +89,8 @@ public class CirclePosUpdate : Button
         onClick.AddListener(DestroySelf);
         _ref = obj;
         StartCoroutine(PosUpdate());
+        StartCoroutine(ScaleDown());
+        StartCoroutine(RotateBoi());
     }
 
     public void TurnOff()
@@ -60,7 +98,9 @@ public class CirclePosUpdate : Button
         onClick.RemoveListener(DestroySelf);
         _ref = null;
         PoolManager.Instance.EnqCircle(this);
+        this.transform.localScale = originScale;
         this.gameObject.SetActive(false);
+
     }
 
     public void CheckUI()

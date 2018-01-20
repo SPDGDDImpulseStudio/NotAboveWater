@@ -120,12 +120,12 @@ public class Player : MonoBehaviour {
                 if (dist[chosen] < dist[j + 1]) chosen = j + 1;
             }
 
-            tentacles[chosen].Trigger = true;
+            tentacles[chosen].rangeAttack = true;
             for(int k = 0; k < tentacles.Count; k++)
             {
                 if (k == chosen) continue;
 
-                tentacles[k].Trigger = false;
+                tentacles[k].rangeAttack = false;
             }
 
             yield return new WaitForSeconds(1.2f);

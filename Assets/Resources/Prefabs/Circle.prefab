@@ -101,8 +101,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  _ref: {fileID: 0}
   offSet: {x: 0, y: 0}
+  _ref: {fileID: 0}
 --- !u!114 &114731802322071538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -200,8 +200,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1837784110622252}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 206.22412, y: 111.74844, z: 33.543694}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 206.22412, y: 111.74841, z: 33.543694}
+  m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_Children:
   - {fileID: 224200338515256164}
   m_Father: {fileID: 0}
@@ -210,5 +210,5 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 206.22412, y: 111.74844}
-  m_SizeDelta: {x: 60, y: 60}
+  m_SizeDelta: {x: 4961, y: 3508}
   m_Pivot: {x: 0.5, y: 0.5}

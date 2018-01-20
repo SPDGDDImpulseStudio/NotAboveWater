@@ -5,7 +5,7 @@ using UnityEngine;
 public class Tentacle : MonoBehaviour
 {
     float attackTimer = 4f, currentTimer = 0f;
-    public bool Trigger = false;
+    public bool rangeAttack = false;
     TentacleState currentState = TentacleState.IDLE;
     Animator anim;
     public GameObject stonePrefab;
@@ -49,7 +49,7 @@ public class Tentacle : MonoBehaviour
 
         AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
         
-        if (newA.Length == 0)   return;
+        if (newA.Length == 0)return;
 
         if (newA[0].clip.name == "DamagedNHide") { anim.SetBool("DAMAGED", false); NullifyCircle(); }
         
@@ -57,9 +57,10 @@ public class Tentacle : MonoBehaviour
         {
             if (newA[0].clip.name == "Idle")
             {
-                if (Trigger)
+                if (rangeAttack)
                 {
                     anim.Play("Dig", -1);
+                    Time.timeScale = 0.6f;
                     StartCoroutine(WaitTillThrow());
                 }
                 else
@@ -67,12 +68,6 @@ public class Tentacle : MonoBehaviour
                     anim.Play("Charge", -1);
                     StartCoroutine(ChargeAttack());
                 }
-                //Vector2 offset1 = new Vector2(15f, 15f),
-                //        offset2 = new Vector2(15f, 15f);
-
-                //List<Vector2> offset = new List<Vector2>() { offset1, offset2 };
-
-                //CircleManager.Instance.SpawnButtons(2, offset, offset, tip);
                 currentTimer = 0f;
                 attackTimer = Random.Range(3f, 6f);
             }
@@ -148,6 +143,7 @@ public class Tentacle : MonoBehaviour
         }
         NullifyCircle();
         attack = false;
+        Time.timeScale = 1.0f;
     }
     void ThrowStone()
     {

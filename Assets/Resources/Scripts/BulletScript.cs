@@ -35,7 +35,6 @@ public class BulletScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider x)
     {
-        Debug.Log("HELLO " + x.name);
         PoolManager.Instance.EnqBullet(this);
     }
 }
