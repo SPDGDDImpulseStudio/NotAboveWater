@@ -4,25 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(AudioSource))]
-public class Player : MonoBehaviour {
+public class Player : ISingleton<Player> {
 
     #region Attributes
-    public static Player Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<Player>();
-                if (_instance == null)
-                    Debug.LogError("STOP");
-                DontDestroyOnLoad(_instance.gameObject);
-            }
-            if (!_instance.gameObject.activeSelf) _instance.gameObject.SetActive(true);
-            return _instance;
-        }
-    }
-    static Player _instance;
     
     GameObject targetHit;
     [HideInInspector]
@@ -30,7 +14,7 @@ public class Player : MonoBehaviour {
 
     [Header("[None of this should be empty]")]
     public AudioSource audioSource;
-    public Slider healthBar, oxygenBar, gunShootingBar;
+    public Slider oxygenBar;
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
@@ -41,9 +25,7 @@ public class Player : MonoBehaviour {
     public Text reloadText;
     public Text oxygenText;
     public Slider compassSlider;
-
     
-
     List<Image> bullets = new List<Image>();
 
     [Header("[Player's Attributes]")]
@@ -66,9 +48,9 @@ public class Player : MonoBehaviour {
     #endregion
 
     void Start () {
-        if (Instance.GetInstanceID() != this.GetInstanceID())  Destroy(this.gameObject);
 
-        Init(); AssignTentacleList();
+        Init();
+        AssignTentacleList();
         StartCoroutine(TriggerAI());
     }
 
@@ -137,10 +119,10 @@ public class Player : MonoBehaviour {
     {
         if (currSuitHealth < 0)
             Debug.Log("death");
+
         if (shootTimerNow < shootEvery)
             shootTimerNow += Time.deltaTime;
-
-
+        
         if (Input.GetMouseButton(0))
         {
             RaycastHit hit;
@@ -166,6 +148,7 @@ public class Player : MonoBehaviour {
                         //{
                         //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
                         //}
+                        //Debug.Log("I hit " + hit.transform.name);
                         if (hit.transform.GetComponent<AI>())
                             DamageShark(targetHit, pointHit);
                         else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
@@ -174,21 +157,20 @@ public class Player : MonoBehaviour {
                             hit.transform.GetComponent<Boss>().bossCurrHealth -= 15f;
                         else
                         {
-                            if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                                hit.transform.GetComponentInParent<Tentacle>().OnHit();
-                            else
+                            //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                            //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
+                            //else
                                 DamageProps(targetHit, pointHit);
                         }
                     }
-                    if (currBullet - 1 == 0)
-                        StartCoroutine(WorkAroundButton());
-                    else
-                        currBullet--;
-                }
-                else
-                {
-                    if(!audioSource.isPlaying)
-                    audioSource.PlayOneShot(emptyGunFire);
+                    if (currBullet - 1 == 0)    StartCoroutine(WorkAroundButton());
+                    else                        currBullet--;
+                }else{
+                    if (!audioSource.isPlaying)
+                    {
+                        audioSource.clip = emptyGunFire;
+                        audioSource.Play();
+                    }
                 }
             }
 
@@ -212,7 +194,7 @@ public class Player : MonoBehaviour {
 
         for(int i = 0; 0 < maxBullet - 1; i++)
         {
-            int b = 29 - i;
+            int b = (maxBullet -1) - i;
             
             if (b < 0) break;
             
@@ -231,7 +213,7 @@ public class Player : MonoBehaviour {
         currBullet = maxBullet;
 
         reloading = false;
-        gunShootingBar.maxValue = 1;
+        //gunShootingBar.maxValue = 1;
 
     }
 
@@ -303,36 +285,15 @@ public class Player : MonoBehaviour {
 
     int CurrImage()
     {
-        return  30 - currBullet;
+        return  maxBullet - currBullet;
     }
   
     IEnumerator UIUpdate()
     {
         while (true)
         {
-          
             compassSlider.value = (this.transform.localEulerAngles.y/360f);
-            //healthBar.value = currSuitHealth / maxSuitHealth;
             oxygenBar.value = healthBarCount1 / healthBarCount2;
-            if (currBullet != 0)
-            {
-                gunShootingBar.value = shootTimerNow / shootEvery;
-            }
-            else if (reloading)
-            {
-                //if(gunShootingBar.maxValue == 1)
-                gunShootingBar.maxValue = reloadTime;
-                gunShootingBar.value += Time.deltaTime;
-                //Debug.Log((gunShootingBar.value + Time.deltaTime) + " " + gunShootingBar.maxValue);
-                //if ((gunShootingBar.value +Time.deltaTime) >= gunShootingBar.maxValue)
-                //{
-                //    gunShootingBar.maxValue = 1;
-                //    Debug.Log("SET");
-                //}
-            }
-            else
-                gunShootingBar.value = 0;
-
             yield return null;
         }
     }
@@ -349,7 +310,7 @@ public class Player : MonoBehaviour {
 
     IEnumerator AddOx(float x)
     {
-        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+       //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
         float amtToAdd = x,
             finishAddingIn = 4,
@@ -357,7 +318,7 @@ public class Player : MonoBehaviour {
         int numberOfUpdate = 0;
 
         //Debug.Log("finishAddingIn: " + finishAddingIn +  " perUpdatesAdd: " + perUpdateAdd);
-        timer.Start();
+        //timer.Start();
         while(amtToAdd > 0)
         {
             amtToAdd -= perUpdateAdd;
@@ -369,7 +330,7 @@ public class Player : MonoBehaviour {
         }
 
         //Debug.Log("finishAddingIn: " + finishAddingIn +  " seconds, perUpdatesAdd: " + perUpdateAdd + "numberOfUpdate: " + numberOfUpdate);
-        timer.Stop();
+        //timer.Stop();
         //Debug.Log(timer.Elapsed + " | " + timer.ElapsedMilliseconds);
     }
 

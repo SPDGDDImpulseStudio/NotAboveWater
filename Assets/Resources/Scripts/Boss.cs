@@ -6,11 +6,15 @@ public class Boss : MonoBehaviour {
 
     public float bossCurrHealth, bossMaxHealth;
 
-	void Start () {
+    List<Tentacle> tentacles = new List<Tentacle>();
+    float timer = 3f, timerNow = 0f;
+
+    void Start () {
         bossCurrHealth = bossMaxHealth;
         tentacles = new List<Tentacle>(FindObjectsOfType<Tentacle>());
 	}
     public UnityEngine.UI.Slider slider;
+
     public void ShootOnShell()
     {
 
@@ -38,6 +42,5 @@ public class Boss : MonoBehaviour {
             timerNow = 0f;
         }
 	}
-    List<Tentacle> tentacles = new List<Tentacle>();
-    float timer = 3f, timerNow = 0f;
+
 }

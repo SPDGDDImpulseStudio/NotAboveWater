@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletScript : MonoBehaviour {
+public class BulletScript : PoolObject {
 
 	// Use this for initialization
 	void Start () {
@@ -16,7 +16,7 @@ public class BulletScript : MonoBehaviour {
 		
 	}
     Transform target;
-    float speed = 200f, rotSpeed = 5f;
+    float speed = 100f, rotSpeed = 5f;
     Rigidbody rb;
     void FixedUpdate()
     {

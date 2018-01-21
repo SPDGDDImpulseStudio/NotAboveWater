@@ -5,20 +5,21 @@ using UnityEngine;
 public class Tentacle : MonoBehaviour
 {
     float attackTimer = 4f, currentTimer = 0f;
+    //Control from outside
     public bool rangeAttack = false;
-    TentacleState currentState = TentacleState.IDLE;
+    
     Animator anim;
     public GameObject stonePrefab;
-    public GameObject tip;
+    public GameObject tipAKAwhereToShootAt;
     CirclePosUpdate circle;
-    public enum TentacleState
-    {
-        IDLE,
-        PREATTACK,
-        WINDUP,
-        ATTACK,
-        POSTATTACK,
-    }
+    
+    public bool selectOne = false;
+
+    bool attack = false;
+
+    public UnityEngine.UI.Text debugText;
+
+    Vector3 offSet;
 
     void Start()
     {
@@ -27,46 +28,43 @@ public class Tentacle : MonoBehaviour
         offSet += Random.Range(-15, 15) * transform.right;
         StartCoroutine(DebugUIUpdate());
     }
-    public UnityEngine.UI.Text text;
+
     IEnumerator DebugUIUpdate()
     {
-        if (!text) yield break;
+        if (!debugText) yield break;
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
-            text.text = newA[0].clip.ToString();
-
+            debugText.text = newA[0].clip.ToString();
             yield return null;
         }
     }
+
     void Update()
     {
         if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
-        if (!selectOne) {
-            anim.SetBool("DAMAGED", false);
-            return;
+        if (!selectOne)
+        {
+            DamagedToFalse();            return;
         }
 
         AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
-        
-        if (newA.Length == 0)return;
 
-        if (newA[0].clip.name == "DamagedNHide") { anim.SetBool("DAMAGED", false); NullifyCircle(); }
-        
+        if (newA.Length == 0) return;
+
+        if (newA[0].clip.name == "DamagedNHide") { DamagedToFalse(); NullifyCircle(); }
+
         if (currentTimer > attackTimer)
         {
             if (newA[0].clip.name == "Idle")
             {
                 if (rangeAttack)
                 {
-                    anim.Play("Dig", -1);
-                    Time.timeScale = 0.6f;
                     StartCoroutine(WaitTillThrow());
                 }
                 else
                 {
-                    anim.Play("Charge", -1);
-                    StartCoroutine(ChargeAttack());
+                    StartCoroutine(Charge());
                 }
                 currentTimer = 0f;
                 attackTimer = Random.Range(3f, 6f);
@@ -77,30 +75,41 @@ public class Tentacle : MonoBehaviour
             Player.Instance.transform.position.x + offSet.x,
             this.transform.position.y,
             Player.Instance.transform.position.z + offSet.z);
+
         this.transform.LookAt(temp);
-        this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3( 0, 180f, 0);
+        this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
+        //This is added cause the animation/model is reversed
+        //Thanks to JR's impact i feel like changing these to coroutines
     }
 
-    public bool selectOne = false;
+    public void OnHit()
+    {
+        anim.SetBool("DAMAGED", true);
+    }
+    public void DamagedToFalse()
+    {
+        anim.SetBool("DAMAGED", false);
+    }
 
-    bool attack = false;
-
-    IEnumerator ChargeAttack()
+   IEnumerator Charge()
     {
         if (attack) yield break;
         attack = true;
+        anim.Play("Charge", -1);
         GetCircle();
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
+            
             if (newA[0].clip.name == "DamagedNHide")
             {
-                anim.SetBool("DAMAGED", false);
+                DamagedToFalse();
                 break;
             }
             else if (newA[0].clip.name == "Strike")
             {
-                Charge();
+                NullifyCircle();
+                ChargeAttack();
                 break;
             }
 
@@ -109,10 +118,16 @@ public class Tentacle : MonoBehaviour
         NullifyCircle();
         attack = false;
     }
+    void ChargeAttack()
+    {
+        DamagedToFalse();
+        Debug.Log("Charge");
+    }
+
     void GetCircle()
     {
         circle = PoolManager.Instance.DeqCircle();
-        circle.Init(tip);
+        circle.Init_(tipAKAwhereToShootAt);
     }
     void NullifyCircle()
     {
@@ -125,18 +140,20 @@ public class Tentacle : MonoBehaviour
     {
         if (attack) yield break;
         attack = true;
+        anim.Play("Dig", -1);
+        Time.timeScale = 0.6f;
         GetCircle();
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
             if (newA[0].clip.name == "Throw")
             {
-                ThrowStone();
+                StoneAttack();
                 break;
             }
             else if (newA[0].clip.name == "DamagedNHide")
             {
-                anim.SetBool("DAMAGED", false);
+                DamagedToFalse();
                 break;
             }
             yield return null;
@@ -145,22 +162,17 @@ public class Tentacle : MonoBehaviour
         attack = false;
         Time.timeScale = 1.0f;
     }
-    void ThrowStone()
+    void StoneAttack()
     {
         GameObject bul = //RepositionStone(PoolManager.Instance.DeqBullet(), tip.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ; 
-        Instantiate(stonePrefab, tip.transform.position + 3* Vector3.forward, Quaternion.identity);
+        Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
 
-        Vector3 dir = (Player.Instance.transform.position - tip.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
-        bul.GetComponent<Rigidbody>().velocity = dir * 120 * Time.deltaTime;
-        anim.SetBool("DAMAGED", false);
+        Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
+        bul.GetComponent<Rigidbody>().velocity = dir * 15 * Time.deltaTime;
+
+        DamagedToFalse();
     }
 
-    Vector3 offSet;
-    void Charge()
-    {
-        anim.SetBool("DAMAGED", false);
-        Debug.Log("Charge");
-    }
 
     BulletScript RepositionStone(BulletScript x ,Vector3 pos, Quaternion quat)
     {
@@ -171,13 +183,5 @@ public class Tentacle : MonoBehaviour
         return x;
     }
 
-    public void OnHit()
-    {
-        anim.SetBool("DAMAGED", true);
-    }
 
-    public void SwitchState(TentacleState state)
-    {
-        currentState = state;
-    }
 }

@@ -61,7 +61,7 @@ public class CircleManager : ISingleton<CircleManager> {
     CirclePosUpdate GetCircle(GameObject _ref)
     {
         CirclePosUpdate x = PoolManager.Instance.DeqCircle();
-        x.Init(_ref);
+        x.Init_(_ref);
 
         return x;
     }

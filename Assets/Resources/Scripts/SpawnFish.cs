@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class SpawnFish : MonoBehaviour {
 
-
-    public float spawnArea;
-
+    [Tooltip("The prefab i referred to")]
     public GameObject fishPrefab;
+    [Tooltip("Cheap way to control spawning of fish, note its not control by Update function but a coroutine.")]
+    public bool spawnFish = true;
+    [Tooltip("Maximum number of fishes can be spawn")]
+    public int maxNumberOfFish = 5;
+    [Tooltip("How I check how many fish is spawned in")]
     public List<GameObject> fishes = new List<GameObject>();
+    [Tooltip("How long does it take to spawn another fish")]
+    public float spawnRate = 2.5f;
+    [Tooltip("The area where I spawn fishes")]
+    public float spawnArea;
     void Start () {
         Init();
 	}
@@ -40,12 +47,9 @@ public class SpawnFish : MonoBehaviour {
         }
     }
 
-    public bool spawnFish = true;
-    public int maxNumberOfFish = 5;
-    public float spawnRate = 2.5f;
 #if UNITY_EDITOR
 
-
+    [Header("EDITOR ATTRIBUTES")]
     public bool showEditor;
     public Color editorColor = Color.black;
     void OnDrawGizmos()

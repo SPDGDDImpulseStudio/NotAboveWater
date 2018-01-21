@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class CirclePosUpdate : Button
-{
-    protected override void Start()
-    {
-        base.Start();
-        cam = Camera.main;
+using UnityEngine.EventSystems;
+using System;
 
-        if (Application.isPlaying)
-        {
-            originScale = this.transform.localScale;
-            newScale.x = originScale.x * 2;
-            newScale.y = originScale.y / 2;
-            TurnOff();
-        }
-    }
+public class CirclePosUpdate : PoolObject, 
+    IPointerEnterHandler ,
+    IPointerDownHandler  
+ 
+{
+
     Vector3 originScale;
     Vector2 newScale;
     public Vector2 offSet;
     public GameObject _ref;
     Camera cam;
 
+    void Start()
+    {
+        cam = Camera.main;
+        originScale = this.transform.localScale;
+        newScale.x = originScale.x * 2;
+        newScale.y = originScale.y / 2;
+        TurnOff();
+    }
+    
     IEnumerator RotateBoi()
     {
         Vector3 newRot = this.transform.localEulerAngles;
@@ -40,15 +43,14 @@ public class CirclePosUpdate : Button
     IEnumerator ScaleDown()
     {
         Vector3 theScale = this.transform.localScale;
-        int Rnd = Random.Range(1, 5);
-        while (this.transform.localScale.x > 0.01f)
+        int Rnd = UnityEngine.Random.Range(1, 5);
+        while (this.transform.localScale.x > 0.013f)
         {
 
             theScale.x -= Rnd * Time.deltaTime / 100;
             theScale.y -= Rnd * Time.deltaTime / 100;
             this.transform.localScale = theScale;
             yield return new WaitForFixedUpdate();
-
         }
       
     }
@@ -83,28 +85,49 @@ public class CirclePosUpdate : Button
         }
     }
 
-    public void Init(GameObject obj)
+    public override void Init()
+    {
+        Init();
+    }
+    public void Init_(GameObject obj)
     {
         this.gameObject.SetActive(true);
-        onClick.AddListener(DestroySelf);
         _ref = obj;
         StartCoroutine(PosUpdate());
         StartCoroutine(ScaleDown());
         StartCoroutine(RotateBoi());
     }
 
-    public void TurnOff()
+    public override void TurnOff()
     {
-        onClick.RemoveListener(DestroySelf);
         _ref = null;
         PoolManager.Instance.EnqCircle(this);
         this.transform.localScale = originScale;
         this.gameObject.SetActive(false);
-
     }
 
     public void CheckUI()
     {
         Debug.Log(this.gameObject.name);
     }
+
+  
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if(Player.Instance.currBullet != 0 && Input.GetMouseButton(0))
+        {
+            _ref.GetComponentInParent<Tentacle>().OnHit();
+            TurnOff();
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (Player.Instance.currBullet != 0 && Input.GetMouseButton(0))
+        {
+            _ref.GetComponentInParent<Tentacle>().OnHit();
+            TurnOff();
+        }
+    }
+
 }
