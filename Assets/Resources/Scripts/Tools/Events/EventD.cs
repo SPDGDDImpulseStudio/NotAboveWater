@@ -44,6 +44,7 @@ public class EventD : EventsInterface {
                 AI.Instance.anim.Play("Bite", -1);
                 s = 0;
                 Player.Instance.currHealth -= AI.Instance.damage;
+                Stats.Instance.damageTaken += AI.Instance.damage;
             }
             yield return null;
         }
@@ -114,6 +115,7 @@ public class EventD : EventsInterface {
                 AI.Instance.anim.Play("Bite", -1);
                 s = 0;
                 Player.Instance.currHealth -= AI.Instance.damage;
+                Stats.Instance.damageTaken += AI.Instance.damage;
             }
             yield return null;
         }
@@ -169,6 +171,7 @@ public class EventD : EventsInterface {
                     AI.Instance.anim.Play("Bite", -1);
                     s = 0;
                     Player.Instance.currHealth -= AI.Instance.damage;
+                    Stats.Instance.damageTaken += AI.Instance.damage;
                 }
                 yield return null;
             }

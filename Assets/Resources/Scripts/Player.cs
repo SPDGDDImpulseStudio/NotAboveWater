@@ -117,6 +117,7 @@ public class Player : ISingleton<Player> {
 
     void Update()
     {
+        Stats.Instance.timeTaken += 1 * Time.deltaTime;
         if (currSuitHealth < 0)
             Debug.Log("death");
 
@@ -163,8 +164,13 @@ public class Player : ISingleton<Player> {
                                 DamageProps(targetHit, pointHit);
                         }
                     }
-                    if (currBullet - 1 == 0)    StartCoroutine(WorkAroundButton());
-                    else                        currBullet--;
+                    if (currBullet - 1 == 0)
+                        StartCoroutine(WorkAroundButton());
+                    else
+                    {
+                        currBullet--;
+                        Stats.Instance.roundsFired++;
+                    }
                 }else{
                     if (!audioSource.isPlaying)
                     {
@@ -182,6 +188,7 @@ public class Player : ISingleton<Player> {
     {
         yield return new WaitForSeconds(shootEvery);
         currBullet--;
+        Stats.Instance.roundsFired++;
     }
     bool reloading = false;//, suitUp = true;
 
@@ -233,6 +240,7 @@ public class Player : ISingleton<Player> {
                 yield break;
             }
             currOxygen -= oxyDrop;
+            Stats.Instance.oxygenLost += oxyDrop;
             yield return null;
         }
     }
@@ -254,6 +262,7 @@ public class Player : ISingleton<Player> {
             healthBarCount2 = maxHealth;
             if (currOxygen > 0) { healthDrop_ = false; StartCoroutine(OxyDropping()); yield break; }
             currHealth -= healthDrop;
+            Stats.Instance.damageTaken -= healthDrop;
             yield return null;
         }
     }
@@ -337,6 +346,7 @@ public class Player : ISingleton<Player> {
     void DamageShark(GameObject targetHitName, Vector3 pointHitPosition)
     {
         targetHitName.GetComponent<AI>().currHealth -= bulletDamage;
+        Stats.Instance.roundsHit++;
         Instantiate(VFX_HitShark, pointHitPosition, targetHitName.transform.rotation);
     }
 

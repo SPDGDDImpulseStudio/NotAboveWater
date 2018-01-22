@@ -18,6 +18,9 @@ public class Bullets : MonoBehaviour {
     void OnTriggerEnter(Collider x)
     {
         if (x.GetComponent<AI>())
+        {
             x.GetComponent<AI>().currHealth -= damage;
+            Stats.Instance.roundsHit++;
+        }
     }
 }

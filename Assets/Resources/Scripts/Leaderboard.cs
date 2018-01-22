@@ -8,9 +8,17 @@ public class Leaderboard : MonoBehaviour {
 
     public GameObject ScoresGroup;
 
+    public GameObject AccuracyGroup;
+
+    public GameObject TreasuresGroup;
+
+    public GameObject TimeGroup;
 
     public List<Text> namesText = new List<Text>();
     public List<Text> scoresText = new List<Text>();
+    public List<Text> accuracyText = new List<Text>();
+    public List<Text> treasuresText = new List<Text>();
+    public List<Text> timeText = new List<Text>();
 
 	void Start () {
         namesText = new List<Text>(NamesGroup.GetComponentsInChildren<Text>());
