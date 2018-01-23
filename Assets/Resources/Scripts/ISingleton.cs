@@ -31,10 +31,17 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
                     _instance = FindObjectOfType<T>();
                     if (_instance == null)
                     {
-                        GameObject newGO2 = Instantiate (Resources.Load<GameObject>(singletonPathing + typeof(T)));
-                        //GameObject newGO = new GameObject();
-                        _instance = newGO2.GetComponent<T>();
-                        //newGO2.name = "(singleton) " + typeof(T).ToString();
+                        GameObject newGO2;
+                        if (Resources.Load(singletonPathing + typeof(T)))
+                        {
+                            newGO2 = Instantiate(Resources.Load<GameObject>(singletonPathing + typeof(T)));
+                            _instance = newGO2.GetComponent<T>();
+                        }else
+                        {
+                            newGO2 = new GameObject();
+                            _instance = newGO2.AddComponent<T>();
+                            //If its a prefab, if not i just dump this component into a new go
+                        }
 
                         DontDestroyOnLoad(newGO2);
                         Debug.Log("[Singleton] An instance of " + typeof(T) +
@@ -66,9 +73,15 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
             if (_instance.GetInstanceID() != this.GetInstanceID())
             {
                 Destroy(this.gameObject);
+                Debug.Log("Destroyed this " + typeof(T) + " singleton");
                 return;
             }
         }
+    }
+
+    void OnDisable()
+    {
+        _instance = null;
     }
 
     public void OnDestroy()
@@ -76,8 +89,4 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
         applicationIsQuitting = true;
     }
 
-    void Update()
-    {
-
-    }
 }

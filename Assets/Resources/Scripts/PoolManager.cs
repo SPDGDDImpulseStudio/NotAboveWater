@@ -6,7 +6,6 @@ public class PoolManager : ISingleton<PoolManager> {
 
     int spawnBullets = 10;
 
-
     public List<GameObject> prefabsListToPool;
 
     List<int> toSpawn;
@@ -130,7 +129,16 @@ public class PoolManager : ISingleton<PoolManager> {
 
     void SpawnCircles() {
         GameObject GO = new GameObject();
-        GO.transform.SetParent(FindObjectOfType<Canvas>().transform);
+        Canvas[] newCanvases = FindObjectsOfType<Canvas>();
+        for (int i = 0; i < newCanvases.Length; i++)
+        {
+            if (newCanvases[i].name != "SceneChanger")
+            {
+                GO.transform.SetParent(newCanvases[i].transform);
+                break;
+            }
+        }
+       
         for (int i = 0; i < spawnBullets; i++)
         {
             GameObject newGO = Instantiate(circlePrefab);
