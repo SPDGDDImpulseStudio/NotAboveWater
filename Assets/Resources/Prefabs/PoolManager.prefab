@@ -51,5 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26186a9bde675e14480938ec6c65a8dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabsListToPool: []
   bulletPrefab: {fileID: 1453437051886272, guid: 75d84a7f28b8ddf4fbfe2458e3a3827b,
     type: 2}
+  circlePrefab: {fileID: 1837784110622252, guid: ff62abe20ca896c4eb43e7f8dcea5327,
+    type: 2}
+  fishPrefab: {fileID: 1155519933841982, guid: a4b8a9a7daed2fd47b2a50f6116db464, type: 2}

@@ -41,9 +41,24 @@ public class Tentacle : MonoBehaviour
         anim = GetComponent<Animator>();
         currentTimer += Random.Range(-1.2f, 1.2f);
         offSet += Random.Range(-15, 15) * transform.right;
+
         GameObject go = new GameObject();
         go.name = "Circle parent";
-        //PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
+        Canvas[] canvases = FindObjectsOfType<Canvas>();
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (canvases[i].name != "SceneChanger")
+            {
+                go.transform.SetParent(canvases[i].transform);
+                break;
+            }
+        }
+        PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
+        
+        GameObject go2 = new GameObject();
+        go2.name = "Stones Parent";
+        PoolManager.RequestCreatePool(stonePrefab, 10, go2.transform);
+        Debug.Log(circlePrefab.GetInstanceID());
         StartCoroutine(DebugUIUpdate());
         //StartCoroutine(AIUpdate());
     }
@@ -180,6 +195,9 @@ public class Tentacle : MonoBehaviour
         //temp += new Vector3(0, 180f, 0);
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         this.transform.LookAt(temp);
+
+        this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(Random.Range(1f,5f), 180f, 0);
+
         sw.Start();
         while (true)
         {
@@ -237,7 +255,8 @@ public class Tentacle : MonoBehaviour
     }
     void StoneAttack()
     {
-        GameObject bul = RepositionStone(PoolManager.Instance.DeqBullet(), tipAKAwhereToShootAt.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ; 
+        GameObject x = PoolManager.Instance.ReturnGOFromList(stonePrefab);
+        GameObject bul = RepositionStone(x.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ; 
        // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
 
         Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;

@@ -1,26 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletScript : PoolObject {
-
-	// Use this for initialization
+    
 	void Start () {
-        rb = GetComponent<Rigidbody>();
-        iniMass = rb.mass;
-        Debug.Log("HEY");
+        Init();
 	}
     float iniMass;
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
     Transform target;
     float speed = 100f, rotSpeed = 5f;
     Rigidbody rb;
+
     void FixedUpdate()
     {
-
         if (!target) return;
 
         Vector2 dir = target.position - rb.position;
@@ -36,5 +31,18 @@ public class BulletScript : PoolObject {
     void OnTriggerEnter(Collider x)
     {
         PoolManager.Instance.EnqBullet(this);
+        //TurnOff();
+    }
+
+    public override void Init()
+    {
+        rb = GetComponent<Rigidbody>();
+        iniMass = rb.mass;
+    }
+
+    public override void TurnOff()
+    {
+        gameObject.SetActive(false);
+
     }
 }

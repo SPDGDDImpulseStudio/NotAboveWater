@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class CircleManager : ISingleton<CircleManager> {
 
-    CirclePosUpdate circle;
+    public GameObject circlePrefab;
 
     public List<CirclePosUpdate> currCircle = new List<CirclePosUpdate>();
     
     void Start () {
-        if (!circle)  circle = Resources.Load<CirclePosUpdate>("Prefabs/Circle");
+        if (!circlePrefab)  circlePrefab = Resources.Load<GameObject>("Prefabs/Circle");
 
         Init();
 
@@ -22,7 +22,7 @@ public class CircleManager : ISingleton<CircleManager> {
         {
             if (canvases[i].name != "SceneChanger")
             {
-                PoolManager.RequestCreatePool(circle.gameObject, 5, canvases[i].transform);
+                PoolManager.RequestCreatePool(circlePrefab, 5, canvases[i].transform);
                 break;
             }
         }
@@ -66,7 +66,7 @@ public class CircleManager : ISingleton<CircleManager> {
         Canvas canvas = FindObjectOfType<Canvas>();
         for (int i = 0; i < num; i++)
         {
-            currCircle.Add(Instantiate(circle, pos[i], Quaternion.identity));
+            currCircle.Add(Instantiate(circlePrefab.GetComponent<CirclePosUpdate>(), pos[i], Quaternion.identity));
             currCircle[i].transform.SetParent(canvas.transform);
             CirclePosUpdate x = currCircle[i].GetComponent<CirclePosUpdate>();
             x._ref = go;

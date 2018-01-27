@@ -21,7 +21,7 @@ public class PoolManager : ISingleton<PoolManager> {
     void Start()
     {
         #region NotR2GenericPool
-
+        /*
         toSpawn = new List<int>() {
             4,
             9,
@@ -37,6 +37,7 @@ public class PoolManager : ISingleton<PoolManager> {
 
         SpawnBullets();
         SpawnCircles(); 
+        */
         #endregion
     }
     
@@ -72,7 +73,7 @@ public class PoolManager : ISingleton<PoolManager> {
         if (!poolDictionary.ContainsKey(poolKey))
         {
             poolDictionary.Add(poolKey, new Queue<GameObject>());
-            
+
             for (int i = 0; i < poolSize; i++)
             {
                 GameObject newObject = Instantiate(prefab);
@@ -80,8 +81,11 @@ public class PoolManager : ISingleton<PoolManager> {
                 newObject.transform.SetParent(parent);
                 newObject.GetComponent<PoolObject>().TurnOff();
             }
+        }else{
+#if UNITY_EDITOR
+            Debug.Log(prefab + " is already inside the pool!");
+#endif
         }
-
         FinishedCreatingPoolObject();
     }
     void FinishedCreatingPoolObject()
@@ -89,15 +93,7 @@ public class PoolManager : ISingleton<PoolManager> {
         isProcessingPath = false;
         TryProcessNext();
     }
-/*
-    Player 
-        VFX
-    AI/Tentacle 
-        Bullet
-        Circle
-    
-    
-         */
+
     public GameObject ReturnGOFromList(GameObject prefabToReturn)
     {
         int prefabKey = prefabToReturn.GetInstanceID();
