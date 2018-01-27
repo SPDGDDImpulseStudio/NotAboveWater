@@ -19,10 +19,7 @@ public class CirclePosUpdate : PoolObject,
 
     void Start()
     {
-        cam = Camera.main;
-        originScale = this.transform.localScale;
-        newScale.x = originScale.x * 2;
-        newScale.y = originScale.y / 2;
+     
         TurnOff();
     }
     
@@ -87,12 +84,17 @@ public class CirclePosUpdate : PoolObject,
 
     public override void Init()
     {
-        Init();
+        //Debug.Log(")
+        cam = Camera.main;
+        originScale = this.transform.localScale;
+        newScale.x = originScale.x * 2;
+        newScale.y = originScale.y / 2;
     }
     public void Init_(GameObject obj)
-    {
+    { 
         this.gameObject.SetActive(true);
         _ref = obj;
+        Init();
         StartCoroutine(PosUpdate());
         StartCoroutine(ScaleDown());
         StartCoroutine(RotateBoi());

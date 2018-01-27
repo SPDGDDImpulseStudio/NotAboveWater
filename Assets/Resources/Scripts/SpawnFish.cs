@@ -17,15 +17,23 @@ public class SpawnFish : MonoBehaviour {
     [Tooltip("The area where I spawn fishes")]
     public float spawnArea;
     void Start () {
+        GameObject fishParent = new GameObject();
+        fishParent.name = "Fish Pool";
+        PoolManager.RequestCreatePool(fishPrefab, maxNumberOfFish, fishParent.transform);
         Init();
 	}
 	public void Init()
     {
+        SpawnDemFishes();
+    }
+    public void SpawnDemFishes()
+    {
         StartCoroutine(SpawnFishes());
     }
-
     IEnumerator SpawnFishes()
     {
+        if (spawnFish) yield break;
+        spawnFish = true;
         float timer = 0f;
         while (true)
         {
@@ -38,15 +46,22 @@ public class SpawnFish : MonoBehaviour {
                     continue;
 
                 Vector3 pos = this.transform.position+Random.insideUnitSphere * spawnArea;
-                GameObject newFish = Instantiate(fishPrefab, pos, Quaternion.identity);
+                GameObject newFish = SpawnDahFish(fishPrefab, pos, Quaternion.identity);
                 fishes.Add(newFish);
             }
 
             
             yield return null;
         }
+        spawnFish = false;
     }
-
+    GameObject SpawnDahFish(GameObject prefab, Vector3 pos, Quaternion rot)
+    {
+        GameObject x = PoolManager.Instance.ReturnGOFromList(prefab);
+        x.transform.position = pos;
+        x.transform.rotation = rot;
+        return x;
+    }
 #if UNITY_EDITOR
 
     [Header("EDITOR ATTRIBUTES")]

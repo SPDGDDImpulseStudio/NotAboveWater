@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource), typeof(AudioSource))]
-public class AudioManager : MonoBehaviour {
+public class AudioManager : ISingleton<AudioManager> {
 
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
     public AudioSource audioSource, _audioSource, backGroundAudioSource;
@@ -74,28 +74,4 @@ public class AudioManager : MonoBehaviour {
         StartCoroutine(FadeTo());
 
     }
-
-    public static AudioManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<AudioManager>();
-                if (_instance == null)
-                {
-                    GameObject newGO = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/AudioManager"));
-                    _instance = newGO.GetComponent<AudioManager>();
-                }
-                if (_instance == null)
-                    Debug.LogError("STOP");
-                DontDestroyOnLoad(_instance.gameObject);
-            }
-            if (!_instance.gameObject.activeSelf) _instance.gameObject.SetActive(true);
-            return _instance;               
-        }
-    }
-
-    static AudioManager _instance;
-    
 }

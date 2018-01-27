@@ -78,6 +78,14 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
             }
         }
     }
+    //public void TurnOff()
+    //{
+    //    //When Change scene
+    //    _instance.gameObject.SetActive(false);
+    //    Refresh();
+    //}
+
+    //public abstract void Refresh();
 
     void OnDisable()
     {

@@ -11,8 +11,23 @@ public class CircleManager : ISingleton<CircleManager> {
     
     void Start () {
         if (!circle)  circle = Resources.Load<CirclePosUpdate>("Prefabs/Circle");
-	}
-	
+
+        Init();
+
+    }
+    public void Init()
+    {
+        Canvas[] canvases = FindObjectsOfType<Canvas>();
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (canvases[i].name != "SceneChanger")
+            {
+                PoolManager.RequestCreatePool(circle.gameObject, 5, canvases[i].transform);
+                break;
+            }
+        }
+    }
+
     public bool SetClear()
     {
         if (currCircle.Count == 0) return true;
@@ -42,7 +57,10 @@ public class CircleManager : ISingleton<CircleManager> {
             }
         }
     }
+    public void SpawnButtons(int num , GameObject go)
+    {
 
+    }
     public void SpawnButtons(int num, List<Vector2> _offSet, List<Vector2> pos, GameObject go)
     {
         Canvas canvas = FindObjectOfType<Canvas>();

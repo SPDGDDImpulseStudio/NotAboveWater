@@ -9,7 +9,7 @@ public class Tentacle : MonoBehaviour
     public bool rangeAttack = false;
     
     Animator anim;
-    public GameObject stonePrefab;
+    public GameObject stonePrefab, circlePrefab;
     public GameObject tipAKAwhereToShootAt;
     CirclePosUpdate circle;
     
@@ -20,13 +20,32 @@ public class Tentacle : MonoBehaviour
     public UnityEngine.UI.Text debugText;
 
     Vector3 offSet;
-
+    List<string> animClips = new List<string>();
+    public enum ANIM
+    {
+        
+    }
     void Start()
     {
+        animClips = new List<string>()
+        {
+            "Idle_Lookup",
+            "Idle_Lookdown",
+
+            "Attack_Up_Charge",
+            "Attack_Down_Charge",
+
+            "Damaged",
+            "Shoot_Charge",
+        };
         anim = GetComponent<Animator>();
         currentTimer += Random.Range(-1.2f, 1.2f);
         offSet += Random.Range(-15, 15) * transform.right;
+        GameObject go = new GameObject();
+        go.name = "Circle parent";
+        //PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
         StartCoroutine(DebugUIUpdate());
+        //StartCoroutine(AIUpdate());
     }
 
     IEnumerator DebugUIUpdate()
@@ -40,6 +59,33 @@ public class Tentacle : MonoBehaviour
         }
     }
 
+    //IEnumerator AIUpdate()
+    //{
+    //    AnimatorClipInfo[] animClips;
+    //    while (true)
+    //    {
+    //        animClips = anim.GetCurrentAnimatorClipInfo(0);
+
+    //        if(!selectOne || animClips.Length  == 0)
+    //        {
+
+
+    //        }
+    //        else
+    //        {
+
+    //        }
+
+
+
+
+
+
+    //        yield return new WaitForFixedUpdate();
+    //    }
+    //}
+
+
     void Update()
     {
         if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
@@ -52,34 +98,37 @@ public class Tentacle : MonoBehaviour
 
         if (newA.Length == 0) return;
 
-        if (newA[0].clip.name == "DamagedNHide") { DamagedToFalse(); NullifyCircle(); }
+        if (newA[0].clip.name == animClips[4]) { DamagedToFalse(); NullifyCircle(); }
+
+        if (newA[0].clip.name != "Attack_Up_After" && 
+            newA[0].clip.name != "Attack_Up_Release") {
+            Vector3 temp = new Vector3(
+              Player.Instance.transform.position.x + offSet.x,
+              this.transform.position.y,
+              Player.Instance.transform.position.z + offSet.z);
+
+            this.transform.LookAt(temp);
+        }
+        //this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
 
         if (currentTimer > attackTimer)
         {
-            if (newA[0].clip.name == "Idle")
+            if (newA[0].clip.name == animClips[0] || newA[0].clip.name == animClips[1])
             {
                 if (rangeAttack)
                 {
+                    anim.Play(animClips[5], -1);
                     StartCoroutine(WaitTillThrow());
                 }
                 else
                 {
+                    anim.Play((anim.GetBool("LOOKUP") ? animClips[2]:animClips[3]), -1);
                     StartCoroutine(Charge());
                 }
                 currentTimer = 0f;
                 attackTimer = Random.Range(3f, 6f);
             }
         }
-
-        Vector3 temp = new Vector3(
-            Player.Instance.transform.position.x + offSet.x,
-            this.transform.position.y,
-            Player.Instance.transform.position.z + offSet.z);
-
-        this.transform.LookAt(temp);
-        this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
-        //This is added cause the animation/model is reversed
-        //Thanks to JR's impact i feel like changing these to coroutines
     }
 
     public void OnHit()
@@ -95,38 +144,58 @@ public class Tentacle : MonoBehaviour
     {
         if (attack) yield break;
         attack = true;
-        anim.Play("Charge", -1);
         GetCircle();
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
+            if (newA.Length > 0)
+            {
+                if (newA[0].clip.name == animClips[4])
+                {
+                    DamagedToFalse();
+                    break;
+                }
+                else if (newA[0].clip.name == "Attack_Up_Release" || newA[0].clip.name == "Attack_Down_Release")
+                {
+                    NullifyCircle();
+                    StartCoroutine(ChargeAttack());
+                    break;
+                }
+            }
+           // else Debug.Log("ZEROOOOOOOO");
             
-            if (newA[0].clip.name == "DamagedNHide")
-            {
-                DamagedToFalse();
-                break;
-            }
-            else if (newA[0].clip.name == "Strike")
-            {
-                NullifyCircle();
-                ChargeAttack();
-                break;
-            }
 
             yield return null;
         }
         NullifyCircle();
         attack = false;
     }
-    void ChargeAttack()
+
+    IEnumerator ChargeAttack()
     {
         DamagedToFalse();
-        Debug.Log("Charge");
+        AnimatorClipInfo[] newA;
+        Vector3 temp = Player.Instance.transform.localPosition;
+        Debug.LogError("AJA");
+        //temp += new Vector3(0, 180f, 0);
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        this.transform.LookAt(temp);
+        sw.Start();
+        while (true)
+        {
+           newA = anim.GetCurrentAnimatorClipInfo(0);
+
+            if(newA[0].clip.name == "Attack_Up_After") break;
+            yield return null;
+        }
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
     }
 
     void GetCircle()
     {
-        circle = PoolManager.Instance.DeqCircle();
+        //circle = PoolManager.Instance.DeqCircle();
+        circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
         circle.Init_(tipAKAwhereToShootAt);
     }
     void NullifyCircle()
@@ -140,22 +209,26 @@ public class Tentacle : MonoBehaviour
     {
         if (attack) yield break;
         attack = true;
-        anim.Play("Dig", -1);
         Time.timeScale = 0.6f;
         GetCircle();
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
-            if (newA[0].clip.name == "Throw")
+            if (newA.Length > 0)
             {
-                StoneAttack();
-                break;
+                if (newA[0].clip.name == "Shoot_Release")
+                {
+                    StoneAttack();
+                    break;
+                }
+                else if (newA[0].clip.name == animClips[4])
+                {
+                    DamagedToFalse();
+                    break;
+                }
             }
-            else if (newA[0].clip.name == "DamagedNHide")
-            {
-                DamagedToFalse();
-                break;
-            }
+          //  else Debug.Log("ZEROOOOOOOO");
+           
             yield return null;
         }
         NullifyCircle();
@@ -164,24 +237,21 @@ public class Tentacle : MonoBehaviour
     }
     void StoneAttack()
     {
-        GameObject bul = //RepositionStone(PoolManager.Instance.DeqBullet(), tip.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ; 
-        Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
+        GameObject bul = RepositionStone(PoolManager.Instance.DeqBullet(), tipAKAwhereToShootAt.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ; 
+       // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
 
         Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
-        bul.GetComponent<Rigidbody>().velocity = dir * 15 * Time.deltaTime;
+        bul.GetComponent<Rigidbody>().velocity = dir * 10    * Time.deltaTime;
 
         DamagedToFalse();
     }
 
-
     BulletScript RepositionStone(BulletScript x ,Vector3 pos, Quaternion quat)
     {
-        Debug.Log(x.gameObject.name);
+        //Debug.Log(x.gameObject.name);
         if (x == null) return null;
         x.transform.position = pos;
         x.transform.rotation = quat;
         return x;
     }
-
-
 }
