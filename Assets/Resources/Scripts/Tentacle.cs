@@ -6,7 +6,7 @@ public class Tentacle : MonoBehaviour
 {
     float attackTimer = 4f, currentTimer = 0f;
     //Control from outside
-    public bool rangeAttack = false;
+    public bool rangeAttack = false, nearAttack = false;
     
     Animator anim;
     public GameObject stonePrefab, circlePrefab;
@@ -21,12 +21,10 @@ public class Tentacle : MonoBehaviour
 
     Vector3 offSet;
     List<string> animClips = new List<string>();
-    public enum ANIM
-    {
-        
-    }
+
     void Start()
     {
+        this.transform.localEulerAngles = new Vector3(0, Random.Range(0f,180f), 0f);
         animClips = new List<string>()
         {
             "Idle_Lookup",
@@ -66,10 +64,11 @@ public class Tentacle : MonoBehaviour
     IEnumerator DebugUIUpdate()
     {
         if (!debugText) yield break;
+        AnimatorClipInfo[] newA;
         while (true)
         {
-            AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
-            debugText.text = newA[0].clip.ToString();
+            newA = anim.GetCurrentAnimatorClipInfo(0);
+            debugText.text = this.gameObject.name + " | " + newA[0].clip.name +" | " + anim.GetBool("RELEASED");
             yield return null;
         }
     }
@@ -125,17 +124,18 @@ public class Tentacle : MonoBehaviour
             this.transform.LookAt(temp);
         }
         //this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
-
+        if (!nearAttack && !rangeAttack) return;
         if (currentTimer > attackTimer)
         {
             if (newA[0].clip.name == animClips[0] || newA[0].clip.name == animClips[1])
             {
+                SetFalse();
                 if (rangeAttack)
                 {
                     anim.Play(animClips[5], -1);
                     StartCoroutine(WaitTillThrow());
                 }
-                else
+                else if (nearAttack)
                 {
                     anim.Play((anim.GetBool("LOOKUP") ? animClips[2]:animClips[3]), -1);
                     StartCoroutine(Charge());
@@ -176,14 +176,24 @@ public class Tentacle : MonoBehaviour
                     StartCoroutine(ChargeAttack());
                     break;
                 }
-            }
-           // else Debug.Log("ZEROOOOOOOO");
-            
+                else if (!nearAttack && (newA[0].clip.name == animClips[2] || newA[0].clip.name == animClips[3]))
+                {
+                    anim.SetBool("RELEASED", true);
+                    break;
+                }
 
+            }
+            
             yield return null;
         }
         NullifyCircle();
-        attack = false;
+        attack = false; 
+
+    }
+    void SetFalse()
+    {
+        if(anim.GetBool("RELEASED")) //Debug.Log("fas");
+        anim.SetBool("RELEASED", false);
     }
 
     IEnumerator ChargeAttack()
@@ -204,10 +214,12 @@ public class Tentacle : MonoBehaviour
            newA = anim.GetCurrentAnimatorClipInfo(0);
 
             if(newA[0].clip.name == "Attack_Up_After") break;
+         
             yield return null;
         }
         sw.Stop();
-        Debug.Log(sw.ElapsedMilliseconds);
+        //Debug.Log(sw.ElapsedMilliseconds);
+
     }
 
     void GetCircle()
