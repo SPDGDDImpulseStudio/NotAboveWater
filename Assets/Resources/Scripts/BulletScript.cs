@@ -30,7 +30,6 @@ public class BulletScript : PoolObject {
 
     void OnTriggerEnter(Collider x)
     {
-        PoolManager.Instance.EnqBullet(this);
         //TurnOff();
     }
 
