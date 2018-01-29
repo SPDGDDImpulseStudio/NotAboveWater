@@ -20,7 +20,7 @@ public class Bullets : MonoBehaviour {
         if (x.GetComponent<AI>())
         {
             x.GetComponent<AI>().currHealth -= damage;
-            Stats.Instance.roundsHit++;
+            //Stats.Instance.roundsHit++;
         }
     }
 }

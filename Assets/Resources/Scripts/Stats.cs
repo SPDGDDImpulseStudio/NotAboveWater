@@ -2,28 +2,49 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stats : MonoBehaviour
+public class Stats : ISingleton<Stats>
 {
     #region Attributes
-    public static Stats Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<Stats>();
-                if (_instance == null)
-                    Debug.LogError("STOP");
-                DontDestroyOnLoad(_instance.gameObject);
-            }
-            if (!_instance.gameObject.activeSelf)
-                _instance.gameObject.SetActive(true);
-            return _instance;
-        }
-    }
-    static Stats _instance;
 
-    public float roundsFired, roundsHit, damageTaken, timeTaken, oxygenLeftover, oxygenLost, healthCollected, secretCollected;
+    public float roundsFired0, roundsHit1, damageTaken2, timeTaken3, oxygenLeftover4, oxygenLost5, healthCollected6, secretCollected7, chainComboTOTAL8, chainComboMAX9;
 
     #endregion
+
+    public void TrackStats(int stats, float data)
+    {
+        switch (stats)
+        {
+            case 0:
+                roundsFired0 += data;
+                break;
+            case 1:
+                roundsHit1 += data;
+                break;
+            case 2:
+                damageTaken2 += data;
+                break;
+            case 3:
+                timeTaken3 += data;
+                break;
+            case 4:
+                oxygenLeftover4 += data;
+                break;
+            case 5:
+                oxygenLost5 += data;
+                break;
+            case 6:
+                healthCollected6 += data;
+                break;
+            case 7:
+                secretCollected7 += data;
+                break;
+            case 8:
+                chainComboTOTAL8 += data;
+                break;
+            case 9:
+                chainComboMAX9 += data;
+                break;
+
+        }
+    }
 }

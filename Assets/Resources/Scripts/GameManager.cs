@@ -69,6 +69,12 @@ public class GameManager : ISingleton<GameManager> {
     public const string leaderboardName = leaderboard + "NAME";
 
     public const string leaderboardScore = leaderboard + "SCORE";
+
+    public const string leaderboardAccuracy = leaderboard + "ACCURACY";
+
+    public const string leaderboardTreasures = leaderboard + "TREASURES";
+
+    public const string leaderboardTime = leaderboard + "TIME";
     
     public float playerScore = 0;
 
@@ -256,6 +262,12 @@ public class GameManager : ISingleton<GameManager> {
                         + " Score: " + PlayerPrefs.GetFloat(leaderboardScore + i.ToString())
 
                         //+" Jsoned " + JsonUtility.FromJson<string>(PlayerPrefs.GetString(leaderboard + i.ToString()))
+
+                        + " Accuracy: " + PlayerPrefs.GetFloat(leaderboardAccuracy + i.ToString())
+
+                        + " Treasures: " + PlayerPrefs.GetFloat(leaderboardTreasures + i.ToString())
+
+                        + " Time Taken: " + PlayerPrefs.GetFloat(leaderboardTime + i.ToString())
 
                         );
             }

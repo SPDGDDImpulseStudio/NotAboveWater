@@ -25,7 +25,7 @@ public class Player : ISingleton<Player> {
     public Text reloadText;
     public Text oxygenText;
     public Slider compassSlider;
-    
+
     List<Image> bullets = new List<Image>();
 
     [Header("[Player's Attributes]")]
@@ -44,6 +44,8 @@ public class Player : ISingleton<Player> {
         , shootTimerNow;
     
     float healthBarCount1, healthBarCount2;
+
+
 
     #endregion
 
@@ -117,7 +119,7 @@ public class Player : ISingleton<Player> {
 
     void Update()
     {
-        Stats.Instance.timeTaken += 1 * Time.deltaTime;
+        Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
         if (currSuitHealth < 0)
             Debug.Log("death");
 
@@ -169,7 +171,7 @@ public class Player : ISingleton<Player> {
                     else
                     {
                         currBullet--;
-                        Stats.Instance.roundsFired++;
+                        Stats.Instance.TrackStats(0, 1);
                     }
                 }else{
                     if (!audioSource.isPlaying)
@@ -188,7 +190,7 @@ public class Player : ISingleton<Player> {
     {
         yield return new WaitForSeconds(shootEvery);
         currBullet--;
-        Stats.Instance.roundsFired++;
+        Stats.Instance.TrackStats(0, 1);
     }
     bool reloading = false;//, suitUp = true;
 
@@ -240,7 +242,7 @@ public class Player : ISingleton<Player> {
                 yield break;
             }
             currOxygen -= oxyDrop;
-            Stats.Instance.oxygenLost += oxyDrop;
+            Stats.Instance.TrackStats(5, oxyDrop);
             yield return null;
         }
     }
@@ -262,7 +264,7 @@ public class Player : ISingleton<Player> {
             healthBarCount2 = maxHealth;
             if (currOxygen > 0) { healthDrop_ = false; StartCoroutine(OxyDropping()); yield break; }
             currHealth -= healthDrop;
-            Stats.Instance.damageTaken -= healthDrop;
+            Stats.Instance.TrackStats(2, healthDrop);
             yield return null;
         }
     }
@@ -346,7 +348,7 @@ public class Player : ISingleton<Player> {
     void DamageShark(GameObject targetHitName, Vector3 pointHitPosition)
     {
         targetHitName.GetComponent<AI>().currHealth -= bulletDamage;
-        Stats.Instance.roundsHit++;
+        Stats.Instance.TrackStats(1, 1);
         Instantiate(VFX_HitShark, pointHitPosition, targetHitName.transform.rotation);
     }
 
