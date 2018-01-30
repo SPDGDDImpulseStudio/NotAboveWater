@@ -16,13 +16,8 @@ public class CirclePosUpdate : PoolObject,
     public Vector2 offSet;
     public GameObject _ref;
     Camera cam;
-
-    void Start()
-    {
-     
-        TurnOff();
-    }
-    
+    bool bootUp = false;
+  
     IEnumerator RotateBoi()
     {
         Vector3 newRot = this.transform.localEulerAngles;
@@ -41,11 +36,13 @@ public class CirclePosUpdate : PoolObject,
     {
         Vector3 theScale = this.transform.localScale;
         int Rnd = UnityEngine.Random.Range(1, 5);
+
         while (this.transform.localScale.x > 0.013f)
         {
 
             theScale.x -= Rnd * Time.deltaTime / 100;
             theScale.y -= Rnd * Time.deltaTime / 100;
+
             this.transform.localScale = theScale;
             yield return new WaitForFixedUpdate();
         }
@@ -53,16 +50,17 @@ public class CirclePosUpdate : PoolObject,
     }
     IEnumerator PosUpdate()
     {
+        Vector3 posOnScreen;
         while (true)
         {
-            Vector3 posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
-            
+            posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
+
             posOnScreen.x = (0 < posOnScreen.x && posOnScreen.x < Screen.width) ? posOnScreen.x :
                (posOnScreen.x < 0) ? 0 : Screen.width;
 
             posOnScreen.y = (0 < posOnScreen.y && posOnScreen.y < Screen.height) ? posOnScreen.y :
                 (posOnScreen.y < 0) ? 0 : Screen.height;
-
+            //Debug.Log(posOnScreen);
 
             if((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x)> 0)  posOnScreen.x += offSet.x;
 
@@ -72,6 +70,36 @@ public class CirclePosUpdate : PoolObject,
             yield return new WaitForFixedUpdate();
         }
     }
+    void Start()
+    {
+        BootUp();
+    }
+    void BootUp()
+    {
+        if (bootUp) return;
+        bootUp = true;
+        cam = Camera.main;
+        originScale = this.transform.localScale;
+        newScale.x = originScale.x * 2;
+        newScale.y = originScale.y / 2;
+    }
+    //void FixedUpdate()
+    //{
+    //    if (!_ref) return;
+    //    Vector3 posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
+    //    posOnScreen.x = (0 < posOnScreen.x && posOnScreen.x < Screen.width) ? posOnScreen.x :
+    //       (posOnScreen.x < 0) ? 0 : Screen.width;
+
+    //    posOnScreen.y = (0 < posOnScreen.y && posOnScreen.y < Screen.height) ? posOnScreen.y :
+    //        (posOnScreen.y < 0) ? 0 : Screen.height;
+
+
+    //    if ((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x) > 0) posOnScreen.x += offSet.x;
+
+    //    if ((posOnScreen.y + offSet.y) < Screen.height && (posOnScreen.y + offSet.y) > 0) posOnScreen.y += offSet.y;
+
+    //    this.transform.position = posOnScreen;
+    //}
 
     void DestroySelf()
     {
@@ -85,14 +113,13 @@ public class CirclePosUpdate : PoolObject,
     public override void Init()
     {
         //Debug.Log(")
+        BootUp();
         cam = Camera.main;
-        originScale = this.transform.localScale;
-        newScale.x = originScale.x * 2;
-        newScale.y = originScale.y / 2;
     }
     public void Init_(GameObject obj)
     { 
         this.gameObject.SetActive(true);
+
         _ref = obj;
         Init();
         StartCoroutine(PosUpdate());
@@ -102,8 +129,8 @@ public class CirclePosUpdate : PoolObject,
 
     public override void TurnOff()
     {
+        BootUp();
         _ref = null;
-        PoolManager.Instance.EnqCircle(this);
         this.transform.localScale = originScale;
         this.gameObject.SetActive(false);
     }

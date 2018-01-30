@@ -7,12 +7,12 @@ public class Tentacle : MonoBehaviour
     float attackTimer = 4f, currentTimer = 0f;
     //Control from outside
     public bool rangeAttack = false, nearAttack = false;
-    
+
     Animator anim;
     public GameObject stonePrefab, circlePrefab;
     public GameObject tipAKAwhereToShootAt;
     CirclePosUpdate circle;
-    
+
     public bool selectOne = false;
 
     bool attack = false;
@@ -24,7 +24,7 @@ public class Tentacle : MonoBehaviour
 
     void Start()
     {
-        this.transform.localEulerAngles = new Vector3(0, Random.Range(0f,180f), 0f);
+        this.transform.localEulerAngles = new Vector3(0, Random.Range(0f, 180f), 0f);
         animClips = new List<string>()
         {
             "Idle_Lookup",
@@ -52,11 +52,11 @@ public class Tentacle : MonoBehaviour
             }
         }
         PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
-        
+
         GameObject go2 = new GameObject();
         go2.name = "Stones Parent";
         PoolManager.RequestCreatePool(stonePrefab, 10, go2.transform);
-        Debug.Log(circlePrefab.GetInstanceID());
+        //Debug.Log(circlePrefab.GetInstanceID());
         StartCoroutine(DebugUIUpdate());
         //StartCoroutine(AIUpdate());
     }
@@ -68,7 +68,7 @@ public class Tentacle : MonoBehaviour
         while (true)
         {
             newA = anim.GetCurrentAnimatorClipInfo(0);
-            debugText.text = this.gameObject.name + " | " + newA[0].clip.name +" | " + anim.GetBool("RELEASED");
+            debugText.text = this.gameObject.name + " | " + newA[0].clip.name + " | " + anim.GetBool("RELEASED");
             yield return null;
         }
     }
@@ -105,7 +105,7 @@ public class Tentacle : MonoBehaviour
         if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
         if (!selectOne)
         {
-            DamagedToFalse();            return;
+            DamagedToFalse(); return;
         }
 
         AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
@@ -114,7 +114,7 @@ public class Tentacle : MonoBehaviour
 
         if (newA[0].clip.name == animClips[4]) { DamagedToFalse(); NullifyCircle(); }
 
-        if (newA[0].clip.name != "Attack_Up_After" && 
+        if (newA[0].clip.name != "Attack_Up_After" &&
             newA[0].clip.name != "Attack_Up_Release") {
             Vector3 temp = new Vector3(
               Player.Instance.transform.position.x + offSet.x,
@@ -137,7 +137,7 @@ public class Tentacle : MonoBehaviour
                 }
                 else if (nearAttack)
                 {
-                    anim.Play((anim.GetBool("LOOKUP") ? animClips[2]:animClips[3]), -1);
+                    anim.Play((anim.GetBool("LOOKUP") ? animClips[2] : animClips[3]), -1);
                     StartCoroutine(Charge());
                 }
                 currentTimer = 0f;
@@ -155,11 +155,11 @@ public class Tentacle : MonoBehaviour
         anim.SetBool("DAMAGED", false);
     }
 
-   IEnumerator Charge()
+    IEnumerator Charge()
     {
         if (attack) yield break;
         attack = true;
-        GetCircle();
+        GetCircle(tipAKAwhereToShootAt);
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
@@ -183,17 +183,17 @@ public class Tentacle : MonoBehaviour
                 }
 
             }
-            
+
             yield return null;
         }
         NullifyCircle();
-        attack = false; 
+        attack = false;
 
     }
     void SetFalse()
     {
-        if(anim.GetBool("RELEASED")) //Debug.Log("fas");
-        anim.SetBool("RELEASED", false);
+        if (anim.GetBool("RELEASED")) //Debug.Log("fas");
+            anim.SetBool("RELEASED", false);
     }
 
     IEnumerator ChargeAttack()
@@ -201,20 +201,24 @@ public class Tentacle : MonoBehaviour
         DamagedToFalse();
         AnimatorClipInfo[] newA;
         Vector3 temp = Player.Instance.transform.localPosition;
+        //temp += new Vector3(0, 180f, 0); 
+        Vector3 newPos = Camera.main.WorldToScreenPoint(tipAKAwhereToShootAt.transform.position);
+        Debug.Log(newPos);
+
+        Player.Instance.ShakeCam();
         Debug.LogError("AJA");
-        //temp += new Vector3(0, 180f, 0);
+
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         this.transform.LookAt(temp);
 
-        this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(Random.Range(1f,5f), 180f, 0);
-
+        this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(Random.Range(1f, 5f), 180f, 0);
         sw.Start();
         while (true)
         {
-           newA = anim.GetCurrentAnimatorClipInfo(0);
+            newA = anim.GetCurrentAnimatorClipInfo(0);
 
-            if(newA[0].clip.name == "Attack_Up_After") break;
-         
+            if (newA[0].clip.name == "Attack_Up_After") break;
+
             yield return null;
         }
         sw.Stop();
@@ -222,25 +226,24 @@ public class Tentacle : MonoBehaviour
 
     }
 
-    void GetCircle()
+    void GetCircle(GameObject x)
     {
-        //circle = PoolManager.Instance.DeqCircle();
         circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        circle.Init_(tipAKAwhereToShootAt);
+        circle.Init_(x);
     }
     void NullifyCircle()
     {
         if (circle == null) return;
         circle.TurnOff();
-        PoolManager.Instance.EnqCircle(circle);
         circle = null;
     }
+
     IEnumerator WaitTillThrow()
     {
         if (attack) yield break;
         attack = true;
         Time.timeScale = 0.6f;
-        GetCircle();
+        //GetCircle();
         while (true)
         {
             AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
@@ -268,9 +271,9 @@ public class Tentacle : MonoBehaviour
     void StoneAttack()
     {
         GameObject x = PoolManager.Instance.ReturnGOFromList(stonePrefab);
-        GameObject bul = RepositionStone(x.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ; 
-       // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
-
+        GameObject bul = RepositionStone(x.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ;
+        // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
+        GetCircle(x);
         Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
         bul.GetComponent<Rigidbody>().velocity = dir * 10    * Time.deltaTime;
 

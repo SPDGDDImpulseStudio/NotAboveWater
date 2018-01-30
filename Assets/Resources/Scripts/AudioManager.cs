@@ -9,13 +9,10 @@ public class AudioManager : ISingleton<AudioManager> {
     public AudioSource audioSource, _audioSource, backGroundAudioSource;
 
     int currInt, rndInt;
-    // Use this for initialization
+
     void Start()
     {
-        //audioSource = GetComponent<AudioSource>();
-        StartCoroutine(FadeTo());
-        //audioSource.clip = audioClips[1];
-
+        //StartCoroutine(FadeTo());
     }
 
     IEnumerator FadeTo()

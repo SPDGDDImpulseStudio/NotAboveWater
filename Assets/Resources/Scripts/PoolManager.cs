@@ -4,42 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PoolManager : ISingleton<PoolManager> {
-    #region NotRelatedToGenericPool
-
-    int spawnBullets = 10;
-
-    public List<GameObject> prefabsListToPool;
-
-    List<int> toSpawn;
-
-    #endregion
-
-    public GameObject bulletPrefab, circlePrefab, fishPrefab;
-
+    
     Dictionary<int, Queue<GameObject>> poolDictionary = new Dictionary<int, Queue<GameObject>>();
-
-    void Start()
-    {
-        #region NotR2GenericPool
-        /*
-        toSpawn = new List<int>() {
-            4,
-            9,
-            6
-        };
-
-        prefabsListToPool = new List<GameObject>()
-        {
-            circlePrefab,
-            bulletPrefab,
-            fishPrefab
-        };
-
-        SpawnBullets();
-        SpawnCircles(); 
-        */
-        #endregion
-    }
     
     bool isProcessingPath = false;
 
@@ -79,6 +45,7 @@ public class PoolManager : ISingleton<PoolManager> {
                 GameObject newObject = Instantiate(prefab);
                 poolDictionary[poolKey].Enqueue(newObject);
                 newObject.transform.SetParent(parent);
+                newObject.name = prefab.name +" " + i;
                 newObject.GetComponent<PoolObject>().TurnOff();
             }
         }else{
@@ -94,6 +61,7 @@ public class PoolManager : ISingleton<PoolManager> {
         TryProcessNext();
     }
 
+    //In a sense, any script that calls this should've req for prefab making + storing
     public GameObject ReturnGOFromList(GameObject prefabToReturn)
     {
         int prefabKey = prefabToReturn.GetInstanceID();
@@ -112,138 +80,6 @@ public class PoolManager : ISingleton<PoolManager> {
             return null;
         }
     }
-    //NotR
-    void SpawnPoolObject()
-    {
-        for (int i = 0; i < prefabsListToPool.Count; i++)
-        {
-            GameObject GO = new GameObject();
-            if (prefabsListToPool[i] == circlePrefab)
-            {
-                Canvas[] newCanvases = FindObjectsOfType<Canvas>();
-                for (int j = 0; j < newCanvases.Length; j++)
-                {
-                    if (newCanvases[j].name != "SceneChanger")
-                    {
-                        GO.transform.SetParent(newCanvases[j].transform);
-                        break;
-                    }
-                }
-            }
-            GO.name = prefabsListToPool[i].name + " Parent";
-            int poolKey = prefabsListToPool[i].GetInstanceID();
-            if (!poolDictionary.ContainsKey(poolKey))
-            {
-                //poolDictionary.Add(poolKey, new List<PoolObject>());
-
-                for (int j = 0; j < toSpawn[i]; j++)
-                {
-                    GameObject newGO = Instantiate(prefabsListToPool[i]);
-
-                    newGO.name = prefabsListToPool[i].ToString() + j;
-                    newGO.transform.SetParent(GO.transform);
-                    //poolDictionary[poolKey].Add(newGO.GetComponent<PoolObject>());
-                }
-            }
-        }
-    }
-
-    #region BulletPool
-    
-    Queue<BulletScript> bulletQueue = new Queue<BulletScript>();
-
-    List<BulletScript> onUseBulletList = new List<BulletScript>();
-
-    void SpawnBullets()
-    {
-        GameObject GO = new GameObject();
-        for (int i = 0; i < spawnBullets; i++)
-        {
-            GameObject newGO = Instantiate(bulletPrefab);
-            newGO.name = "Bullet " + i;
-            newGO.transform.SetParent(GO.transform);
-            EnqBullet(newGO.GetComponent<BulletScript>());
-        }
-        GO.name = "Bullet Parent";
-    }
-    public BulletScript DeqBullet()
-    {
-        if (bulletQueue.Count > 0)
-        {
-            BulletScript x = bulletQueue.Dequeue();
-            onUseBulletList.Add(x);
-            return x;
-        }
-        else
-        {
-            BulletScript x = onUseBulletList[0];
-            return x;
-        }
-    }
-
-    public void EnqBullet(BulletScript x)
-    {
-        bulletQueue.Enqueue(x);
-        CheckBulletInList(x);
-        x.gameObject.SetActive(false);
-    }
-
-    void CheckBulletInList(BulletScript x)
-    {
-        if (onUseBulletList.Count < 0) return;
-        for (int i = 0; i < onUseBulletList.Count; i++)
-        {
-            if (onUseBulletList[i] == x)
-            {
-                onUseBulletList.RemoveAt(i);
-                break;
-            }
-        }
-    }
-
-
-    #endregion
-    #region CirclePool
-
-    Queue<CirclePosUpdate> circleQueue = new Queue<CirclePosUpdate>();
-
-    public void EnqCircle(CirclePosUpdate x)
-    {
-        circleQueue.Enqueue(x);
-    }
-
-    void SpawnCircles()
-    {
-        GameObject GO = new GameObject();
-        Canvas[] newCanvases = FindObjectsOfType<Canvas>();
-        for (int i = 0; i < newCanvases.Length; i++)
-        {
-            if (newCanvases[i].name != "SceneChanger")
-            {
-                GO.transform.SetParent(newCanvases[i].transform);
-                break;
-            }
-        }
-
-        for (int i = 0; i < spawnBullets; i++)
-        {
-            GameObject newGO = Instantiate(circlePrefab);
-            newGO.name = "Circle " + i;
-            newGO.transform.SetParent(GO.transform);
-            EnqCircle(newGO.GetComponent<CirclePosUpdate>());
-        }
-        GO.name = "Circle Parent";
-    }
-
-
-    public CirclePosUpdate DeqCircle()
-    {
-        if (circleQueue.Count == 0) return null;
-        else
-            return circleQueue.Dequeue();
-    } 
-    #endregion
-        
 }
 struct PathRequest
 {
@@ -260,19 +96,4 @@ struct PathRequest
         parent = _parent;
     }
 }
-//public class ObjectInstance
-//{
-//    GameObject go;
-//    Transform _t;
-//    bool hasPoolObject;
-
-//    public ObjectInstance(GameObject _go)
-//    {
-//        go = _go;
-//        if (go.GetComponent<PoolObject>())
-//        {
-
-//        }
-//    }
-//}
 

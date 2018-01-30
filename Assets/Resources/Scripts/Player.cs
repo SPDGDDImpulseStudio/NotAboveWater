@@ -44,16 +44,15 @@ public class Player : ISingleton<Player> {
         , shootTimerNow;
     
     float healthBarCount1, healthBarCount2;
-
-
+    
+    Cinemachine.CinemachineBrain CB;
 
     #endregion
 
     void Start () {
-
         Init();
         AssignTentacleList();
-        StartCoroutine(TriggerAI());
+        StartCoroutine(TriggerTentacles());
     }
 
     public void Init()
@@ -65,6 +64,14 @@ public class Player : ISingleton<Player> {
         currBullet = maxBullet;
         reloadTime = reloadingClip.length;
 
+        GameObject parentOf = new GameObject();
+        parentOf.name = "VFX Container";
+
+        PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
+        PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
+        PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
+
+        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
 
         bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<UnityEngine.UI.Image>());
         StartCoroutine(UIUpdate());
@@ -77,16 +84,17 @@ public class Player : ISingleton<Player> {
         audioSource.PlayOneShot(clip, volume);
         //audioSource.
     }
+
     List<Tentacle> tentacles = new List<Tentacle>();
     public void AssignTentacleList()
     {
-        tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());        
+        tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
+        StartCoroutine(TriggerTentacles());        
     }
 
-    public IEnumerator TriggerAI()
+    IEnumerator TriggerTentacles()
     {
         if (tentacles.Count < 0) yield break;
-
         while (true)
         {
             List<float> dist = new List<float>();
@@ -94,25 +102,27 @@ public class Player : ISingleton<Player> {
             for (int i = 0; i < tentacles.Count; i ++)
             {
                 float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
-
                 dist.Add(newV3);
             }
 
-            int chosen = 0;
+            int chosen = 0, chosen2 = 0;
             for (int j = chosen; j < tentacles.Count - 1; j++)
             {
+
                 if (dist[chosen] < dist[j + 1]) chosen = j + 1;
+
+                if (dist[chosen2] > dist[j + 1]) chosen2 = j + 1;
             }
 
+            tentacles[chosen2].nearAttack = true;
             tentacles[chosen].rangeAttack = true;
             for(int k = 0; k < tentacles.Count; k++)
             {
-                if (k == chosen) continue;
-
-                tentacles[k].rangeAttack = false;
+                if (k != chosen) tentacles[k].rangeAttack = false;
+                if (k != chosen2) tentacles[k].nearAttack = false;
             }
 
-            yield return new WaitForSeconds(1.2f);
+            yield return new WaitForSeconds(3.2f);
         }
     }
     
@@ -120,18 +130,14 @@ public class Player : ISingleton<Player> {
     void Update()
     {
         Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
-        if (currSuitHealth < 0)
-            Debug.Log("death");
+        if (currSuitHealth < 0)         Debug.Log("death");
 
-        if (shootTimerNow < shootEvery)
-            shootTimerNow += Time.deltaTime;
+        if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
         
         if (Input.GetMouseButton(0))
         {
             RaycastHit hit;
             Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
-            //Debug.DrawRay(point.origin, point.direction);
-            //Debug.DrawRay(transform.position, point,Color.green);
 
             if (shootTimerNow > shootEvery && !reloading)
             {
@@ -186,53 +192,18 @@ public class Player : ISingleton<Player> {
         if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
 
     }
-    public IEnumerator WorkAroundButton()
+    IEnumerator UIUpdate()
     {
-        yield return new WaitForSeconds(shootEvery);
-        currBullet--;
-        Stats.Instance.TrackStats(0, 1);
-    }
-    bool reloading = false;//, suitUp = true;
-
-    public IEnumerator Reload()
-    {
-        if (reloading) yield break; 
-        reloading = true;
-        PlayAudioClip(reloadingClip);
-        yield return new WaitForSeconds(reloadingClip.length);
-
-        for(int i = 0; 0 < maxBullet - 1; i++)
+        while (true)
         {
-            int b = (maxBullet -1) - i;
-            
-            if (b < 0) break;
-            
-            if (!bullets[b].gameObject.activeSelf)
-            {
-                bullets[b].gameObject.SetActive(true);
-            }
+            compassSlider.value = (this.transform.localEulerAngles.y / 360f);
+            oxygenBar.value = healthBarCount1 / healthBarCount2;
+            yield return null;
         }
-        //while (!bullets[0].gameObject.activeSelf)
-        //{
-        //        Debug.Log(CurrImage());
-        //    if(!bullets[CurrImage()].gameObject.activeSelf)
-        //    bullets[CurrImage()].gameObject.SetActive(true);
-        //    yield return null;
-        //}
-        currBullet = maxBullet;
-
-        reloading = false;
-        //gunShootingBar.maxValue = 1;
-
     }
 
     public IEnumerator OxyDropping()
     {
-        Image[] x = oxygenBar.GetComponentsInChildren<Image>(); // = Color.blue + new Color(0,0.5f, 0);
-        for(int i = 0; i < x.Length; i++)
-        {
-            //x[i].color = Color.blue + new Color(0, 0.5f, 0);
-        }
         while (true)
         {
             healthBarCount1 = currOxygen;
@@ -249,14 +220,8 @@ public class Player : ISingleton<Player> {
     bool healthDrop_ = false;
     public IEnumerator HealthDropping()
     {
-        float newNum =96 / 225;
-        Image[] x = oxygenBar.GetComponentsInChildren<Image>(); // = Color.blue + new Color(0,0.5f, 0);
-        for (int i = 0; i < x.Length; i++)
-        {
-            x[i].color = Color.red + new Color(0, 0, newNum);
-        }
-        //oxygenBar.GetComponentsInChildren<Image>().color = Color.red + new Color(0, 0, newNum);
-        if (healthDrop_) yield break;
+       
+         if (healthDrop_) yield break;
         healthDrop_ = true;
         while (true)
         {
@@ -269,26 +234,6 @@ public class Player : ISingleton<Player> {
         }
     }
 
-    //public IEnumerator SuittedUp()
-    //{
-    //    yield return new WaitUntil(() => currSuitHealth >= 0);
-    //    suitUp = true;
-    //    healthBarCount1 = currSuitHealth;
-    //    healthBarCount2 = maxSuitHealth;
-    //    //Here i can set the image for UI too
-    //    StartCoroutine(SuitDown());
-    //}
-    //public IEnumerator SuitDown()
-    //{
-    //    yield return new WaitUntil(() => currSuitHealth <= 0);
-
-    //    suitUp = false;
-    //    //StartCoroutine(HealthDropping());
-    //    //healthBarCount1 = currHealth;
-    //    //healthBarCount2 = maxHealth;
-    //    //Here i can set the image for UI too
-    //    StartCoroutine(SuittedUp());
-    //}
     void ImageUpdate(bool x)
     {
         bullets[CurrImage()].gameObject.SetActive(x);
@@ -299,29 +244,53 @@ public class Player : ISingleton<Player> {
         return  maxBullet - currBullet;
     }
   
-    IEnumerator UIUpdate()
-    {
-        while (true)
-        {
-            compassSlider.value = (this.transform.localEulerAngles.y/360f);
-            oxygenBar.value = healthBarCount1 / healthBarCount2;
-            yield return null;
-        }
-    }
 
     public void AddOxygen(float x)
     {
-        //currOxygen = ((x + currOxygen) < maxOxygen) ? currOxygen + x : maxOxygen;
-        //if ((x + currOxygen) < maxOxygen)
-        //    currOxygen += x;
-        //else
-        //    currOxygen = maxOxygen;
         StartCoroutine(AddOx(x));
+    }
+
+    public void ShakeCam()
+    {
+        StartCoroutine(ShakerShaker());
+    }
+
+    #region PrivateCoroutines
+
+    IEnumerator WorkAroundButton()
+    {
+        yield return new WaitForSeconds(shootEvery);
+        currBullet--;
+        Stats.Instance.TrackStats(0, 1);
+    }
+
+    bool reloading = false;
+    IEnumerator Reload()
+    {
+        if (reloading) yield break;
+        reloading = true;
+        PlayAudioClip(reloadingClip);
+        yield return new WaitForSeconds(reloadingClip.length);
+
+        for (int i = 0; 0 < maxBullet - 1; i++)
+        {
+            int b = (maxBullet - 1) - i;
+
+            if (b < 0) break;
+
+            if (!bullets[b].gameObject.activeSelf)
+            {
+                bullets[b].gameObject.SetActive(true);
+            }
+        }
+
+        currBullet = maxBullet;
+        reloading = false;
     }
 
     IEnumerator AddOx(float x)
     {
-       //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
         float amtToAdd = x,
             finishAddingIn = 4,
@@ -330,7 +299,7 @@ public class Player : ISingleton<Player> {
 
         //Debug.Log("finishAddingIn: " + finishAddingIn +  " perUpdatesAdd: " + perUpdateAdd);
         //timer.Start();
-        while(amtToAdd > 0)
+        while (amtToAdd > 0)
         {
             amtToAdd -= perUpdateAdd;
             currOxygen = ((perUpdateAdd + currOxygen) < maxOxygen) ? currOxygen + perUpdateAdd : maxOxygen;
@@ -344,6 +313,21 @@ public class Player : ISingleton<Player> {
         //timer.Stop();
         //Debug.Log(timer.Elapsed + " | " + timer.ElapsedMilliseconds);
     }
+    IEnumerator ShakerShaker()
+    {
+        CB.enabled = false;
+        float timer = 0, timerNow = 1f;
+        while (timer < timerNow)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        CB.enabled = true;
+
+    }
+
+    #endregion
 
     void DamageShark(GameObject targetHitName, Vector3 pointHitPosition)
     {
@@ -357,5 +341,12 @@ public class Player : ISingleton<Player> {
         Quaternion newRotation = Quaternion.FromToRotation(transform.up, pointHitPosition.normalized);
         Instantiate(VFX_BulletSpark, pointHitPosition, targetHitName.transform.rotation);
         Instantiate(VFX_BulletMark, pointHitPosition, targetHitName.transform.rotation);
+    }
+    GameObject GetGOWithPrefab(GameObject prefab, Vector3 pos, Quaternion quat)
+    {
+        GameObject x = PoolManager.Instance.ReturnGOFromList(prefab);
+        x.transform.position = pos;
+        x.transform.rotation = quat;
+        return x;
     }
 }
