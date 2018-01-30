@@ -27,8 +27,22 @@ public class SceneChanger : ISingleton<SceneChanger> {
     public void OnLevelLoaded(Scene scene, LoadSceneMode mode)
     {
         levelLoaded = true;
+        StartCoroutine(WhenFaderFades(scene.buildIndex));
     }
 
+    IEnumerator WhenFaderFades(int levelIndex)
+    {
+        yield return new WaitUntil(() => !levelLoaded);
+        switch (levelIndex)
+        {
+            case 0: break; //Main Menu
+                           //Somewhere i reset the whole thing i needa turn all singletons except this off and on again.
+                           //In a sense, this becomes the 'gameManager'
+            case 1: break;
+            case 2: break;
+            case 3: break;
+        }
+    }
     public void Fading(string toLoad)
     {
         //Build Index:
@@ -49,7 +63,6 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         StartFadeCoroutine(toLoad);
     }
-
 
     public void ExitGame()
     {

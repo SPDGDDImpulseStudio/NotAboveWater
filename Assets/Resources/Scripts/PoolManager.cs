@@ -55,6 +55,10 @@ public class PoolManager : ISingleton<PoolManager> {
         }
         FinishedCreatingPoolObject();
     }
+    public void ClearPool()
+    {
+        poolDictionary.Clear();
+    }
     void FinishedCreatingPoolObject()
     {
         isProcessingPath = false;

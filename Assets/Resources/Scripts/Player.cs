@@ -51,7 +51,6 @@ public class Player : ISingleton<Player> {
 
     void Start () {
         Init();
-        AssignTentacleList();
         StartCoroutine(TriggerTentacles());
     }
 
@@ -73,60 +72,26 @@ public class Player : ISingleton<Player> {
 
         CB = this.GetComponent<Cinemachine.CinemachineBrain>();
 
-        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<UnityEngine.UI.Image>());
+        AssignTentacleList();
+        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
         StartCoroutine(UIUpdate());
         StartCoroutine(OxyDropping());
         //StartCoroutine(SuittedUp());
     }
-    public void PlayAudioClip(AudioClip clip, float volume = 1.0f)
+    void PlayAudioClip(AudioClip clip, float volume = 1.0f)
     {
         audioSource.clip = clip;
         audioSource.PlayOneShot(clip, volume);
-        //audioSource.
     }
 
     List<Tentacle> tentacles = new List<Tentacle>();
+
     public void AssignTentacleList()
     {
         tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
         StartCoroutine(TriggerTentacles());        
     }
-
-    IEnumerator TriggerTentacles()
-    {
-        if (tentacles.Count < 0) yield break;
-        while (true)
-        {
-            List<float> dist = new List<float>();
-
-            for (int i = 0; i < tentacles.Count; i ++)
-            {
-                float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
-                dist.Add(newV3);
-            }
-
-            int chosen = 0, chosen2 = 0;
-            for (int j = chosen; j < tentacles.Count - 1; j++)
-            {
-
-                if (dist[chosen] < dist[j + 1]) chosen = j + 1;
-
-                if (dist[chosen2] > dist[j + 1]) chosen2 = j + 1;
-            }
-
-            tentacles[chosen2].nearAttack = true;
-            tentacles[chosen].rangeAttack = true;
-            for(int k = 0; k < tentacles.Count; k++)
-            {
-                if (k != chosen) tentacles[k].rangeAttack = false;
-                if (k != chosen2) tentacles[k].nearAttack = false;
-            }
-
-            yield return new WaitForSeconds(3.2f);
-        }
-    }
     
-
     void Update()
     {
         Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
@@ -152,12 +117,7 @@ public class Player : ISingleton<Player> {
                     {
                         targetHit = hit.transform.gameObject;
                         pointHit = hit.point;
-
-                        //if (hit.transform.GetComponent<Book>())
-                        //{
-                        //    Debug.Log(hit.transform.GetComponent<Book>().bookSlotInfo.bookSlotPos + " " + hit.transform.GetComponent<Book>().ReturnSlot(hit.transform.position).bookSlotPos);
-                        //}
-                        //Debug.Log("I hit " + hit.transform.name);
+                        
                         if (hit.transform.GetComponent<AI>())
                             DamageShark(targetHit, pointHit);
                         else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
@@ -192,44 +152,14 @@ public class Player : ISingleton<Player> {
         if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
 
     }
-    IEnumerator UIUpdate()
-    {
-        while (true)
-        {
-            compassSlider.value = (this.transform.localEulerAngles.y / 360f);
-            oxygenBar.value = healthBarCount1 / healthBarCount2;
-            yield return null;
-        }
-    }
+  
 
     public IEnumerator OxyDropping()
     {
         while (true)
         {
-            healthBarCount1 = currOxygen;
-            healthBarCount2 = maxOxygen;
-            if (currOxygen < 0) {
-                StartCoroutine(HealthDropping());
-                yield break;
-            }
             currOxygen -= oxyDrop;
             Stats.Instance.TrackStats(5, oxyDrop);
-            yield return null;
-        }
-    }
-    bool healthDrop_ = false;
-    public IEnumerator HealthDropping()
-    {
-       
-         if (healthDrop_) yield break;
-        healthDrop_ = true;
-        while (true)
-        {
-            healthBarCount1 = currHealth;
-            healthBarCount2 = maxHealth;
-            if (currOxygen > 0) { healthDrop_ = false; StartCoroutine(OxyDropping()); yield break; }
-            currHealth -= healthDrop;
-            Stats.Instance.TrackStats(2, healthDrop);
             yield return null;
         }
     }
@@ -243,8 +173,13 @@ public class Player : ISingleton<Player> {
     {
         return  maxBullet - currBullet;
     }
-  
+    #region Public Functions
 
+    public void HealthDropping(float _healthDrop)
+    {
+        Stats.Instance.TrackStats(2, _healthDrop);
+        currHealth -= _healthDrop;
+    }
     public void AddOxygen(float x)
     {
         StartCoroutine(AddOx(x));
@@ -255,7 +190,42 @@ public class Player : ISingleton<Player> {
         StartCoroutine(ShakerShaker());
     }
 
+    #endregion
+
     #region PrivateCoroutines
+    IEnumerator TriggerTentacles()
+    {
+        if (tentacles.Count < 0) yield break;
+        while (true)
+        {
+            List<float> dist = new List<float>();
+
+            for (int i = 0; i < tentacles.Count; i++)
+            {
+                float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
+                dist.Add(newV3);
+            }
+
+            int chosen = 0, chosen2 = 0;
+            for (int j = chosen; j < tentacles.Count - 1; j++)
+            {
+
+                if (dist[chosen] < dist[j + 1]) chosen = j + 1;
+
+                if (dist[chosen2] > dist[j + 1]) chosen2 = j + 1;
+            }
+
+            tentacles[chosen2].nearAttack = true;
+            tentacles[chosen].rangeAttack = true;
+            for (int k = 0; k < tentacles.Count; k++)
+            {
+                if (k != chosen) tentacles[k].rangeAttack = false;
+                if (k != chosen2) tentacles[k].nearAttack = false;
+            }
+
+            yield return new WaitForSeconds(3.2f);
+        }
+    }
 
     IEnumerator WorkAroundButton()
     {
@@ -263,7 +233,15 @@ public class Player : ISingleton<Player> {
         currBullet--;
         Stats.Instance.TrackStats(0, 1);
     }
-
+    IEnumerator UIUpdate()
+    {
+        while (true)
+        {
+            compassSlider.value = (this.transform.localEulerAngles.y / 360f);
+            oxygenBar.value = currOxygen / maxOxygen;
+            yield return null;
+        }
+    }
     bool reloading = false;
     IEnumerator Reload()
     {
