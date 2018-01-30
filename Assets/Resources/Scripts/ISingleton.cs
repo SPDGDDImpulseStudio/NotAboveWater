@@ -39,6 +39,7 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
                         }else
                         {
                             newGO2 = new GameObject();
+                            newGO2.name = typeof(T).ToString() + " Singleton";
                             _instance = newGO2.AddComponent<T>();
                             //If its a prefab, if not i just dump this component into a new go
                         }
@@ -85,14 +86,17 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
     //    Refresh();
     //}
 
-    //public abstract void Refresh();
+    public virtual void Refresh(bool x)
+    {
+        this.gameObject.SetActive(x);
+    }
 
     void OnDisable()
     {
         _instance = null;
     }
 
-    public void OnDestroy()
+    void OnDestroy()
     {
         applicationIsQuitting = true;
     }

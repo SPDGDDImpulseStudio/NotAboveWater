@@ -14,11 +14,13 @@ public class SceneChanger : ISingleton<SceneChanger> {
     public bool transitting = false;
     private bool levelLoaded = false;
 
+    bool firstLoad = true;
     
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnLevelLoaded;
     }
+
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnLevelLoaded;
@@ -28,28 +30,28 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         levelLoaded = true;
         StartCoroutine(WhenFaderFades(scene.buildIndex));
+        if (firstLoad) firstLoad = false;
     }
 
     IEnumerator WhenFaderFades(int levelIndex)
     {
         yield return new WaitUntil(() => !levelLoaded);
+        
         switch (levelIndex)
         {
-            case 0: break; //Main Menu
+            case 0:
+                break; //Main Menu
                            //Somewhere i reset the whole thing i needa turn all singletons except this off and on again.
                            //In a sense, this becomes the 'gameManager'
             case 1: break;
             case 2: break;
             case 3: break;
         }
+
+        Debug.Log(levelIndex);
     }
     public void Fading(string toLoad)
     {
-        //Build Index:
-        //Main Menu         0
-        //Javan_Test        1
-        //Credits           2
-        //Settings          3
         switch (toLoad)
         {
             case "Credit":          StartFadeCoroutine(1);  break;
