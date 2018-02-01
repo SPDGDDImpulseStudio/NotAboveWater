@@ -76,13 +76,13 @@ public class CircleManager : ISingleton<CircleManager> {
         }
     }
 
-    CirclePosUpdate GetCircle(GameObject _ref)
-    {
-        CirclePosUpdate x = PoolManager.Instance.DeqCircle();
-        x.Init_(_ref);
+    //CirclePosUpdate GetCircle(GameObject _ref)
+    //{
+    //    CirclePosUpdate x = PoolManager.Instance.DeqCircle();
+    //    x.Init_(_ref);
 
-        return x;
-    }
+    //    return x;
+    //}
 
     #region Hide
 
