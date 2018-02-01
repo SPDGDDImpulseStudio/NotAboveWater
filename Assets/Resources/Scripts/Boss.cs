@@ -27,7 +27,7 @@ public class Boss : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        slider.value = (bossCurrHealth / bossMaxHealth);
+        //slider.value = (bossCurrHealth / bossMaxHealth);
         if (timerNow < timer) timerNow += Time.deltaTime;
         else
         {

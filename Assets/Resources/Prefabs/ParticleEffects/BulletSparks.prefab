@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4404468471192742}
   - component: {fileID: 198586988124345844}
+  - component: {fileID: 114394078112432952}
   - component: {fileID: 199985166683433086}
   m_Layer: 0
   m_Name: BulletSparks
@@ -41,6 +42,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &114394078112432952
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363840424504464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35775fef249e7024a988a32ff9c84307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198586988124345844
 ParticleSystem:
   m_ObjectHideFlags: 1

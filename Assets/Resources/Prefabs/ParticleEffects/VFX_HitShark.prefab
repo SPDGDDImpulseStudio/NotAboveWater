@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4578958161513986}
   - component: {fileID: 198403959202262194}
+  - component: {fileID: 114555663547831582}
   - component: {fileID: 199246331356995136}
   m_Layer: 0
   m_Name: VFX_HitShark
@@ -41,6 +42,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114555663547831582
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1395700912471364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35775fef249e7024a988a32ff9c84307, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198403959202262194
 ParticleSystem:
   m_ObjectHideFlags: 1

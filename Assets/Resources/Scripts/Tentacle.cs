@@ -63,7 +63,7 @@ public class Tentacle : MonoBehaviour
 
     IEnumerator DebugUIUpdate()
     {
-        if (!debugText) yield break;
+        if (!debugText || !debugText.gameObject.activeInHierarchy) yield break;
         AnimatorClipInfo[] newA;
         while (true)
         {
