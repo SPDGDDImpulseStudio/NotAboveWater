@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -185,9 +186,9 @@ public class Player : ISingleton<Player> {
         StartCoroutine(AddOx(x));
     }
 
-    public void ShakeCam()
+    public void ShakeCam(Vector3 pos)
     {
-        StartCoroutine(ShakerShaker());
+        StartCoroutine(ShakerShaker(pos));
     }
 
     #endregion
@@ -205,6 +206,8 @@ public class Player : ISingleton<Player> {
                 float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
                 dist.Add(newV3);
             }
+
+            //Tentacle furthest = tentacles.Find(x=> (x.gameObject.transform.position )
 
             int chosen = 0, chosen2 = 0;
             for (int j = chosen; j < tentacles.Count - 1; j++)
@@ -291,13 +294,25 @@ public class Player : ISingleton<Player> {
         //timer.Stop();
         //Debug.Log(timer.Elapsed + " | " + timer.ElapsedMilliseconds);
     }
-    IEnumerator ShakerShaker()
+    IEnumerator ShakerShaker(Vector3 tipPos)
     {
+        Vector3 pos = Camera.main.WorldToScreenPoint(tipPos);
+        Debug.Log(pos);
+        Vector3 originValue = this.transform.localEulerAngles;
         CB.enabled = false;
-        float timer = 0, timerNow = 1f;
-        while (timer < timerNow)
+        Vector3 val = (pos.x > Screen.width / 2) ?
+            new Vector3(0, 30f, 0) : new Vector3(0, -30f, 0);
+        
+        this.transform.localEulerAngles += val/2;
+        yield return null;
+        this.transform.localEulerAngles += val/2;
+
+        float timer = 0; //timerNow = 1f;
+        
+        while (timer < 1.3f)
         {
             timer += Time.deltaTime;
+            this.transform.localEulerAngles = Vector3.Lerp(this.transform.localEulerAngles, originValue, Time.deltaTime * 2f);
             yield return null;
         }
 

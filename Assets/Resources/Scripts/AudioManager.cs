@@ -6,13 +6,77 @@ using UnityEngine;
 public class AudioManager : ISingleton<AudioManager> {
 
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
-    public AudioSource audioSource, _audioSource, backGroundAudioSource;
+    public AudioSource audioSource, audioSource2, sfxAS;
 
     int currInt, rndInt;
 
+    bool fadedOut, fadedIn;
+
     void Start()
     {
-        //StartCoroutine(FadeTo());
+        
+    }
+
+    //The fn i call from scenechanger x when scene change
+    // i want this argument to be filled with the scene.buildindex
+    //
+    public void FadeFromSceneChanger(int BGM)
+    {
+        StartCoroutine(FadeToNext(BGM));
+    }
+    IEnumerator FadeToNext(int nextBGM)
+    {
+        if (audioSource.isPlaying)
+        {
+            StartCoroutine(FadeOutASOne());
+            StartCoroutine(FadeInASTwo());
+        }
+        else
+        {
+            StartCoroutine(FadeOutASTwo());
+            StartCoroutine(FadeInASOne());
+        }
+        yield return new WaitUntil(() => fadedIn && fadedOut);
+        fadedIn = false;
+        fadedOut = false;
+    }
+
+    IEnumerator FadeOutASOne()
+    {
+        while(audioSource.volume != 0)
+        {
+            audioSource.volume -= Time.deltaTime;
+            yield return null;
+        }
+        fadedOut = true;
+    }
+    IEnumerator FadeInASOne()
+    {
+        while(audioSource.volume != 1)
+        {
+            audioSource.volume += Time.deltaTime;
+            yield return null;
+        }
+        fadedIn = true;
+    }
+
+    IEnumerator FadeOutASTwo()
+    {
+        while (audioSource2.volume != 0)
+        {
+            audioSource2.volume -= Time.deltaTime;
+            yield return null;
+        }
+        fadedOut = true;
+    }
+    IEnumerator FadeInASTwo()
+    {
+        while (audioSource2.volume != 1)
+        {
+            audioSource2.volume += Time.deltaTime;
+            yield return null;
+        }
+        fadedIn = true;
     }
 
     IEnumerator FadeTo()
@@ -31,8 +95,8 @@ public class AudioManager : ISingleton<AudioManager> {
             yield return null;
         }
         Debug.Log(currInt);
-        _audioSource.clip = loopingAmbienceClips[rndInt];
-        _audioSource.Play();
+        audioSource2.clip = loopingAmbienceClips[rndInt];
+        audioSource2.Play();
         //_audioSource.loop = true;
         while (audioSource.volume != 0)
         {

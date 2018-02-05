@@ -202,10 +202,10 @@ public class Tentacle : MonoBehaviour
         AnimatorClipInfo[] newA;
         Vector3 temp = Player.Instance.transform.localPosition;
         //temp += new Vector3(0, 180f, 0); 
-        Vector3 newPos = Camera.main.WorldToScreenPoint(tipAKAwhereToShootAt.transform.position);
-        Debug.Log(newPos);
+        //Vector3 newPos = Camera.main.WorldToScreenPoint(tipAKAwhereToShootAt.transform.position);
+        //Debug.Log(newPos);
 
-        Player.Instance.ShakeCam();
+        Player.Instance.ShakeCam(tipAKAwhereToShootAt.transform.position);
         Debug.LogError("AJA");
 
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -242,7 +242,7 @@ public class Tentacle : MonoBehaviour
     {
         if (attack) yield break;
         attack = true;
-        Time.timeScale = 0.6f;
+        //Time.timeScale = 0.6f;
         //GetCircle();
         while (true)
         {
@@ -266,7 +266,7 @@ public class Tentacle : MonoBehaviour
         }
         NullifyCircle();
         attack = false;
-        Time.timeScale = 1.0f;
+        //Time.timeScale = 1.0f;
     }
     void StoneAttack()
     {
