@@ -4,17 +4,33 @@ using UnityEngine;
 
 [RequireComponent(typeof(AudioSource), typeof(AudioSource))]
 public class AudioManager : ISingleton<AudioManager> {
-
+    
+    [Tooltip("Please put the audioclips in the same order of scene build index.")]
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
     public AudioSource audioSource, audioSource2, sfxAS;
-
+    
     int currInt, rndInt;
 
     bool fadedOut, fadedIn;
 
+    [Range(0.1f,2f)]
+    public float musicFadeSpd = 1f;
+
+
+    
+    public float masterVolumeAttr;
+
+    public float sfxAttr;
+
+
+   public const string masterVol = "MasterVol", sfxVol = "sfxVol";
+
+
+
     void Start()
     {
-        
+        masterVolumeAttr = PlayerPrefs.GetFloat(masterVol);
+        sfxAttr = PlayerPrefs.GetFloat(sfxVol);
     }
 
     //The fn i call from scenechanger x when scene change
@@ -29,12 +45,12 @@ public class AudioManager : ISingleton<AudioManager> {
         if (audioSource.isPlaying)
         {
             StartCoroutine(FadeOutASOne());
-            StartCoroutine(FadeInASTwo());
+            StartCoroutine(FadeInASTwo(nextBGM));
         }
         else
         {
             StartCoroutine(FadeOutASTwo());
-            StartCoroutine(FadeInASOne());
+            StartCoroutine(FadeInASOne(nextBGM));
         }
         yield return new WaitUntil(() => fadedIn && fadedOut);
         fadedIn = false;
@@ -45,16 +61,18 @@ public class AudioManager : ISingleton<AudioManager> {
     {
         while(audioSource.volume != 0)
         {
-            audioSource.volume -= Time.deltaTime;
+            audioSource.volume -= Time.deltaTime*musicFadeSpd ;
             yield return null;
         }
         fadedOut = true;
     }
-    IEnumerator FadeInASOne()
+    IEnumerator FadeInASOne(int BGM)
     {
-        while(audioSource.volume != 1)
+        audioSource.volume = 0f;
+        audioSource.clip = loopingAmbienceClips[BGM];
+        while (audioSource.volume != 1)
         {
-            audioSource.volume += Time.deltaTime;
+            audioSource.volume += Time.deltaTime * musicFadeSpd;
             yield return null;
         }
         fadedIn = true;
@@ -64,16 +82,18 @@ public class AudioManager : ISingleton<AudioManager> {
     {
         while (audioSource2.volume != 0)
         {
-            audioSource2.volume -= Time.deltaTime;
+            audioSource2.volume -= Time.deltaTime * musicFadeSpd;
             yield return null;
         }
         fadedOut = true;
     }
-    IEnumerator FadeInASTwo()
+    IEnumerator FadeInASTwo(int BGM)
     {
+        audioSource2.volume = 0f;
+        audioSource2.clip  = loopingAmbienceClips[BGM];
         while (audioSource2.volume != 1)
         {
-            audioSource2.volume += Time.deltaTime;
+            audioSource2.volume += Time.deltaTime * musicFadeSpd;
             yield return null;
         }
         fadedIn = true;

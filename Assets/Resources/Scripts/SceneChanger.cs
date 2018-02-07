@@ -10,14 +10,21 @@ public class SceneChanger : ISingleton<SceneChanger> {
  
     [Range(1f, 5f)]
     public float fadeSpeed;
-    public Canvas canvas;
+    public Canvas sceneChangingCanvas;
     public Image image;
     public Text text;
     public bool transitting = false;
     private bool levelLoaded = false;
 
+    Canvas currSceneCanvas;
     bool firstLoad = true;
-    
+
+    //First Time's Attributes
+    bool haventRepeat = true;
+    public Image instructionPanel;
+    public Text instructionText;
+    public Button button;
+    public Text pressAny;
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnLevelLoaded;
@@ -34,7 +41,8 @@ public class SceneChanger : ISingleton<SceneChanger> {
         //    PoolManager.Instance.gameObject,
         //    Stats.Instance.gameObject,
         //};
-    }
+        ChangeOfCurrScene();
+    } 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnLevelLoaded;
@@ -44,8 +52,24 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         levelLoaded = true;
         StartCoroutine(WhenFaderFades(scene.buildIndex));
-        ToCallWhenSceneLoad();
         if (firstLoad) firstLoad = false;
+
+        ChangeOfCurrScene();
+        ToCallWhenSceneLoad();
+
+    }
+
+    void ChangeOfCurrScene()
+    {
+        Canvas[] canvases = FindObjectsOfType<Canvas>();
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (canvases[i] != sceneChangingCanvas)
+            {
+                currSceneCanvas = canvases[i];
+                break;
+            }
+        }
     }
     List<GameObject> allSingletons;
 
@@ -108,14 +132,43 @@ public class SceneChanger : ISingleton<SceneChanger> {
         StartCoroutine(FadeIn(toLoad));
     }
 
+    IEnumerator PopUpTutorial()
+    {
+        if (!instructionPanel.gameObject.activeInHierarchy)   instructionPanel.gameObject.SetActive(true);
+        if (!instructionText.gameObject.activeInHierarchy) instructionText.gameObject.SetActive(true);
+        while (instructionPanel.color != Color.white)
+        {
+            instructionPanel.color = Color.Lerp(instructionPanel.color, Color.white, Time.deltaTime * fadeSpeed);
+            yield return null;
+        }
+        pressAny.gameObject.SetActive(true);
+        if (!button.gameObject.activeInHierarchy) button.gameObject.SetActive(true);
+        button.onClick.AddListener(Pressed);
+    }
+    void Pressed()
+    {
+        StartCoroutine(OneTimedUseFadeOut());
+    }
+
+    IEnumerator OneTimedUseFadeOut()
+    {
+        while (instructionPanel.color != Color.black)
+        {
+            instructionPanel.color = Color.Lerp(instructionPanel.color, Color.black, Time.deltaTime * fadeSpeed);
+            yield return null;
+        }
+        instructionPanel.gameObject.SetActive(false); instructionText.gameObject.SetActive(false); button.gameObject.SetActive(false);
+        haventRepeat = false;
+    }
+
     IEnumerator FadeIn(int levelToLoad)
     {
         if (transitting) yield break;
         transitting = true;
 
-        int temp = canvas.sortingOrder;
-        canvas.sortingOrder = 1;
-
+        int temp = sceneChangingCanvas.sortingOrder;
+        sceneChangingCanvas.sortingOrder = 1;
+        currSceneCanvas.sortingOrder = 0;
         float tempSpd = fadeSpeed + Random.Range(0.6f, 1f);
         while (image.color != Color.black)
         {
@@ -124,6 +177,10 @@ public class SceneChanger : ISingleton<SceneChanger> {
         }
         image.color = Color.black;
 
+
+        if (haventRepeat) StartCoroutine(PopUpTutorial());
+
+        yield return new WaitUntil(() => !haventRepeat);
         StartCoroutine(LoadText(3f, levelToLoad));
 
  
@@ -140,7 +197,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
             image.color = Color.Lerp(image.color, Color.clear, Time.deltaTime * tempSpd);
             yield return null;
         }
-        canvas.sortingOrder = temp;
+        sceneChangingCanvas.sortingOrder = temp;
         transitting = false;
         levelLoaded = false;
         gameObject.SetActive(false);
