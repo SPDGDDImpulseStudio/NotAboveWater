@@ -54,6 +54,7 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
                         Debug.Log("[Singleton] Using instance already created: " +
                             _instance.gameObject.name);
 
+                        DontDestroyOnLoad(_instance.gameObject);
                     }
 
                 }
@@ -78,6 +79,11 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
                 return;
             }
         }
+        if(Instance!= SceneChanger.Instance)
+        {
+            //RegisterSelf();
+            SceneChanger.Instance.ToCallWhenSceneLoad += RegisterSelf;
+        }
     }
     //public void TurnOff()
     //{
@@ -85,6 +91,10 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
     //    _instance.gameObject.SetActive(false);
     //    Refresh();
     //}
+
+       public virtual void RegisterSelf() {
+        Debug.Log(this.name);
+    }
 
     public virtual void Refresh(bool x)
     {
