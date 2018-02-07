@@ -17,7 +17,7 @@ public class CirclePosUpdate : PoolObject,
     public GameObject _ref;
     Camera cam;
     bool bootUp = false;
-  
+    public bool bulletCheck = false;
     IEnumerator RotateBoi()
     {
         Vector3 newRot = this.transform.localEulerAngles;
@@ -55,6 +55,7 @@ public class CirclePosUpdate : PoolObject,
         {
             posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
 
+
             posOnScreen.x = (0 < posOnScreen.x && posOnScreen.x < Screen.width) ? posOnScreen.x :
                (posOnScreen.x < 0) ? 0 : Screen.width;
 
@@ -62,7 +63,9 @@ public class CirclePosUpdate : PoolObject,
                 (posOnScreen.y < 0) ? 0 : Screen.height;
             //Debug.Log(posOnScreen);
 
-            if((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x)> 0)  posOnScreen.x += offSet.x;
+            if (0 > posOnScreen.x || posOnScreen.x > Screen.width)
+                TurnOff();
+            if ((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x)> 0)  posOnScreen.x += offSet.x;
 
             if((posOnScreen.y + offSet.y) < Screen.height&& (posOnScreen.y + offSet.y)> 0)  posOnScreen.y += offSet.y;
 
@@ -101,6 +104,8 @@ public class CirclePosUpdate : PoolObject,
     //    this.transform.position = posOnScreen;
     //}
 
+  
+
     void DestroySelf()
     {
         if (Player.Instance.currBullet != 0)
@@ -131,6 +136,7 @@ public class CirclePosUpdate : PoolObject,
     {
         BootUp();
         _ref = null;
+        bulletCheck = false;
         this.transform.localScale = originScale;
         this.gameObject.SetActive(false);
     }
@@ -145,7 +151,10 @@ public class CirclePosUpdate : PoolObject,
     {
         if(Player.Instance.currBullet != 0 && Input.GetMouseButton(0))
         {
-            _ref.GetComponentInParent<Tentacle>().OnHit();
+            if (!bulletCheck)
+                _ref.GetComponentInParent<Tentacle>().OnHit();
+            else
+                _ref.GetComponent<BulletScript>().TurnOff();
             TurnOff();
         }
     }
@@ -154,7 +163,11 @@ public class CirclePosUpdate : PoolObject,
     {
         if (Player.Instance.currBullet != 0 && Input.GetMouseButton(0))
         {
-            _ref.GetComponentInParent<Tentacle>().OnHit();
+            if (!bulletCheck)
+
+                _ref.GetComponentInParent<Tentacle>().OnHit();
+            else
+                _ref.GetComponent<BulletScript>().TurnOff();
             TurnOff();
         }
     }

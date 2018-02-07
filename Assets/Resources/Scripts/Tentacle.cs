@@ -242,11 +242,13 @@ public class Tentacle : MonoBehaviour
     {
         if (attack) yield break;
         attack = true;
-        //Time.timeScale = 0.6f;
-        //GetCircle();
+        AnimatorClipInfo[] newA;
+       
+        //Bul.transform.SetParent(tipAKAwhereToShootAt.transform);
+        //Bul.transform.localPosition = new Vector3(0, 0, 0);
         while (true)
         {
-            AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
+            newA = anim.GetCurrentAnimatorClipInfo(0);
             if (newA.Length > 0)
             {
                 if (newA[0].clip.name == "Shoot_Release")
@@ -270,12 +272,15 @@ public class Tentacle : MonoBehaviour
     }
     void StoneAttack()
     {
-        GameObject x = PoolManager.Instance.ReturnGOFromList(stonePrefab);
-        GameObject bul = RepositionStone(x.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position + 3 * Vector3.forward, Quaternion.identity).gameObject ;
+        GameObject Bul = PoolManager.Instance.ReturnGOFromList(stonePrefab);
+        Bul.GetComponent<PoolObject>().Init();
+        BulletScript b = RepositionStone(Bul.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position, Quaternion.identity);
         // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
-        GetCircle(x);
+        //GetCircle(Bul);
+        b.Init_(PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>(), Player.Instance.transform);
+
         Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
-        bul.GetComponent<Rigidbody>().velocity = dir * 10    * Time.deltaTime;
+        //Bul.GetComponent<Rigidbody>().velocity = dir * 30    * Time.deltaTime;
 
         DamagedToFalse();
     }

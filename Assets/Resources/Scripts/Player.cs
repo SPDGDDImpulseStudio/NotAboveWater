@@ -326,14 +326,14 @@ public class Player : ISingleton<Player> {
     {
         targetHitName.GetComponent<AI>().currHealth -= bulletDamage;
         Stats.Instance.TrackStats(1, 1);
-        Instantiate(VFX_HitShark, pointHitPosition, targetHitName.transform.rotation);
+        GetGOWithPrefab(VFX_HitShark, pointHitPosition, targetHitName.transform.rotation);
     }
 
     void DamageProps(GameObject targetHitName, Vector3 pointHitPosition)
     {
         Quaternion newRotation = Quaternion.FromToRotation(transform.up, pointHitPosition.normalized);
-        Instantiate(VFX_BulletSpark, pointHitPosition, targetHitName.transform.rotation);
-        Instantiate(VFX_BulletMark, pointHitPosition, targetHitName.transform.rotation);
+        GetGOWithPrefab(VFX_BulletSpark, pointHitPosition, targetHitName.transform.rotation);
+        GetGOWithPrefab(VFX_BulletMark, pointHitPosition, targetHitName.transform.rotation);
     }
     GameObject GetGOWithPrefab(GameObject prefab, Vector3 pos, Quaternion quat)
     {

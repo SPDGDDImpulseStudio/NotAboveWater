@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
+
 
 public class SceneChanger : ISingleton<SceneChanger> {
-    
+ 
     [Range(1f, 5f)]
     public float fadeSpeed;
     public Canvas canvas;
@@ -20,7 +22,19 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         SceneManager.sceneLoaded += OnLevelLoaded;
     }
-
+    void Start()
+    {
+        //allSingletons = new List<GameObject>()
+        //{
+        //    AudioManager.Instance.gameObject,
+        //    CircleManager.Instance.gameObject,
+        //    CratesManager.Instance.gameObject,
+        //    GameManager.Instance.gameObject,
+        //    Player.Instance.gameObject,
+        //    PoolManager.Instance.gameObject,
+        //    Stats.Instance.gameObject,
+        //};
+    }
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnLevelLoaded;
@@ -30,7 +44,17 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         levelLoaded = true;
         StartCoroutine(WhenFaderFades(scene.buildIndex));
+        ToCallWhenSceneLoad();
         if (firstLoad) firstLoad = false;
+    }
+    List<GameObject> allSingletons;
+
+
+    public System.Action ToCallWhenSceneLoad;
+    void RefreshSingletons()
+    {
+        
+
     }
 
     IEnumerator WhenFaderFades(int levelIndex)
