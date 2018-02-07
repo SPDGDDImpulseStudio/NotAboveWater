@@ -53,6 +53,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
     public void OnLevelLoaded(Scene scene, LoadSceneMode mode)
     {
         ChangeOfCurrScene();
+        if(currSceneCanvas)
         currSceneCanvas.sortingOrder = 0;
         levelLoaded = true;
         StartCoroutine(WhenFaderFades(scene.buildIndex));
