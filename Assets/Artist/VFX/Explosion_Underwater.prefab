@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 4869887604774518}
   - component: {fileID: 114200507441595154}
   m_Layer: 0
-  m_Name: Oxygen_Explode
+  m_Name: Explosion_Underwater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
