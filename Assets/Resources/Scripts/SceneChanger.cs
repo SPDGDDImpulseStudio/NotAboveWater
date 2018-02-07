@@ -41,15 +41,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
         //    PoolManager.Instance.gameObject,
         //    Stats.Instance.gameObject,
         //};
-        Canvas[] canvases = FindObjectsOfType<Canvas>();
-        for (int i = 0; i < canvases.Length; i++)
-        {
-            if (canvases[i] != sceneChangingCanvas)
-            {
-                currSceneCanvas = canvases[i];
-                break;
-            }
-        }
+        ChangeOfCurrScene();
     } 
     void OnDisable()
     {
@@ -62,6 +54,13 @@ public class SceneChanger : ISingleton<SceneChanger> {
         StartCoroutine(WhenFaderFades(scene.buildIndex));
         if (firstLoad) firstLoad = false;
 
+        ChangeOfCurrScene();
+        ToCallWhenSceneLoad();
+
+    }
+
+    void ChangeOfCurrScene()
+    {
         Canvas[] canvases = FindObjectsOfType<Canvas>();
         for (int i = 0; i < canvases.Length; i++)
         {
@@ -71,8 +70,6 @@ public class SceneChanger : ISingleton<SceneChanger> {
                 break;
             }
         }
-        ToCallWhenSceneLoad();
-
     }
     List<GameObject> allSingletons;
 
@@ -150,10 +147,10 @@ public class SceneChanger : ISingleton<SceneChanger> {
     }
     void Pressed()
     {
-        StartCoroutine(FadeOut());
-        
+        StartCoroutine(OneTimedUseFadeOut());
     }
-    IEnumerator FadeOut()
+
+    IEnumerator OneTimedUseFadeOut()
     {
         while (instructionPanel.color != Color.black)
         {
@@ -163,7 +160,6 @@ public class SceneChanger : ISingleton<SceneChanger> {
         instructionPanel.gameObject.SetActive(false); instructionText.gameObject.SetActive(false); button.gameObject.SetActive(false);
         haventRepeat = false;
     }
-
 
     IEnumerator FadeIn(int levelToLoad)
     {

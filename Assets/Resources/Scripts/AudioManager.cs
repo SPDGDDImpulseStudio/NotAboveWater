@@ -16,9 +16,21 @@ public class AudioManager : ISingleton<AudioManager> {
     [Range(0.1f,2f)]
     public float musicFadeSpd = 1f;
 
+
+    
+    public float masterVolumeAttr;
+
+    public float sfxAttr;
+
+
+   public const string masterVol = "MasterVol", sfxVol = "sfxVol";
+
+
+
     void Start()
     {
-        
+        masterVolumeAttr = PlayerPrefs.GetFloat(masterVol);
+        sfxAttr = PlayerPrefs.GetFloat(sfxVol);
     }
 
     //The fn i call from scenechanger x when scene change
