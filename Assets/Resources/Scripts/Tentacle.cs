@@ -45,7 +45,7 @@ public class Tentacle : MonoBehaviour
         Canvas[] canvases = FindObjectsOfType<Canvas>();
         for (int i = 0; i < canvases.Length; i++)
         {
-            if (canvases[i].name != "SceneChanger")
+            if (!canvases[i].GetComponent<SceneChanger>())
             {
                 go.transform.SetParent(canvases[i].transform);
                 break;

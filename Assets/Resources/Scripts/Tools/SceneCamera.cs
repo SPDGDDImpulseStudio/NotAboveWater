@@ -48,6 +48,16 @@ public class SceneCamera : MonoBehaviour {
     {
         PlayerPrefs.DeleteAll();
     }
+
+    [MenuItem("Tools/FuckingStopResetting")]
+    public static void PrefabReset()
+    {
+        GameObject GO = Resources.Load<SceneChanger>("Prefabs/SceneChanger").gameObject;
+        GO.GetComponent<Canvas>().sortingOrder = 0;
+        GO.GetComponent<SceneChanger>().transitting = false;
+        GO.GetComponent<SceneChanger>().image.color = Color.clear;
+        Debug.Log(GO.name);
+    }
     [MenuItem("Tools/PlacePos")]
     public static void Placement()
     {

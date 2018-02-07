@@ -25,6 +25,8 @@ public class SceneChanger : ISingleton<SceneChanger> {
     public Text instructionText;
     public Button button;
     public Text pressAny;
+    
+
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnLevelLoaded;
@@ -50,13 +52,19 @@ public class SceneChanger : ISingleton<SceneChanger> {
 
     public void OnLevelLoaded(Scene scene, LoadSceneMode mode)
     {
+        ChangeOfCurrScene();
+        currSceneCanvas.sortingOrder = 0;
         levelLoaded = true;
         StartCoroutine(WhenFaderFades(scene.buildIndex));
         if (firstLoad) firstLoad = false;
 
-        ChangeOfCurrScene();
         ToCallWhenSceneLoad();
 
+    }
+    public void RegisterInScene()
+    {
+        
+        //allSingletons.
     }
 
     void ChangeOfCurrScene()
@@ -71,10 +79,12 @@ public class SceneChanger : ISingleton<SceneChanger> {
             }
         }
     }
-    List<GameObject> allSingletons;
+    Dictionary<int, List<GameObject>> allSingletons = new Dictionary<int, List<GameObject>>();
+    Dictionary<List<GameObject>, System.Action> GOReturnAction = new Dictionary<List<GameObject>, System.Action>();
 
-
+    Dictionary<int, Dictionary<List<GameObject>, System.Action>> x = new Dictionary<int, Dictionary<List<GameObject>, System.Action>>();
     public System.Action ToCallWhenSceneLoad;
+    
     void RefreshSingletons()
     {
         
@@ -102,16 +112,16 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         switch (toLoad)
         {
-            case "Credit":          StartFadeCoroutine(1);  break;
-            case "New Game":        StartFadeCoroutine(2);  break;
-            case "Instructions":    StartFadeCoroutine(3);  break;
-            default:                StartFadeCoroutine(0); break;
+            case "Credit":      Instance.StartFadeCoroutine(1);  break;
+            case "New Game":    Instance.StartFadeCoroutine(2);  break;
+            case "Instructions":Instance.StartFadeCoroutine(3);  break;
+            default:            Instance.StartFadeCoroutine(0); break;
         }
     }
 
     public void Fading(int toLoad)
     {
-        StartFadeCoroutine(toLoad);
+        Instance.StartFadeCoroutine(toLoad);
     }
 
     public void ExitGame()
@@ -125,16 +135,18 @@ public class SceneChanger : ISingleton<SceneChanger> {
     
     void StartFadeCoroutine(int toLoad)
     {
-        if (!this.gameObject.activeInHierarchy)
-            this.gameObject.SetActive(true);
-
+        if (!Instance.gameObject.activeInHierarchy)
+            Instance.gameObject.SetActive(true);
+        if(currSceneCanvas == null)
+        ChangeOfCurrScene();
         image.color = Color.clear;
-        StartCoroutine(FadeIn(toLoad));
+        Instance.StartCoroutine(FadeIn(toLoad));
     }
+    #region OneTimedTutorial
 
     IEnumerator PopUpTutorial()
     {
-        if (!instructionPanel.gameObject.activeInHierarchy)   instructionPanel.gameObject.SetActive(true);
+        if (!instructionPanel.gameObject.activeInHierarchy) instructionPanel.gameObject.SetActive(true);
         if (!instructionText.gameObject.activeInHierarchy) instructionText.gameObject.SetActive(true);
         while (instructionPanel.color != Color.white)
         {
@@ -161,6 +173,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
         haventRepeat = false;
     }
 
+    #endregion
     IEnumerator FadeIn(int levelToLoad)
     {
         if (transitting) yield break;
@@ -178,12 +191,11 @@ public class SceneChanger : ISingleton<SceneChanger> {
         image.color = Color.black;
 
 
-        if (haventRepeat) StartCoroutine(PopUpTutorial());
+        //if (haventRepeat) StartCoroutine(PopUpTutorial());
 
-        yield return new WaitUntil(() => !haventRepeat);
+        //yield return new WaitUntil(() => !haventRepeat);
         StartCoroutine(LoadText(3f, levelToLoad));
-
- 
+        
         yield return new WaitUntil(() => levelLoaded);
         //In Between should have a while, but the whole level is so fucking huge the game hangs liek crazy
         yield return new WaitUntil(() => loadText);
@@ -198,9 +210,10 @@ public class SceneChanger : ISingleton<SceneChanger> {
             yield return null;
         }
         sceneChangingCanvas.sortingOrder = temp;
+        currSceneCanvas.sortingOrder = 1;
         transitting = false;
         levelLoaded = false;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
 
     }
 
@@ -242,5 +255,10 @@ public class SceneChanger : ISingleton<SceneChanger> {
         text.enabled = false;
     }
     bool loadText = false;
-
+    void OnDestroy()
+    {
+        sceneChangingCanvas.sortingOrder = 0;
+        transitting = false;
+        GetComponent<SceneChanger>().image.color = Color.clear;
+    }
 }

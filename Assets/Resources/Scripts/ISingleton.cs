@@ -92,8 +92,10 @@ public abstract class ISingleton<T> : MonoBehaviour where T : Component
     //    Refresh();
     //}
 
-       public virtual void RegisterSelf() {
-        Debug.Log(this.name);
+    public virtual void RegisterSelf() {
+        Debug.Log("From scene " +
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+          + " [" + name   + "]");
     }
 
     public virtual void Refresh(bool x)

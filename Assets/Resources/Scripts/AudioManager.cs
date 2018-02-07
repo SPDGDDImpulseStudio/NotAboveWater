@@ -16,22 +16,22 @@ public class AudioManager : ISingleton<AudioManager> {
     [Range(0.1f,2f)]
     public float musicFadeSpd = 1f;
 
-
-    
-    public float masterVolumeAttr;//JR SAYS change 1 to master volume
-
-    public float sfxAttr;
-
-
-   public const string masterVol = "MasterVol", sfxVol = "sfxVol";
-
-
-
-    void Start()
+    public override void RegisterSelf()
     {
-        masterVolumeAttr = PlayerPrefs.GetFloat(masterVol);
-        sfxAttr = PlayerPrefs.GetFloat(sfxVol);
+        base.RegisterSelf();
+        AudioSource[] allAS = FindObjectsOfType<AudioSource>();
+        
+        allASScene = new List<AudioSource>(allAS);
+        for (int i = 0; i< allASScene.Count; i++)
+        {
+            allASScene[i].volume = PlayerPrefs.GetFloat(masterVol);
+        }
     }
+    public List<AudioSource> allASScene;
+
+
+    public const string masterVol = "MasterVol", sfxVol = "sfxVol";
+
 
     //The fn i call from scenechanger x when scene change
     // i want this argument to be filled with the scene.buildindex
