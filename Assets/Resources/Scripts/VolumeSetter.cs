@@ -39,9 +39,19 @@ public class VolumeSetter : MonoBehaviour {
     }
     public void SaveValue()
     {
-        PlayerPrefs.SetFloat(AudioManager.masterVol, masterVSlider.value);
+        AudioManager.Instance.masterVolumeAttr = masterVSlider.value;
+        AudioManager.Instance.sfxAttr = sfxSlider.value;
+        PlayerPrefs.SetFloat(AudioManager.masterVol, masterVSlider.value);//JR SAYS U maybe want to set the value of the audimanager then save only when set finish
         PlayerPrefs.SetFloat(AudioManager.sfxVol, sfxSlider.value);
         PlayerPrefs.Save();
+    }
+
+    public void SetBGMVolume()
+    {
+        Camera.main.GetComponent<AudioSource>().volume = AudioManager.Instance.masterVolumeAttr; //JR SAYS TEMP FIX BECUS UR BGM STILL PLAYS FROM MAIN CAMERA
+        AudioManager.Instance.audioSource.volume = AudioManager.Instance.masterVolumeAttr; //JR SAYS use master volume
+        masterText.text = AudioManager.Instance.masterVolumeAttr.ToString("F1");
+        //AudioManager.Instance.audioSource2.volume = AudioManager.Instance.masterVolumeAttr; //JR SAYS use master volume
     }
 
     public void DisplayValue()

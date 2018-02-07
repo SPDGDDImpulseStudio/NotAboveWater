@@ -18,7 +18,7 @@ public class AudioManager : ISingleton<AudioManager> {
 
 
     
-    public float masterVolumeAttr;
+    public float masterVolumeAttr;//JR SAYS change 1 to master volume
 
     public float sfxAttr;
 
@@ -70,7 +70,7 @@ public class AudioManager : ISingleton<AudioManager> {
     {
         audioSource.volume = 0f;
         audioSource.clip = loopingAmbienceClips[BGM];
-        while (audioSource.volume != 1)
+        while (audioSource.volume != 1)//JR SAYS change 1 to master volume
         {
             audioSource.volume += Time.deltaTime * musicFadeSpd;
             yield return null;
@@ -91,7 +91,7 @@ public class AudioManager : ISingleton<AudioManager> {
     {
         audioSource2.volume = 0f;
         audioSource2.clip  = loopingAmbienceClips[BGM];
-        while (audioSource2.volume != 1)
+        while (audioSource2.volume != 1)//JR SAYS change 1 to master volume
         {
             audioSource2.volume += Time.deltaTime * musicFadeSpd;
             yield return null;
@@ -99,60 +99,60 @@ public class AudioManager : ISingleton<AudioManager> {
         fadedIn = true;
     }
 
-    IEnumerator FadeTo()
-    {
-        if (loopingAmbienceClips.Count == 0) yield break;
-        currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-        audioSource.clip = loopingAmbienceClips[currInt];
-        audioSource.Play();
-        float rndSec = Random.Range(4.0f, 8.0f);
-        yield return new WaitForSeconds(rndSec);
+    //IEnumerator FadeTo()
+    //{
+    //    if (loopingAmbienceClips.Count == 0) yield break;
+    //    currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
+    //    audioSource.clip = loopingAmbienceClips[currInt];
+    //    audioSource.Play();
+    //    float rndSec = Random.Range(4.0f, 8.0f);
+    //    yield return new WaitForSeconds(rndSec);
 
-        rndInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-        while (rndInt == currInt)
-        {
-            rndInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-            yield return null;
-        }
-        Debug.Log(currInt);
-        audioSource2.clip = loopingAmbienceClips[rndInt];
-        audioSource2.Play();
-        //_audioSource.loop = true;
-        while (audioSource.volume != 0)
-        {
-            audioSource.volume -= Time.deltaTime;
-            //Debug.Log(audioSource.volume);
-            yield return null;
-        }
-        rndSec = Random.Range(2.0f, 5.0f);
-        Debug.Log(rndInt);
-        yield return new WaitForSeconds(rndSec);
-        StartCoroutine(FadeIn());
-    }
+    //    rndInt = Random.Range(0, loopingAmbienceClips.Count - 1);
+    //    while (rndInt == currInt)
+    //    {
+    //        rndInt = Random.Range(0, loopingAmbienceClips.Count - 1);
+    //        yield return null;
+    //    }
+    //    Debug.Log(currInt);
+    //    audioSource2.clip = loopingAmbienceClips[rndInt];
+    //    audioSource2.Play();
+    //    //_audioSource.loop = true;
+    //    while (audioSource.volume != 0)
+    //    {
+    //        audioSource.volume -= Time.deltaTime;
+    //        //Debug.Log(audioSource.volume);
+    //        yield return null;
+    //    }
+    //    rndSec = Random.Range(2.0f, 5.0f);
+    //    Debug.Log(rndInt);
+    //    yield return new WaitForSeconds(rndSec);
+    //    StartCoroutine(FadeIn());
+    //}
 
 
-    IEnumerator FadeIn()
-    {
-        currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-        while (currInt == rndInt)
-        {
-            currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-            yield return null;
-        }
-        audioSource.clip = loopingAmbienceClips[currInt];
-        Debug.Log(currInt);
+    //IEnumerator FadeIn()
+    //{
+    //    currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
+    //    while (currInt == rndInt)
+    //    {
+    //        currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
+    //        yield return null;
+    //    }
+    //    audioSource.clip = loopingAmbienceClips[currInt];
+    //    Debug.Log(currInt);
 
-        audioSource.Play();
-        while (audioSource.volume != 1)
-        {
-            audioSource.volume += Time.deltaTime;
+    //    audioSource.Play();
+    //    while (audioSource.volume != 1)
+    //    {
+    //        audioSource.volume += Time.deltaTime;
 
-            Debug.Log(audioSource.volume);
-            yield return null;
-        }
-        float rndSec = Random.Range(4.0f, 8.0f);
-        yield return new WaitForSeconds(rndSec);
-        StartCoroutine(FadeTo());
+    //        Debug.Log(audioSource.volume);
+    //        yield return null;
+    //    }
+    //    float rndSec = Random.Range(4.0f, 8.0f);
+    //    yield return new WaitForSeconds(rndSec);
+    //    StartCoroutine(FadeTo());
 
-    }
+    //}
 }
