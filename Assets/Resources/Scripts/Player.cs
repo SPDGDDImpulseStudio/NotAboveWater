@@ -16,16 +16,21 @@ public class Player : ISingleton<Player> {
     [Header("[None of this should be empty]")]
     public AudioSource audioSource;
     public Slider oxygenBar;
+    [Header("[VFX]")]
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
     public AudioClip gunFire, reloadingClip, emptyGunFire;
     public GameObject ammoCounterBar;
-    public Image spr_OxygenBar;
+    public Slider compassSlider;
 
+    public Image spr_OxygenBar;
     public Text reloadText;
     public Text oxygenText;
-    public Slider compassSlider;
+
+
+    public Canvas playerCanvas, titleCanvas;
+
 
     List<Image> bullets = new List<Image>();
 
@@ -45,15 +50,54 @@ public class Player : ISingleton<Player> {
         , shootTimerNow;
     
     float healthBarCount1, healthBarCount2;
-    
+    public UnityEngine.Playables.PlayableDirector pd;
     Cinemachine.CinemachineBrain CB;
 
+    public Image SlimeTexture;
     #endregion
-
+    public void PlayerTurnOnTitleOff()
+    {
+        titleCanvas.gameObject.SetActive(false);
+        playerCanvas.gameObject.SetActive(true);
+    }
     void Start () {
         Init();
         StartCoroutine(TriggerTentacles());
     }
+    public override void RegisterSelf()
+    {
+        base.RegisterSelf();
+
+        switch (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex)
+        {
+            case 0:
+                Instance.Dab();
+                break;
+
+            case 1:
+                Instance.Deb();
+                break;
+            case 2:
+                Instance.Fk();
+                break;
+        }
+    }
+    void Dab()
+    {
+        Debug.Log("Dab");
+    }
+    void Deb()
+    {
+        Init();
+        playerCanvas.gameObject.SetActive(true); StartCoroutine(OxyDropping());
+
+        //titleCanvas.gameObject.SetActive(false);
+    }
+
+    void Fk()
+    {
+    }
+
 
     public void Init()
     {
@@ -76,13 +120,23 @@ public class Player : ISingleton<Player> {
         AssignTentacleList();
         bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
         StartCoroutine(UIUpdate());
-        StartCoroutine(OxyDropping());
+        StartCoroutine(Fade());
         //StartCoroutine(SuittedUp());
     }
     void PlayAudioClip(AudioClip clip, float volume = 1.0f)
     {
         audioSource.clip = clip;
         audioSource.PlayOneShot(clip, volume);
+    }
+    IEnumerator Fade()
+    {
+        //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
+        Debug.Log(pd);
+        if (pd == null) yield break;
+        yield return new WaitUntil(() => pd.state != UnityEngine.Playables.PlayState.Paused);
+        yield return new WaitUntil(() => pd.state != UnityEngine.Playables.PlayState.Playing);
+        SceneChanger.Instance.Fading(1);
+        Debug.Log("DA");
     }
 
     List<Tentacle> tentacles = new List<Tentacle>();
@@ -97,7 +151,7 @@ public class Player : ISingleton<Player> {
     {
         Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
         if (currSuitHealth < 0)         Debug.Log("death");
-
+    
         if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
         
         if (Input.GetMouseButton(0))
@@ -118,19 +172,19 @@ public class Player : ISingleton<Player> {
                     {
                         targetHit = hit.transform.gameObject;
                         pointHit = hit.point;
-                        
+
                         if (hit.transform.GetComponent<AI>())
                             DamageShark(targetHit, pointHit);
                         else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                             hit.transform.GetComponent<InteractableObj>().Interact();
                         else if (hit.transform.GetComponent<Boss>())
-                            hit.transform.GetComponent<Boss>().bossCurrHealth -= 15f;
+                            hit.transform.GetComponent<Boss>().OnHit();
                         else
                         {
                             //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                             //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
                             //else
-                                DamageProps(targetHit, pointHit);
+                            DamageProps(targetHit, pointHit);
                         }
                     }
                     if (currBullet - 1 == 0)
@@ -154,6 +208,10 @@ public class Player : ISingleton<Player> {
 
     }
   
+    void OnDestroy()
+    {
+        Debug.Log("Player Donge")
+;    }
 
     public IEnumerator OxyDropping()
     {
@@ -196,13 +254,13 @@ public class Player : ISingleton<Player> {
     #region PrivateCoroutines
     IEnumerator TriggerTentacles()
     {
-        if (tentacles.Count < 0) yield break;
+        if (tentacles.Count < 1) yield break;
         while (true)
         {
             List<float> dist = new List<float>();
 
             for (int i = 0; i < tentacles.Count; i++)
-            {
+            {if (tentacles[i] == null) yield break;
                 float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
                 dist.Add(newV3);
             }
@@ -222,6 +280,7 @@ public class Player : ISingleton<Player> {
             tentacles[chosen].rangeAttack = true;
             for (int k = 0; k < tentacles.Count; k++)
             {
+                if (tentacles[k] == null) yield break;
                 if (k != chosen) tentacles[k].rangeAttack = false;
                 if (k != chosen2) tentacles[k].nearAttack = false;
             }

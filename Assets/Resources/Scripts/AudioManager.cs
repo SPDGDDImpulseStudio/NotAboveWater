@@ -3,28 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource), typeof(AudioSource))]
-public class AudioManager : ISingleton<AudioManager> {
-    
+public class AudioManager : ISingleton<AudioManager>
+{
     [Tooltip("Please put the audioclips in the same order of scene build index.")]
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
     public AudioSource audioSource, audioSource2, sfxAS;
-    
+
     int currInt, rndInt;
 
     bool fadedOut, fadedIn;
 
-    [Range(0.1f,2f)]
+    [Range(0.1f, 2f)]
     public float musicFadeSpd = 1f;
 
     public override void RegisterSelf()
     {
         base.RegisterSelf();
+        Call();
+    }
+    void Call()
+    {
         AudioSource[] allAS = FindObjectsOfType<AudioSource>();
-        
+        allASScene.Clear();
         allASScene = new List<AudioSource>(allAS);
-        for (int i = 0; i< allASScene.Count; i++)
+        for (int i = 0; i < allASScene.Count; i++)
         {
-            allASScene[i].volume = PlayerPrefs.GetFloat(masterVol);
+            if (allASScene[i])
+                allASScene[i].volume = PlayerPrefs.GetFloat(masterVol);
+        }
+
+        switch (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex)
+        {
+            case 0: Instance.FadeFromSceneChanger(0, 1); break;
+            //0 and 1 for menu 
+
+            case 1: Instance.FadeFromSceneChanger(5, 4); break;
+            //4 and 5 for boss fight
+
+            case 2: Instance.FadeFromSceneChanger(0, 1); break;
+
         }
     }
     public List<AudioSource> allASScene;
@@ -36,123 +53,50 @@ public class AudioManager : ISingleton<AudioManager> {
     //The fn i call from scenechanger x when scene change
     // i want this argument to be filled with the scene.buildindex
     //
-    public void FadeFromSceneChanger(int BGM)
+    public void PlaySecAS(int BGM)
     {
+        audioSource2.clip = loopingAmbienceClips[BGM];
+        audioSource2.Play();
+    }
+    public void FadeFromSceneChanger(int BGM, int BGM2 = 0)
+    {
+        Debug.Log("BGM = " + BGM + " BGM2 = " + BGM2);
         StartCoroutine(FadeToNext(BGM));
+        StartCoroutine(FadeSecAS(BGM2));
     }
     IEnumerator FadeToNext(int nextBGM)
     {
         if (audioSource.isPlaying)
         {
-            StartCoroutine(FadeOutASOne());
-            StartCoroutine(FadeInASTwo(nextBGM));
+            while (audioSource.volume > 0.2f)
+            {
+                audioSource.volume -= Time.deltaTime * musicFadeSpd;
+                yield return null;
+            }
         }
-        else
-        {
-            StartCoroutine(FadeOutASTwo());
-            StartCoroutine(FadeInASOne(nextBGM));
-        }
-        yield return new WaitUntil(() => fadedIn && fadedOut);
-        fadedIn = false;
-        fadedOut = false;
-    }
-
-    IEnumerator FadeOutASOne()
-    {
-        while(audioSource.volume != 0)
-        {
-            audioSource.volume -= Time.deltaTime*musicFadeSpd ;
-            yield return null;
-        }
-        fadedOut = true;
-    }
-    IEnumerator FadeInASOne(int BGM)
-    {
-        audioSource.volume = 0f;
-        audioSource.clip = loopingAmbienceClips[BGM];
-        while (audioSource.volume != 1)//JR SAYS change 1 to master volume
+        audioSource.clip = loopingAmbienceClips[nextBGM];
+        audioSource.Play();
+        while (audioSource.volume < PlayerPrefs.GetFloat(masterVol))
         {
             audioSource.volume += Time.deltaTime * musicFadeSpd;
             yield return null;
         }
-        fadedIn = true;
     }
-
-    IEnumerator FadeOutASTwo()
+    IEnumerator FadeSecAS(int BGM2)
     {
-        while (audioSource2.volume != 0)
+        if (audioSource2.isPlaying)
         {
-            audioSource2.volume -= Time.deltaTime * musicFadeSpd;
-            yield return null;
+            while (audioSource2.volume > 0.2f)
+            {
+                audioSource2.volume -= Time.deltaTime * musicFadeSpd;
+                yield return null;
+            }
         }
-        fadedOut = true;
-    }
-    IEnumerator FadeInASTwo(int BGM)
-    {
-        audioSource2.volume = 0f;
-        audioSource2.clip  = loopingAmbienceClips[BGM];
-        while (audioSource2.volume != 1)//JR SAYS change 1 to master volume
+            PlaySecAS(BGM2);
+        while (audioSource2.volume < PlayerPrefs.GetFloat(masterVol))
         {
             audioSource2.volume += Time.deltaTime * musicFadeSpd;
             yield return null;
         }
-        fadedIn = true;
     }
-
-    //IEnumerator FadeTo()
-    //{
-    //    if (loopingAmbienceClips.Count == 0) yield break;
-    //    currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-    //    audioSource.clip = loopingAmbienceClips[currInt];
-    //    audioSource.Play();
-    //    float rndSec = Random.Range(4.0f, 8.0f);
-    //    yield return new WaitForSeconds(rndSec);
-
-    //    rndInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-    //    while (rndInt == currInt)
-    //    {
-    //        rndInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-    //        yield return null;
-    //    }
-    //    Debug.Log(currInt);
-    //    audioSource2.clip = loopingAmbienceClips[rndInt];
-    //    audioSource2.Play();
-    //    //_audioSource.loop = true;
-    //    while (audioSource.volume != 0)
-    //    {
-    //        audioSource.volume -= Time.deltaTime;
-    //        //Debug.Log(audioSource.volume);
-    //        yield return null;
-    //    }
-    //    rndSec = Random.Range(2.0f, 5.0f);
-    //    Debug.Log(rndInt);
-    //    yield return new WaitForSeconds(rndSec);
-    //    StartCoroutine(FadeIn());
-    //}
-
-
-    //IEnumerator FadeIn()
-    //{
-    //    currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-    //    while (currInt == rndInt)
-    //    {
-    //        currInt = Random.Range(0, loopingAmbienceClips.Count - 1);
-    //        yield return null;
-    //    }
-    //    audioSource.clip = loopingAmbienceClips[currInt];
-    //    Debug.Log(currInt);
-
-    //    audioSource.Play();
-    //    while (audioSource.volume != 1)
-    //    {
-    //        audioSource.volume += Time.deltaTime;
-
-    //        Debug.Log(audioSource.volume);
-    //        yield return null;
-    //    }
-    //    float rndSec = Random.Range(4.0f, 8.0f);
-    //    yield return new WaitForSeconds(rndSec);
-    //    StartCoroutine(FadeTo());
-
-    //}
 }

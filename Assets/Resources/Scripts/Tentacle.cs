@@ -22,8 +22,17 @@ public class Tentacle : MonoBehaviour
     Vector3 offSet;
     List<string> animClips = new List<string>();
 
+
+    public List<AudioClip> hitSFXClips = new List<AudioClip>();
+
+    public List<AudioClip> gotHitSFX = new List<AudioClip>();
+
+    public AudioSource aSource;
+
     void Start()
     {
+        if(!aSource)
+        aSource = GetComponent<AudioSource>();
         this.transform.localEulerAngles = new Vector3(0, Random.Range(0f, 180f), 0f);
         animClips = new List<string>()
         {
@@ -149,6 +158,10 @@ public class Tentacle : MonoBehaviour
     public void OnHit()
     {
         anim.SetBool("DAMAGED", true);
+        if (aSource.isPlaying) return;
+        int x = Random.Range(0, gotHitSFX.Count);
+        aSource.clip = gotHitSFX[x];
+        aSource.Play();
     }
     public void DamagedToFalse()
     {
@@ -204,7 +217,12 @@ public class Tentacle : MonoBehaviour
         //temp += new Vector3(0, 180f, 0); 
         //Vector3 newPos = Camera.main.WorldToScreenPoint(tipAKAwhereToShootAt.transform.position);
         //Debug.Log(newPos);
-
+        if (!aSource.isPlaying)
+        {
+            int x = Random.Range(0, hitSFXClips.Count);
+            aSource.clip = hitSFXClips[x];
+            aSource.Play();
+        }
         Player.Instance.ShakeCam(tipAKAwhereToShootAt.transform.position);
         Debug.LogError("AJA");
 
