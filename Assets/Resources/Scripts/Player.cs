@@ -58,180 +58,188 @@ public class Player : ISingleton<Player> {
     public void PlayerTurnOnTitleOff()
     {
         titleCanvas.gameObject.SetActive(false);
-        playerCanvas.gameObject.SetActive(true);
     }
     void Start () {
+        audioSource = GetComponent<AudioSource>();
+        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
+        if (!ammoCounterBar)
+            ammoCounterBar = GameObject.Find("AmmoCounterBar");
+        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
+
         Init();
-        StartCoroutine(TriggerTentacles());
     }
+
     public override void RegisterSelf()
     {
         base.RegisterSelf();
+        GetFunctionWithSceneIndex
+            (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+    }
 
-        switch (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex)
+    void GetFunctionWithSceneIndex(int sceneBuildIndex)
+    {
+        switch (sceneBuildIndex)
         {
             case 0:
-                Instance.Dab();
+                StartCoroutine(SceneZeroFunction());
                 break;
-
             case 1:
-                Instance.Deb();
-                break;
-            case 2:
-                Instance.Fk();
+                Init();
+                AssignTentacleList();
                 break;
         }
     }
-    void Dab()
-    {
-        Debug.Log("Dab");
-    }
-    void Deb()
-    {
-        Init();
-        playerCanvas.gameObject.SetActive(true); StartCoroutine(OxyDropping());
+    bool divedIn = false;
 
-        //titleCanvas.gameObject.SetActive(false);
-    }
-
-    void Fk()
+    IEnumerator SceneZeroFunction()
     {
+        yield return new WaitUntil(() => pd.time > 28f);
+        Debug.Log("IN");
+        AttributeReset();
+        StartCoroutine(OxyDropping());
+        playerCanvas.gameObject.SetActive(true);
     }
 
 
-    public void Init()
+    void AttributeReset()
     {
         currHealth = maxHealth;
-        audioSource = GetComponent<AudioSource>();
         currSuitHealth = maxSuitHealth;
         currOxygen = maxOxygen;
         currBullet = maxBullet;
         reloadTime = reloadingClip.length;
-
-        GameObject parentOf = new GameObject();
+    }
+    public void Init()
+    {
+        GameObject parentOf =//( FindObjectOfType<GameObject>().name == "VFX Container")? 
+            new GameObject();
         parentOf.name = "VFX Container";
-
+        //PoolManager.Instance.ClearPool();
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
-
-        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
-
-        AssignTentacleList();
-        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
+        
         StartCoroutine(UIUpdate());
-        StartCoroutine(Fade());
-        //StartCoroutine(SuittedUp());
+        StartCoroutine(GameplayUpdate());
+        StartCoroutine(CheapFadeToNextScene());
+
     }
-    void PlayAudioClip(AudioClip clip, float volume = 1.0f)
+    void PlayAudioClip(AudioClip clip)//, float volume = 1.0f)
     {
         audioSource.clip = clip;
-        audioSource.PlayOneShot(clip, volume);
+        audioSource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
     }
-    IEnumerator Fade()
+    IEnumerator CheapFadeToNextScene()
     {
         //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
-        Debug.Log(pd);
         if (pd == null) yield break;
         yield return new WaitUntil(() => pd.state != UnityEngine.Playables.PlayState.Paused);
         yield return new WaitUntil(() => pd.state != UnityEngine.Playables.PlayState.Playing);
         SceneChanger.Instance.Fading(1);
-        Debug.Log("DA");
     }
 
-    List<Tentacle> tentacles = new List<Tentacle>();
-
+    List<Tentacle> tentacles;
     public void AssignTentacleList()
     {
         tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
         StartCoroutine(TriggerTentacles());        
     }
-    
-    void Update()
+
+    IEnumerator GameplayUpdate()
     {
-        Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
-        if (currSuitHealth < 0)         Debug.Log("death");
-    
-        if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
-        
-        if (Input.GetMouseButton(0))
+        while (true)
         {
-            RaycastHit hit;
-            Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (!playerCanvas.gameObject.activeInHierarchy) yield break;
 
-            if (shootTimerNow > shootEvery && !reloading)
+            if (currSuitHealth < 0)
             {
-                if (currBullet > 0)
+                PlayerDeath();
+                yield break;
+            }
+            Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
+
+            if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
+
+            if (Input.GetMouseButton(0))
+            {
+                RaycastHit hit;
+                Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (shootTimerNow > shootEvery && !reloading)
                 {
-                    ImageUpdate(false);
-                    shootTimerNow = 0;
-                    PlayAudioClip(gunFire);
-
-
-                    if (Physics.Raycast(this.transform.position, point.direction, out hit))
+                    if (currBullet > 0)
                     {
-                        targetHit = hit.transform.gameObject;
-                        pointHit = hit.point;
+                        bullets[(maxBullet - currBullet)].gameObject.SetActive (false);
+                        shootTimerNow = 0;
+                        PlayAudioClip(gunFire);
 
-                        if (hit.transform.GetComponent<AI>())
-                            DamageShark(targetHit, pointHit);
-                        else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                            hit.transform.GetComponent<InteractableObj>().Interact();
-                        else if (hit.transform.GetComponent<Boss>())
-                            hit.transform.GetComponent<Boss>().OnHit();
+
+                        if (Physics.Raycast(this.transform.position, point.direction, out hit))
+                        {
+                            targetHit = hit.transform.gameObject;
+                            pointHit = hit.point;
+
+                            if (hit.transform.GetComponent<AI>())
+                                DamageShark(targetHit, pointHit);
+                            else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                hit.transform.GetComponent<InteractableObj>().Interact();
+                            else if (hit.transform.GetComponent<Boss>())
+                                hit.transform.GetComponent<Boss>().OnHit();
+                            else
+                            {
+                                //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
+                                //else
+                                DamageProps(targetHit, pointHit);
+                            }
+                        }
+                        if (currBullet - 1 == 0)
+                            StartCoroutine(WorkAroundButton());
                         else
                         {
-                            //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                            //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
-                            //else
-                            DamageProps(targetHit, pointHit);
+                            currBullet--;
+                            Stats.Instance.TrackStats(0, 1);
                         }
                     }
-                    if (currBullet - 1 == 0)
-                        StartCoroutine(WorkAroundButton());
                     else
                     {
-                        currBullet--;
-                        Stats.Instance.TrackStats(0, 1);
-                    }
-                }else{
-                    if (!audioSource.isPlaying)
-                    {
-                        audioSource.clip = emptyGunFire;
-                        audioSource.Play();
+                        if (!audioSource.isPlaying)  PlayAudioClip(emptyGunFire);
+                         
+                        
                     }
                 }
+
             }
+            if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
+
+
+            yield return null;
 
         }
-        if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
-
     }
   
+    void PlayerDeath()
+    {
+
+    }
     void OnDestroy()
     {
-        Debug.Log("Player Donge")
-;    }
+        Debug.Log("Player Donge");
+    }
 
     public IEnumerator OxyDropping()
     {
         while (true)
         {
-            currOxygen -= oxyDrop;
-            Stats.Instance.TrackStats(5, oxyDrop);
+            if (!SceneChanger.Instance.transitting)
+            {
+                currOxygen -= oxyDrop;
+                Stats.Instance.TrackStats(5, oxyDrop);
+            }
             yield return null;
         }
     }
-
-    void ImageUpdate(bool x)
-    {
-        bullets[CurrImage()].gameObject.SetActive(x);
-    }
-
-    int CurrImage()
-    {
-        return  maxBullet - currBullet;
-    }
+ 
     #region Public Functions
 
     public void HealthDropping(float _healthDrop)
@@ -240,32 +248,34 @@ public class Player : ISingleton<Player> {
         currHealth -= _healthDrop;
     }
     public void AddOxygen(float x)
-    {
+    {   //Called from Interact_OxygenTank
         StartCoroutine(AddOx(x));
     }
 
     public void ShakeCam(Vector3 pos)
-    {
+    {   //Called From tentacle
         StartCoroutine(ShakerShaker(pos));
     }
 
     #endregion
 
-    #region PrivateCoroutines
+    #region PrivateCoroutines under active player Canvas
+
+    public float triggerTenTime = 3.2f;
     IEnumerator TriggerTentacles()
     {
         if (tentacles.Count < 1) yield break;
+        List<float> dist;
         while (true)
         {
-            List<float> dist = new List<float>();
+            dist = new List<float>();
 
             for (int i = 0; i < tentacles.Count; i++)
             {if (tentacles[i] == null) yield break;
                 float newV3 = Vector3.Distance(this.transform.position, tentacles[i].transform.position);
                 dist.Add(newV3);
             }
-
-            //Tentacle furthest = tentacles.Find(x=> (x.gameObject.transform.position )
+            //Tentacle furthest = tentacles.Max(x => Vector3.Distance(x.transform.position, transform.position));
 
             int chosen = 0, chosen2 = 0;
             for (int j = chosen; j < tentacles.Count - 1; j++)
@@ -285,7 +295,7 @@ public class Player : ISingleton<Player> {
                 if (k != chosen2) tentacles[k].nearAttack = false;
             }
 
-            yield return new WaitForSeconds(3.2f);
+            yield return new WaitForSeconds(triggerTenTime);
         }
     }
 
@@ -323,7 +333,6 @@ public class Player : ISingleton<Player> {
                 bullets[b].gameObject.SetActive(true);
             }
         }
-
         currBullet = maxBullet;
         reloading = false;
     }
@@ -348,10 +357,6 @@ public class Player : ISingleton<Player> {
             //yield return null;
             yield return new WaitForFixedUpdate();
         }
-
-        //Debug.Log("finishAddingIn: " + finishAddingIn +  " seconds, perUpdatesAdd: " + perUpdateAdd + "numberOfUpdate: " + numberOfUpdate);
-        //timer.Stop();
-        //Debug.Log(timer.Elapsed + " | " + timer.ElapsedMilliseconds);
     }
     IEnumerator ShakerShaker(Vector3 tipPos)
     {
@@ -381,6 +386,8 @@ public class Player : ISingleton<Player> {
 
     #endregion
 
+    #region Shooting
+
     void DamageShark(GameObject targetHitName, Vector3 pointHitPosition)
     {
         targetHitName.GetComponent<AI>().currHealth -= bulletDamage;
@@ -400,5 +407,6 @@ public class Player : ISingleton<Player> {
         x.transform.position = pos;
         x.transform.rotation = quat;
         return x;
-    }
+    } 
+    #endregion
 }
