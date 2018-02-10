@@ -13,7 +13,7 @@ public class Interact_SuitHealth : InteractableObj
     }
     public override void Interact()
     {
-        Player.Instance.currSuitHealth = Player.Instance.maxSuitHealth;
+        Player.Instance.currHealth = Player.Instance.maxHealth;
         AudioManager.Instance.sfxAS.PlayOneShot(suitClip);
     }
 

@@ -9,66 +9,68 @@ public class Player : ISingleton<Player> {
 
     #region Attributes
     
-    GameObject targetHit;
     [HideInInspector]
     public Vector3 pointHit;
+    GameObject targetHit;
 
     [Header("[None of this should be empty]")]
-    public AudioSource audioSource;
-    public Slider oxygenBar;
+    public AudioSource gunASource;
+    public AudioSource playerASource;
     [Header("[VFX]")]
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
-    public AudioClip gunFire, reloadingClip, emptyGunFire;
-    public GameObject ammoCounterBar;
-    public Slider compassSlider;
+    public Image SlimeTexture;
+    [Header("[AudioClips]")]
+    public AudioClip gunFire;
+    public AudioClip reloadingClip, emptyGunFire;
 
+    [Header("[Various UI]")]
+    public GameObject ammoCounterBar;
+    public Slider compassSlider, oxygenBar;
+    public GameObject playerCanvas, titleCanvas, leaderboardUI;
+
+    public UnityEngine.Playables.PlayableDirector pd;
     public Image spr_OxygenBar;
     public Text reloadText;
     public Text oxygenText;
-
-
-    public Canvas playerCanvas, titleCanvas;
-
-
+    
     List<Image> bullets = new List<Image>();
 
     [Header("[Player's Attributes]")]
 
     [Header("[Things to Set]")]
-
-    public float maxSuitHealth;
-    public float maxOxygen, maxHealth,
-        oxyDrop, healthDrop,
+    public float maxHealth;
+    [Tooltip("Oxygen drops every frame, beware to set properly")]
+    public float maxOxygen,
+        oxyDrop, 
         reloadTime = 3, bulletDamage, shootEvery = 1;
     int maxBullet = 30;
 
     [Header("Dont+Touch+For+Debug+Purpose")]
-    public int  currBullet;
-    public float currSuitHealth, currOxygen, currHealth
-        , shootTimerNow;
+    public int currBullet;
+    public float currHealth, currOxygen, shootTimerNow;
     
-    float healthBarCount1, healthBarCount2;
-    public UnityEngine.Playables.PlayableDirector pd;
     Cinemachine.CinemachineBrain CB;
 
-    public Image SlimeTexture;
     #endregion
     public void PlayerTurnOnTitleOff()
     {
-        titleCanvas.gameObject.SetActive(false);
+        titleCanvas.SetActive(false);
     }
     void Start () {
-        audioSource = GetComponent<AudioSource>();
-        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
-        if (!ammoCounterBar)
-            ammoCounterBar = GameObject.Find("AmmoCounterBar");
-        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
+        #region OneTimer
 
+        gunASource = GetComponent<AudioSource>();
+        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
+        if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
+        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
+        reloadTime = reloadingClip.length;
+
+        #endregion
         Init();
     }
-
+    bool setPos = false;
     public override void RegisterSelf()
     {
         base.RegisterSelf();
@@ -89,25 +91,35 @@ public class Player : ISingleton<Player> {
                 break;
         }
     }
-    bool divedIn = false;
 
+    Vector3 iniPos, iniRot;
     IEnumerator SceneZeroFunction()
     {
+        if (!setPos)
+        {
+            iniPos = this.transform.position;
+            iniRot = this.transform.localEulerAngles;
+            setPos = true;
+        }
+        else
+        {
+            this.transform.position = iniPos;
+            this.transform.localEulerAngles = iniRot;
+            playerCanvas.SetActive(false);
+            leaderboardUI.SetActive(true);
+        }
         yield return new WaitUntil(() => pd.time > 28f);
         Debug.Log("IN");
         AttributeReset();
         StartCoroutine(OxyDropping());
-        playerCanvas.gameObject.SetActive(true);
+        playerCanvas.SetActive(true);
     }
-
 
     void AttributeReset()
     {
         currHealth = maxHealth;
-        currSuitHealth = maxSuitHealth;
         currOxygen = maxOxygen;
         currBullet = maxBullet;
-        reloadTime = reloadingClip.length;
     }
     public void Init()
     {
@@ -122,13 +134,8 @@ public class Player : ISingleton<Player> {
         StartCoroutine(UIUpdate());
         StartCoroutine(GameplayUpdate());
         StartCoroutine(CheapFadeToNextScene());
-
     }
-    void PlayAudioClip(AudioClip clip)//, float volume = 1.0f)
-    {
-        audioSource.clip = clip;
-        audioSource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
-    }
+  
     IEnumerator CheapFadeToNextScene()
     {
         //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
@@ -149,9 +156,9 @@ public class Player : ISingleton<Player> {
     {
         while (true)
         {
-            if (!playerCanvas.gameObject.activeInHierarchy) yield break;
+            if (!playerCanvas.activeInHierarchy) yield break;
 
-            if (currSuitHealth < 0)
+            if (currHealth < 0)
             {
                 PlayerDeath();
                 yield break;
@@ -171,7 +178,7 @@ public class Player : ISingleton<Player> {
                     {
                         bullets[(maxBullet - currBullet)].gameObject.SetActive (false);
                         shootTimerNow = 0;
-                        PlayAudioClip(gunFire);
+                        GunAudioPlay(gunFire);
 
 
                         if (Physics.Raycast(this.transform.position, point.direction, out hit))
@@ -203,7 +210,7 @@ public class Player : ISingleton<Player> {
                     }
                     else
                     {
-                        if (!audioSource.isPlaying)  PlayAudioClip(emptyGunFire);
+                        if (!gunASource.isPlaying)  GunAudioPlay(emptyGunFire);
                          
                         
                     }
@@ -227,18 +234,7 @@ public class Player : ISingleton<Player> {
         Debug.Log("Player Donge");
     }
 
-    public IEnumerator OxyDropping()
-    {
-        while (true)
-        {
-            if (!SceneChanger.Instance.transitting)
-            {
-                currOxygen -= oxyDrop;
-                Stats.Instance.TrackStats(5, oxyDrop);
-            }
-            yield return null;
-        }
-    }
+ 
  
     #region Public Functions
 
@@ -259,7 +255,7 @@ public class Player : ISingleton<Player> {
 
     #endregion
 
-    #region PrivateCoroutines under active player Canvas
+    #region PrivateCoroutines under active gameplay
 
     public float triggerTenTime = 3.2f;
     IEnumerator TriggerTentacles()
@@ -319,7 +315,7 @@ public class Player : ISingleton<Player> {
     {
         if (reloading) yield break;
         reloading = true;
-        PlayAudioClip(reloadingClip);
+        GunAudioPlay(reloadingClip);
         yield return new WaitForSeconds(reloadingClip.length);
 
         for (int i = 0; 0 < maxBullet - 1; i++)
@@ -335,6 +331,18 @@ public class Player : ISingleton<Player> {
         }
         currBullet = maxBullet;
         reloading = false;
+    }
+    IEnumerator OxyDropping()
+    {
+        while (true)
+        {
+            if (!SceneChanger.Instance.transitting)
+            {
+                currOxygen -= oxyDrop;
+                Stats.Instance.TrackStats(5, oxyDrop);
+            }
+            yield return null;
+        }
     }
 
     IEnumerator AddOx(float x)
@@ -407,6 +415,11 @@ public class Player : ISingleton<Player> {
         x.transform.position = pos;
         x.transform.rotation = quat;
         return x;
-    } 
+    }
+    void GunAudioPlay(AudioClip clip)//, float volume = 1.0f)
+    {
+        gunASource.clip = clip;
+        gunASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
+    }
     #endregion
 }

@@ -160,7 +160,7 @@ public class Tentacle : MonoBehaviour
         anim.SetBool("DAMAGED", true);
         if (aSource.isPlaying) return;
         int x = Random.Range(0, gotHitSFX.Count);
-        aSource.clip = gotHitSFX[x];
+        aSource.clip = gotHitSFX[x]; 
         aSource.Play();
     }
     public void DamagedToFalse()
