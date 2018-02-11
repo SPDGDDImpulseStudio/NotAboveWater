@@ -59,9 +59,51 @@ public class Player : ISingleton<Player> {
         titleCanvas.SetActive(false);
     }
     void Start () {
-        Init();
+        //Init();
+        gunASource = GetComponent<AudioSource>();
+        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
+        if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
+        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
+        reloadTime = reloadingClip.length;
+        GameObject parentOf =//( FindObjectOfType<GameObject>().name == "VFX Container")? 
+            new GameObject();
+        parentOf.transform.SetParent(this.transform);
+        parentOf.name = "VFX Container";
+        UnityEngine.Playables.PlayableDirector[] playables = FindObjectsOfType<UnityEngine.Playables.PlayableDirector>();
+        for (int i = 0; i < playables.Length; i++) {
+            if (playables[i].gameObject.name == "GameplayTimeline")
+            {
+                pd = playables[i];
+                break;
+            }
+        }
+
+        //PoolManager.Instance.ClearPool();
+        PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
+        PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
+        PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
+        
     }
-    bool setPos = false;
+    IEnumerator PlayerHax()
+    {
+        Debug.Log("OUTSIDE");
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        if (Input.GetKeyDown(KeyCode.Semicolon))
+        {
+            Debug.Log("IN");
+            while (true)
+            {
+                if (Input.GetKeyDown(KeyCode.Semicolon))
+                {
+                    pd.time += 2f;
+                    Debug.Log(Player.Instance);
+                }
+                yield return null;
+            }
+        }
+        Debug.Log("OUT of HAX");
+
+    }
     public override void RegisterSelf()
     {
         base.RegisterSelf();
@@ -71,6 +113,7 @@ public class Player : ISingleton<Player> {
 
     void GetFunctionWithSceneIndex(int sceneBuildIndex)
     {
+        Debug.Log(sceneBuildIndex);
         switch (sceneBuildIndex)
         {
             case 0:
@@ -83,6 +126,7 @@ public class Player : ISingleton<Player> {
         }
     }
 
+    bool setPos = false;
     Vector3 iniPos, iniRot;
     IEnumerator SceneZeroFunction()
     {
@@ -98,12 +142,15 @@ public class Player : ISingleton<Player> {
             this.transform.localEulerAngles = iniRot;
             playerCanvas.SetActive(false);
             leaderboardUI.SetActive(true);
+            Debug.Log("Back");
         }
+        yield return new WaitUntil(() => pd != null);
+        yield return new WaitUntil(() => pd.time > 5f);
+        StartCoroutine(PlayerHax());
         yield return new WaitUntil(() => pd.time > 28f);
         AttributeReset();
         StartCoroutine(OxyDropping());
         playerCanvas.SetActive(true);
-
         StartCoroutine(UIUpdate());
         StartCoroutine(GameplayUpdate()); // Settle these coroutines properly can alrd
             // make sure they stop updating when player die
@@ -116,23 +163,11 @@ public class Player : ISingleton<Player> {
         currHealth = maxHealth;
         currOxygen = maxOxygen;
         currBullet = maxBullet;
+        uglyStop = false;
     }
     public void Init()
     {
         #region OneTimer
-
-        gunASource = GetComponent<AudioSource>();
-        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
-        if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
-        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
-        reloadTime = reloadingClip.length;
-        GameObject parentOf =//( FindObjectOfType<GameObject>().name == "VFX Container")? 
-            new GameObject();
-        parentOf.name = "VFX Container";
-        //PoolManager.Instance.ClearPool();
-        PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
-        PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
-        PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
 
         #endregion
 
@@ -153,7 +188,7 @@ public class Player : ISingleton<Player> {
         tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
         StartCoroutine(TriggerTentacles());        
     }
-
+    bool uglyStop = false;
     IEnumerator GameplayUpdate()
     {
         while (true)
@@ -171,18 +206,18 @@ public class Player : ISingleton<Player> {
 
             if (Input.GetMouseButton(0))
             {
-                RaycastHit hit;
-                Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
-
+                
                 if (shootTimerNow > shootEvery && !reloading)
                 {
+                    RaycastHit hit;
+                    Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
+
                     if (currBullet > 0)
                     {
                         bullets[(maxBullet - currBullet)].gameObject.SetActive (false);
                         shootTimerNow = 0;
                         GunAudioPlay(gunFire);
-
-
+                        
                         if (Physics.Raycast(this.transform.position, point.direction, out hit))
                         {
                             targetHit = hit.transform.gameObject;
@@ -213,15 +248,12 @@ public class Player : ISingleton<Player> {
                     else
                     {
                         if (!gunASource.isPlaying)  GunAudioPlay(emptyGunFire);
-                         
-                        
                     }
                 }
 
             }
             if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
-
-
+            
             yield return null;
 
         }
@@ -230,6 +262,8 @@ public class Player : ISingleton<Player> {
     void PlayerDeath()
     {
         //Fade back to scene 1
+        Debug.Log("DEATH!");
+        uglyStop = true;
     }
 
     
@@ -302,6 +336,7 @@ public class Player : ISingleton<Player> {
     {
         while (true)
         {
+            if (uglyStop) yield break;
             compassSlider.value = (this.transform.localEulerAngles.y / 360f);
             oxygenBar.value = currOxygen / maxOxygen;
             yield return null;
@@ -335,6 +370,7 @@ public class Player : ISingleton<Player> {
         {
             if (!SceneChanger.Instance.transitting)
             {
+                if (uglyStop) yield break;
                 currOxygen -= oxyDrop;
                 Stats.Instance.TrackStats(5, oxyDrop);
             }
