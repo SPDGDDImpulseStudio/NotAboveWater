@@ -13,29 +13,52 @@ public class PoolManager : ISingleton<PoolManager> {
 
     PathRequest currPathReq;
 
-    public static void RequestCreatePool(GameObject _prefab, int _poolSize, Transform _parent)
+    int circleKey = 0; 
+
+    public static void RequestCreatePool(GameObject _prefab, int _poolSize, Transform _parent , bool _circle = false)
     {
         PathRequest newPathReq = new PathRequest( _prefab, _poolSize, _parent);
         Instance.pathReqQueue.Enqueue(newPathReq);
-        Instance.TryProcessNext();
+        Instance.TryProcessNext(_circle);
     }
 
-    void TryProcessNext()
+    public override void RegisterSelf()
+    {
+        base.RegisterSelf();
+        if (circleKey != 0)
+        {
+            for (int i = 0; i < poolDictionary[circleKey].Count; i++)
+            {
+
+                GameObject x = poolDictionary[circleKey].Dequeue();
+                x.GetComponent<CirclePosUpdate>().TurnOff();
+                Debug.Log(x.name);
+                poolDictionary[circleKey].Enqueue(x);
+            }
+        }
+        Debug.Log("circlekey is now " + circleKey);
+    }
+
+    void TryProcessNext(bool x = false)
     {
         if (!isProcessingPath && pathReqQueue.Count > 0)
         {
             isProcessingPath = true;
             currPathReq = pathReqQueue.Dequeue();
-            CreatePool(currPathReq.prefab, currPathReq.poolSize, currPathReq.parent);
+            CreatePool(currPathReq.prefab, currPathReq.poolSize, currPathReq.parent, x);
 
             Debug.Log("currPath is now: " + currPathReq.prefab);
         }
     }
 
-    void CreatePool(GameObject prefab, int poolSize, Transform parent)
+    void CreatePool(GameObject prefab, int poolSize, Transform parent, bool circle = false)
     {
         int poolKey = prefab.GetInstanceID();
-
+        if (circle)
+        {
+            circleKey = poolKey;
+            Debug.Log(circleKey);
+        }
         if (!poolDictionary.ContainsKey(poolKey))
         {
             poolDictionary.Add(poolKey, new Queue<GameObject>());

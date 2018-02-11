@@ -181,7 +181,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
         transitting = true;
 
         int temp = sceneChangingCanvas.sortingOrder;
-        sceneChangingCanvas.sortingOrder = 1;
+        sceneChangingCanvas.sortingOrder = 2;
         currSceneCanvas.sortingOrder = 0;
         float tempSpd = fadeSpeed + Random.Range(0.6f, 1f);
         while (image.color != Color.black)

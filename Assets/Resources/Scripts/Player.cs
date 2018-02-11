@@ -69,14 +69,6 @@ public class Player : ISingleton<Player> {
             new GameObject();
         parentOf.transform.SetParent(this.transform);
         parentOf.name = "VFX Container";
-        UnityEngine.Playables.PlayableDirector[] playables = FindObjectsOfType<UnityEngine.Playables.PlayableDirector>();
-        for (int i = 0; i < playables.Length; i++) {
-            if (playables[i].gameObject.name == "GameplayTimeline")
-            {
-                pd = playables[i];
-                break;
-            }
-        }
 
         //PoolManager.Instance.ClearPool();
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
@@ -96,7 +88,7 @@ public class Player : ISingleton<Player> {
                 if (Input.GetKeyDown(KeyCode.Semicolon))
                 {
                     pd.time += 2f;
-                    Debug.Log(Player.Instance);
+
                 }
                 yield return null;
             }
@@ -141,9 +133,20 @@ public class Player : ISingleton<Player> {
             this.transform.position = iniPos;
             this.transform.localEulerAngles = iniRot;
             playerCanvas.SetActive(false);
+            titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
-            Debug.Log("Back");
         }
+        UnityEngine.Playables.PlayableDirector[] playables = FindObjectsOfType<UnityEngine.Playables.PlayableDirector>();
+        for (int i = 0; i < playables.Length; i++)
+        {
+            if (playables[i].gameObject.name == "GameplayTimeline")
+            {
+                pd = playables[i];
+                break;
+            }
+        }
+
+        Debug.Log("SetPos: "+setPos);
         yield return new WaitUntil(() => pd != null);
         yield return new WaitUntil(() => pd.time > 5f);
         StartCoroutine(PlayerHax());

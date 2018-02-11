@@ -22,7 +22,7 @@ public class CircleManager : ISingleton<CircleManager> {
         {
             if (canvases[i].name != "SceneChanger")
             {
-                PoolManager.RequestCreatePool(circlePrefab, 5, canvases[i].transform);
+                PoolManager.RequestCreatePool(circlePrefab, 5, canvases[i].transform, true);
                 break;
             }
         }
