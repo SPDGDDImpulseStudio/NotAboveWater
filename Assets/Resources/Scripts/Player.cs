@@ -59,15 +59,6 @@ public class Player : ISingleton<Player> {
         titleCanvas.SetActive(false);
     }
     void Start () {
-        #region OneTimer
-
-        gunASource = GetComponent<AudioSource>();
-        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
-        if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
-        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
-        reloadTime = reloadingClip.length;
-
-        #endregion
         Init();
     }
     bool setPos = false;
@@ -86,7 +77,7 @@ public class Player : ISingleton<Player> {
                 StartCoroutine(SceneZeroFunction());
                 break;
             case 1:
-                Init();
+                //Init();
                 AssignTentacleList();
                 break;
         }
@@ -109,10 +100,15 @@ public class Player : ISingleton<Player> {
             leaderboardUI.SetActive(true);
         }
         yield return new WaitUntil(() => pd.time > 28f);
-        Debug.Log("IN");
         AttributeReset();
         StartCoroutine(OxyDropping());
         playerCanvas.SetActive(true);
+
+        StartCoroutine(UIUpdate());
+        StartCoroutine(GameplayUpdate()); // Settle these coroutines properly can alrd
+            // make sure they stop updating when player die
+            //make sure they only update when player play
+        StartCoroutine(CheapFadeToNextScene());
     }
 
     void AttributeReset()
@@ -123,6 +119,13 @@ public class Player : ISingleton<Player> {
     }
     public void Init()
     {
+        #region OneTimer
+
+        gunASource = GetComponent<AudioSource>();
+        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
+        if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
+        bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
+        reloadTime = reloadingClip.length;
         GameObject parentOf =//( FindObjectOfType<GameObject>().name == "VFX Container")? 
             new GameObject();
         parentOf.name = "VFX Container";
@@ -130,12 +133,11 @@ public class Player : ISingleton<Player> {
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
-        
-        StartCoroutine(UIUpdate());
-        StartCoroutine(GameplayUpdate());
-        StartCoroutine(CheapFadeToNextScene());
+
+        #endregion
+
     }
-  
+
     IEnumerator CheapFadeToNextScene()
     {
         //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
@@ -227,15 +229,10 @@ public class Player : ISingleton<Player> {
   
     void PlayerDeath()
     {
-
-    }
-    void OnDestroy()
-    {
-        Debug.Log("Player Donge");
+        //Fade back to scene 1
     }
 
- 
- 
+    
     #region Public Functions
 
     public void HealthDropping(float _healthDrop)
