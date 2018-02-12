@@ -369,49 +369,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 37169628}
---- !u!1001 &48111854
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 12.606947
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -14.522646
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 11.889992
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267968018705538, guid: 2357a17e56661d24d840baed78485792, type: 2}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 82979202409731242, guid: 2357a17e56661d24d840baed78485792, type: 2}
-  m_ParentPrefab: {fileID: 100100000, guid: 2357a17e56661d24d840baed78485792, type: 2}
-  m_IsPrefabParent: 0
 --- !u!4 &62757019 stripped
 Transform:
   m_PrefabParentObject: {fileID: 418706, guid: 30ded8fdd3abc9b40929e3fac0e665c6, type: 2}
@@ -2133,7 +2090,7 @@ Transform:
   - {fileID: 1620395837}
   - {fileID: 1486729866}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 4.9300003, y: 160.876, z: 0}
 --- !u!114 &286878142
 MonoBehaviour:
@@ -2712,7 +2669,7 @@ Transform:
   - {fileID: 2118106403}
   - {fileID: 342683017}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &327611651 stripped
 Transform:
@@ -9416,7 +9373,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!320 &1152544584
 PlayableDirector:
@@ -10270,7 +10227,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4893188671868800, guid: 50067a2ae50a3184ba8350e64d47c84f, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 114972552001759462, guid: 50067a2ae50a3184ba8350e64d47c84f,
         type: 2}
@@ -14192,7 +14149,7 @@ Transform:
   - {fileID: 1288927216}
   - {fileID: 828160248}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1625775324
 GameObject:
@@ -14923,7 +14880,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1777695328
 Prefab:
@@ -15195,7 +15152,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1812839465 stripped
 Transform:
@@ -15600,7 +15557,7 @@ Transform:
   m_Children:
   - {fileID: 547239535}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1868410934
 Prefab:

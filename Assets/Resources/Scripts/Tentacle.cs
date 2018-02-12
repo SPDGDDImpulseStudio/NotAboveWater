@@ -48,23 +48,28 @@ public class Tentacle : MonoBehaviour
         anim = GetComponent<Animator>();
         currentTimer += Random.Range(-1.2f, 1.2f);
         offSet += Random.Range(-15, 15) * transform.right;
-
-        GameObject go = new GameObject();
-        go.name = "Circle parent";
-        Canvas[] canvases = FindObjectsOfType<Canvas>();
-        for (int i = 0; i < canvases.Length; i++)
+        if (!(GameObject.Find("Circle parent")))
         {
-            if (!canvases[i].GetComponent<SceneChanger>())
+            GameObject go = new GameObject();
+            go.name = "Circle parent";
+            Canvas[] canvases = FindObjectsOfType<Canvas>();
+            for (int i = 0; i < canvases.Length; i++)
             {
-                go.transform.SetParent(canvases[i].transform);
-                break;
+                if (!canvases[i].GetComponent<SceneChanger>())
+                {
+                    go.transform.SetParent(canvases[i].transform);
+                    break;
+                }
             }
+            PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
         }
-        PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
-
-        GameObject go2 = new GameObject();
-        go2.name = "Stones Parent";
-        PoolManager.RequestCreatePool(stonePrefab, 10, go2.transform);
+        if (!(GameObject.Find("Stones Parent")))//(FindObjectOfType<GameObject>().name == "Stones Parent"))
+        {
+            GameObject go2 = new GameObject();
+            go2.name = "Stones Parent";
+            PoolManager.RequestCreatePool(stonePrefab, 10, go2.transform);
+            DontDestroyOnLoad(go2);
+        }
         //Debug.Log(circlePrefab.GetInstanceID());
         StartCoroutine(DebugUIUpdate());
         //StartCoroutine(AIUpdate());

@@ -69,7 +69,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 10
+    value: 2
   threshold:
     overrideState: 1
     value: 1
@@ -89,10 +89,10 @@ MonoBehaviour:
     overrideState: 1
     value: 0
   dirtTexture:
-    overrideState: 1
+    overrideState: 0
     value: {fileID: 0}
   dirtIntensity:
-    overrideState: 1
+    overrideState: 0
     value: 0
 --- !u!114 &114504737623954228
 MonoBehaviour:

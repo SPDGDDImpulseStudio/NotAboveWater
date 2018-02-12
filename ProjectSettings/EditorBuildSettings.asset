@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Resources/Scenes/Main Menu.unity
-    guid: c0719fe24b7784c4682a5b43cbcb8a6e
+    path: Assets/Resources/Scenes/Javan_Scene01.unity
+    guid: 3bf15f83fe2111043b024ee2d749f77f
   - enabled: 1
     path: Assets/Resources/Scenes/3_Boss Fight.unity
     guid: d4c0ef5037496554bb5c6fd1da2d24d9
