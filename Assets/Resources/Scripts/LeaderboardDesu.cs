@@ -1,0 +1,28 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class LeaderboardDesu : MonoBehaviour
+{
+    public GameObject grp_Names;
+    public GameObject grp_TimeTaken;
+    public GameObject grp_Accuracy;
+    public GameObject grp_ComboMAX;
+    public GameObject grp_TotalScore;
+
+    public List<Text> txt_Names;
+    public List<Text> txt_TimeTaken;
+    public List<Text> txt_Accuracy;
+    public List<Text> txt_ComboMAX;
+    public List<Text> txt_TotalScore;
+
+    void Start()
+    {
+        txt_Names = new List<Text>(grp_Names.GetComponentsInChildren<Text>());
+        txt_TimeTaken = new List<Text>(grp_TimeTaken.GetComponentsInChildren<Text>());
+        txt_Accuracy = new List<Text>(grp_Accuracy.GetComponentsInChildren<Text>());
+        txt_ComboMAX = new List<Text>(grp_ComboMAX.GetComponentsInChildren<Text>());
+        txt_ComboMAX = new List<Text>(grp_TotalScore.GetComponentsInChildren<Text>());
+    }
+}
