@@ -166,6 +166,17 @@ public class Player : ISingleton<Player> {
         currHealth = maxHealth;
         currOxygen = maxOxygen;
         currBullet = maxBullet;
+        for (int i = 0; 0 < maxBullet - 1; i++)
+        {
+            int b = (maxBullet - 1) - i;
+
+            if (b < 0) break;
+
+            if (!bullets[b].gameObject.activeSelf)
+            {
+                bullets[b].gameObject.SetActive(true);
+            }
+        }
         uglyStop = false;
     }
     public void Init()

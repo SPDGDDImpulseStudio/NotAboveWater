@@ -8,7 +8,6 @@ using System;
 public class CirclePosUpdate : PoolObject, 
     IPointerEnterHandler ,
     IPointerDownHandler  
- 
 {
 
     Vector3 originScale;
@@ -63,15 +62,19 @@ public class CirclePosUpdate : PoolObject,
             posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
 
 
-            posOnScreen.x = (0 < posOnScreen.x && posOnScreen.x < Screen.width) ? posOnScreen.x :
-               (posOnScreen.x < 0) ? 0 : Screen.width;
+            //posOnScreen.x = (0 < posOnScreen.x && posOnScreen.x < Screen.width) ? posOnScreen.x :
+            //   (posOnScreen.x < 0) ? 0 : Screen.width;
 
-            posOnScreen.y = (0 < posOnScreen.y && posOnScreen.y < Screen.height) ? posOnScreen.y :
-                (posOnScreen.y < 0) ? 0 : Screen.height;
-            //Debug.Log(posOnScreen);
+            //posOnScreen.y = (0 < posOnScreen.y && posOnScreen.y < Screen.height) ? posOnScreen.y :
+            //    (posOnScreen.y < 0) ? 0 : Screen.height;
 
-            if (0 > posOnScreen.x || posOnScreen.x > Screen.width)
+
+            if (0 > posOnScreen.x || posOnScreen.x > Screen.width || 0> posOnScreen.y || posOnScreen.y > Screen.height)
+            {
+                Debug.Log("OUT");
                 TurnOff();
+                break;
+            }
             if ((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x) > 0) posOnScreen.x += offSet.x;
 
             if ((posOnScreen.y + offSet.y) < Screen.height && (posOnScreen.y + offSet.y) > 0) posOnScreen.y += offSet.y;
@@ -84,7 +87,6 @@ public class CirclePosUpdate : PoolObject,
     {
         while ((Vector3.Distance(thisPos, _ref.transform.position) < 130f)&& _ref)
         {
-
             if (_ref == null) break;
             yield return null;
         }
