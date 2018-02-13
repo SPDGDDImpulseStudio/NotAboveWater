@@ -20,25 +20,36 @@ public class BulletScript : PoolObject {
     {
         if (!target) return;
 
-        Vector2 dir = target.position - rb.position;
-        dir.Normalize();
-
         this.transform.position = Vector3.MoveTowards(this.transform.position, target.position + anyHow, rotSpeed);
+        if (Vector3.Distance(this.transform.localPosition, Player.Instance.transform.position) < 4.8f)
+            Hit();
+        //Debug.Log(Vector3.Distance(this.transform.localPosition, Player.Instance.transform.localPosition) + " " +
+        // Vector3.Distance(this.transform.position, Player.Instance.transform.position) + " " +
+        //    Vector3.Distance(this.transform.localPosition, Player.Instance.transform.position) + " " +         
+        //    Vector3.Distance(this.transform.position, Player.Instance.transform.localPosition) //+ " " +
+
+
+
+
+
+
+            //);
         //float rotateAmt = Vector3.Cross(dir, transform.up).z;
         ////rb.angularVelocity = -rotateAmt * rotSpeed;
         //rb.velocity = transform.up * speed;
     }
-    
-    void OnTriggerEnter(Collider x)
-    {
-        //TurnOff();
-        if (x.transform.GetComponent<Player>())
-        {
-            Debug.Log("HIT");
-            //Player.Instance.currHealth -= 15f;
-            TurnOff();
-        }
-    }
+
+    //void OnTriggerEnter(Collider x)
+    //{
+    //    TurnOff();
+    //    if (x.transform.GetComponent<Player>())
+    //    {
+    //        Debug.Log("HIT"); Debug.Log(Vector3.Distance(this.transform.position, Player.Instance.transform.position));
+
+    //        Player.Instance.currHealth -= 15f;
+    //        TurnOff();
+    //    }
+    //}
     Vector3 anyHow;
     public override void Init()
     {
@@ -51,13 +62,19 @@ public class BulletScript : PoolObject {
         circle = cir;
         circle.Init_(this.gameObject);
         circle.bulletCheck = true;
-        anyHow = transform.right * UnityEngine.Random.Range(2f, 4f);
+        circle.afterPop += Hit;
+        anyHow = transform.right * UnityEngine.Random.Range(1f, 4f);
         if (Time.timeScale == 1.0f) Time.timeScale = 0.6f;
     }
-
+    void Hit()
+    {
+        Debug.Log("Kena");
+        TurnOff();
+    }
     public override void TurnOff()
     {
         Time.timeScale = 1f;
+        target = null;
         gameObject.SetActive(false);
 
     }

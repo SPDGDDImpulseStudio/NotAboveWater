@@ -72,9 +72,10 @@ public class Tentacle : MonoBehaviour
         }
         //Debug.Log(circlePrefab.GetInstanceID());
         StartCoroutine(DebugUIUpdate());
+        origin = this.transform.rotation;
         //StartCoroutine(AIUpdate());
     }
-
+    Quaternion origin;
     IEnumerator DebugUIUpdate()
     {
         if (!debugText || !debugText.gameObject.activeInHierarchy) yield break;
@@ -134,7 +135,7 @@ public class Tentacle : MonoBehaviour
               Player.Instance.transform.position.x + offSet.x,
               this.transform.position.y,
               Player.Instance.transform.position.z + offSet.z);
-
+            if(newA[0].clip.name != "Damaged")
             this.transform.LookAt(temp);
         }
         //this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
@@ -213,7 +214,29 @@ public class Tentacle : MonoBehaviour
         if (anim.GetBool("RELEASED")) //Debug.Log("fas");
             anim.SetBool("RELEASED", false);
     }
+    public float //maxRadDelta = 3f,
+        maxMagDelta = 70f;
+    IEnumerator Recover()
+    {
+        Vector3 newZero = new Vector3(0, this.transform.localEulerAngles.y, 0);
+        origin.y = this.transform.localRotation.y;
+        //Vector3 dir = (this.transform.position - newZero).normalized;
+        //Quaternion rotation;
+        while (this.transform.localEulerAngles.x > 0.1f || this.transform.localEulerAngles.x < -0.1f
+            || this.transform.localEulerAngles.z> 0.1f  || this.transform.localEulerAngles.z < -0.1f)
+        {
+            //rotation = Quaternion.LookRotation(newZero);
+            this.transform.localRotation = Quaternion.RotateTowards(this.transform.localRotation, origin, maxMagDelta * Time.deltaTime);
+            Debug.Log(this.transform.localRotation);
+            yield return null;
+        }
+        
 
+
+        //CameraManager.Instance.transform.localRotation = Quaternion.RotateTowards(CameraManager.Instance.transform.rotation, rotation, 60 * Time.deltaTime);
+
+
+    }
     IEnumerator ChargeAttack()
     {
         DamagedToFalse();
@@ -245,6 +268,7 @@ public class Tentacle : MonoBehaviour
             yield return null;
         }
         sw.Stop();
+        StartCoroutine(Recover());
         //Debug.Log(sw.ElapsedMilliseconds);
 
     }
@@ -253,6 +277,7 @@ public class Tentacle : MonoBehaviour
     {
         circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
         circle.Init_(x);
+        circle.afterPop += OnHit;
     }
     void NullifyCircle()
     {

@@ -31,7 +31,7 @@ public class Player : ISingleton<Player> {
     public Slider compassSlider, oxygenBar;
     public GameObject playerCanvas, titleCanvas, leaderboardUI;
 
-    public UnityEngine.Playables.PlayableDirector pd;
+    public PlayableDirector pd;
     public Image spr_OxygenBar;
     public Text reloadText;
     public Text oxygenText;
@@ -51,7 +51,7 @@ public class Player : ISingleton<Player> {
     [Header("Dont+Touch+For+Debug+Purpose")]
     public int currBullet;
     public float currHealth, currOxygen, shootTimerNow;
-    
+    public GameObject parentCam;
     public Cinemachine.CinemachineBrain CB;
 
     #endregion
@@ -59,14 +59,21 @@ public class Player : ISingleton<Player> {
     {
         titleCanvas.SetActive(false);
         transform.localPosition = new Vector3(0, 0, 0);
+        Debug.Log("Pressed");
+        PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
+        for (int i = 0; i < playables.Length; i++)
+        {
+            if (playables[i].gameObject.name == "GameplayTimeline")
+            {
+                pd = playables[i];
+                break;
+            }
+        }
+        StartCoroutine(PlayerHax());
+        StartCoroutine(HardcodedDisgustingEvents());
+
     }
     void Start () {
-        ////Init();
-        //if (!(transform.parent))
-        //{
-        //    transform.SetParent(Camera.main.transform);
-        //    //this.transform.parent.gameObject.AddComponent();
-        //}
         gunASource = GetComponent<AudioSource>();
         CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
@@ -76,6 +83,7 @@ public class Player : ISingleton<Player> {
             new GameObject();
         parentOf.transform.SetParent(this.transform);
         parentOf.name = "VFX Container";
+        StartCoroutine(MakeSureThisThing());
 
         //PoolManager.Instance.ClearPool();
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
@@ -83,24 +91,54 @@ public class Player : ISingleton<Player> {
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
         
     }
+    IEnumerator SharkAttack()
+    {
+        yield return new WaitUntil(() => pd != null);
+        yield return new WaitUntil(() => pd.duration > 48f);
+
+    }
     IEnumerator PlayerHax()
     {
         Debug.Log("OUTSIDE");
         yield return new WaitUntil(() => Input.anyKeyDown);
-        if (Input.GetKeyDown(KeyCode.Semicolon))
-        {
-            Debug.Log("IN");
-            while (true)
-            {
-                if (Input.GetKeyDown(KeyCode.Semicolon))
-                {
-                    pd.time += 2f;
 
-                }
-                yield return null;
+        //if (Input.GetKeyDown(KeyCode.Semicolon))
+        //{
+        //    Debug.Log("IN");
+#if UNITY_EDITOR
+
+        while (true)
+        {
+            if (Input.GetKeyDown(KeyCode.Semicolon))
+            {
+                pd.time += 2f;
+
             }
+            yield return null;
         }
-        Debug.Log("OUT of HAX");
+#endif
+    }
+
+    IEnumerator HardcodedDisgustingEvents()
+    {
+        yield return new WaitUntil(() => pd.time > 16f);
+        //Shoot At Door
+        pd.Pause(); 
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        pd.Resume();
+        yield return new WaitUntil(() => pd.time > 18f);
+        pd.Pause();
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        pd.Resume();
+        yield return new WaitUntil(() => pd.time > 37f);
+        pd.Pause();
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        pd.Resume();
+
+        yield return new WaitUntil(() => pd.time > 50f);
+        //Pop circle on it but dont kill it
+        Debug.Log("Shark");
+
 
     }
     public override void RegisterSelf()
@@ -126,43 +164,30 @@ public class Player : ISingleton<Player> {
     }
 
     bool setPos = false;
-    Vector3 iniPos, iniRot;
     IEnumerator SceneZeroFunction()
     {
-        if (!setPos)
-        {
-            //iniPos = this.transform.position;
-            //iniRot = this.transform.localEulerAngles;
-            setPos = true;
-        }
+        if (!setPos) setPos = true;
+        
         else
         {
-            //this.transform.position = iniPos;
-            //this.transform.localEulerAngles = iniRot;
             playerCanvas.SetActive(false);
             titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
         }
-        UnityEngine.Playables.PlayableDirector[] playables = FindObjectsOfType<UnityEngine.Playables.PlayableDirector>();
+        PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
         for (int i = 0; i < playables.Length; i++)
         {
             if (playables[i].gameObject.name == "GameplayTimeline")
             {
                 pd = playables[i];
-
-                   //.sourceObject);//pd.GetGenericBinding(pd.GetComponent<UnityEngine.Playables.PlayableBinding>().sourceObject));//Camera.main.GetComponent<Cinemachine.CinemachineBrain>()));
-                //pd.Se
-                //Debug.Log(pd.playableAsset.outputs.Select(x =>x.streamName== "Main Camera" ));
-                //pd.GetGenericBinding();
                 break;
             }
         }
 
-        Debug.Log("SetPos: "+setPos);
         yield return new WaitUntil(() => pd != null);
         yield return new WaitUntil(() => pd.time > 5f);
         StartCoroutine(PlayerHax());
-        yield return new WaitUntil(() => pd.time > 28f);
+        yield return new WaitUntil(() => pd.time > 20f);
         AttributeReset();
         StartCoroutine(OxyDropping());
         playerCanvas.SetActive(true);
@@ -184,18 +209,13 @@ public class Player : ISingleton<Player> {
 
             if (b < 0) break;
 
-            if (!bullets[b].gameObject.activeSelf)
-            {
-                bullets[b].gameObject.SetActive(true);
-            }
+            if (!bullets[b].gameObject.activeSelf) bullets[b].gameObject.SetActive(true);
         }
         uglyStop = false;
     }
     public void Init()
     {
-        #region OneTimer
 
-        #endregion
 
     }
 
@@ -203,8 +223,8 @@ public class Player : ISingleton<Player> {
     {
         //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
         if (pd == null) yield break;
-        yield return new WaitUntil(() => pd.state != UnityEngine.Playables.PlayState.Paused);
-        yield return new WaitUntil(() => pd.state != UnityEngine.Playables.PlayState.Playing);
+        yield return new WaitUntil(() => pd.state != PlayState.Paused);
+        yield return new WaitUntil(() => pd.time + 5f > pd.duration);
         SceneChanger.Instance.Fading(1);
     }
 
@@ -217,6 +237,7 @@ public class Player : ISingleton<Player> {
     bool uglyStop = false;
     IEnumerator GameplayUpdate()
     {
+        yield return new WaitUntil(() => playerCanvas.activeInHierarchy);
         while (true)
         {
             if (!playerCanvas.activeInHierarchy) yield break;
@@ -237,7 +258,7 @@ public class Player : ISingleton<Player> {
                 {
                     RaycastHit hit;
                     Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
-
+                    Debug.DrawRay(point.origin,point.direction* 100f,Color.red,1f);
                     if (currBullet > 0)
                     {
                         bullets[(maxBullet - currBullet)].gameObject.SetActive (false);
@@ -257,6 +278,7 @@ public class Player : ISingleton<Player> {
                                 hit.transform.GetComponent<Boss>().OnHit();
                             else
                             {
+                                Debug.Log(hit.transform.name);
                                 //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
                                 //else
@@ -363,7 +385,8 @@ public class Player : ISingleton<Player> {
         while (true)
         {
             if (uglyStop) yield break;
-            compassSlider.value = (this.transform.localEulerAngles.y / 360f);
+            if(parentCam)
+            compassSlider.value = (parentCam.transform.localEulerAngles.y / 360f);
             oxygenBar.value = currOxygen / maxOxygen;
             yield return null;
         }
@@ -389,6 +412,18 @@ public class Player : ISingleton<Player> {
         }
         currBullet = maxBullet;
         reloading = false;
+    }
+    IEnumerator MakeSureThisThing()
+    {
+        while (true)
+        {
+            if (this.transform.localPosition != Vector3.zero) { 
+            this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, Vector3.zero, 4f);
+
+            Debug.Log(this.transform.localPosition);
+        }
+            yield return null;
+        }
     }
     IEnumerator OxyDropping()
     {

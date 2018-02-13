@@ -20,6 +20,8 @@ public class PlayerCallerXD : MonoBehaviour {
             GameObject x = Instantiate( playerPrefab);
             x.transform.SetParent(Camera.main.transform);
             DontDestroyOnLoad(Camera.main.gameObject);
+
+            Player.Instance.parentCam = Camera.main.gameObject;
             //Player.Instance.transform.position = new Vector3(-90.3f, 2.973083f, -417.26f);
             //Player.Instance.transform.localEulerAngles = new Vector3(-18.945f, -2.145f, 0f);
             Player.Instance.RegisterSelf();
@@ -35,6 +37,7 @@ public class PlayerCallerXD : MonoBehaviour {
 
             DontDestroyOnLoad(g.gameObject);
 
+            Player.Instance.parentCam = g.gameObject;
             Debug.Log("True");
         }
   
