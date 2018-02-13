@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Playables;
 
 [RequireComponent(typeof(AudioSource))]
 public class Player : ISingleton<Player> {
@@ -51,17 +52,23 @@ public class Player : ISingleton<Player> {
     public int currBullet;
     public float currHealth, currOxygen, shootTimerNow;
     
-    Cinemachine.CinemachineBrain CB;
+    public Cinemachine.CinemachineBrain CB;
 
     #endregion
     public void PlayerTurnOnTitleOff()
     {
         titleCanvas.SetActive(false);
+        transform.localPosition = new Vector3(0, 0, 0);
     }
     void Start () {
-        //Init();
+        ////Init();
+        //if (!(transform.parent))
+        //{
+        //    transform.SetParent(Camera.main.transform);
+        //    //this.transform.parent.gameObject.AddComponent();
+        //}
         gunASource = GetComponent<AudioSource>();
-        CB = this.GetComponent<Cinemachine.CinemachineBrain>();
+        CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
         bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
         reloadTime = reloadingClip.length;
@@ -124,14 +131,14 @@ public class Player : ISingleton<Player> {
     {
         if (!setPos)
         {
-            iniPos = this.transform.position;
-            iniRot = this.transform.localEulerAngles;
+            //iniPos = this.transform.position;
+            //iniRot = this.transform.localEulerAngles;
             setPos = true;
         }
         else
         {
-            this.transform.position = iniPos;
-            this.transform.localEulerAngles = iniRot;
+            //this.transform.position = iniPos;
+            //this.transform.localEulerAngles = iniRot;
             playerCanvas.SetActive(false);
             titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
@@ -142,6 +149,11 @@ public class Player : ISingleton<Player> {
             if (playables[i].gameObject.name == "GameplayTimeline")
             {
                 pd = playables[i];
+
+                   //.sourceObject);//pd.GetGenericBinding(pd.GetComponent<UnityEngine.Playables.PlayableBinding>().sourceObject));//Camera.main.GetComponent<Cinemachine.CinemachineBrain>()));
+                //pd.Se
+                //Debug.Log(pd.playableAsset.outputs.Select(x =>x.streamName== "Main Camera" ));
+                //pd.GetGenericBinding();
                 break;
             }
         }
@@ -418,6 +430,8 @@ public class Player : ISingleton<Player> {
         Vector3 pos = Camera.main.WorldToScreenPoint(tipPos);
         Debug.Log(pos);
         Vector3 originValue = this.transform.localEulerAngles;
+        if(!CB)
+            CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         CB.enabled = false;
         Vector3 val = (pos.x > Screen.width / 2) ?
             new Vector3(0, 30f, 0) : new Vector3(0, -30f, 0);

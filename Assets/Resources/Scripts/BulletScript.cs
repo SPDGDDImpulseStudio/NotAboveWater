@@ -23,12 +23,10 @@ public class BulletScript : PoolObject {
         Vector2 dir = target.position - rb.position;
         dir.Normalize();
 
-        this.transform.position = Vector3.MoveTowards(this.transform.position, target.position, rotSpeed);
+        this.transform.position = Vector3.MoveTowards(this.transform.position, target.position + anyHow, rotSpeed);
         //float rotateAmt = Vector3.Cross(dir, transform.up).z;
-
         ////rb.angularVelocity = -rotateAmt * rotSpeed;
         //rb.velocity = transform.up * speed;
-        
     }
     
     void OnTriggerEnter(Collider x)
@@ -36,12 +34,12 @@ public class BulletScript : PoolObject {
         //TurnOff();
         if (x.transform.GetComponent<Player>())
         {
+            Debug.Log("HIT");
             //Player.Instance.currHealth -= 15f;
             TurnOff();
-            
         }
     }
-
+    Vector3 anyHow;
     public override void Init()
     {
         gameObject.SetActive(true); 
@@ -53,6 +51,7 @@ public class BulletScript : PoolObject {
         circle = cir;
         circle.Init_(this.gameObject);
         circle.bulletCheck = true;
+        anyHow = transform.right * UnityEngine.Random.Range(2f, 4f);
         if (Time.timeScale == 1.0f) Time.timeScale = 0.6f;
     }
 
@@ -60,7 +59,6 @@ public class BulletScript : PoolObject {
     {
         Time.timeScale = 1f;
         gameObject.SetActive(false);
-        
 
     }
 }

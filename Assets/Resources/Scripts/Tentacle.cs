@@ -218,7 +218,7 @@ public class Tentacle : MonoBehaviour
     {
         DamagedToFalse();
         AnimatorClipInfo[] newA;
-        Vector3 temp = Player.Instance.transform.localPosition;
+        Vector3 temp = Player.Instance.transform.position;
         //temp += new Vector3(0, 180f, 0); 
         //Vector3 newPos = Camera.main.WorldToScreenPoint(tipAKAwhereToShootAt.transform.position);
         //Debug.Log(newPos);
