@@ -23,6 +23,22 @@ public class LeaderboardDesu : MonoBehaviour
         txt_TimeTaken = new List<Text>(grp_TimeTaken.GetComponentsInChildren<Text>());
         txt_Accuracy = new List<Text>(grp_Accuracy.GetComponentsInChildren<Text>());
         txt_ComboMAX = new List<Text>(grp_ComboMAX.GetComponentsInChildren<Text>());
-        txt_ComboMAX = new List<Text>(grp_TotalScore.GetComponentsInChildren<Text>());
+        txt_TotalScore = new List<Text>(grp_TotalScore.GetComponentsInChildren<Text>());
+
+        Display();
+    }
+
+    void Display()
+    {
+        for ( int i = 0; i  < txt_Accuracy.Count; i++)
+        {
+            if (PlayerPrefs.HasKey(GameManager.leaderboard + i))
+            {
+                txt_Names[i].text = PlayerPrefs.GetString(GameManager.leaderboardName + i);
+                txt_TotalScore[i].text = PlayerPrefs.GetFloat(GameManager.leaderboardScore + i).ToString();
+                txt_Accuracy[i].text = PlayerPrefs.GetFloat(GameManager.leaderboardAccuracy + i).ToString();
+            }
+            else break;
+        }
     }
 }

@@ -33,11 +33,12 @@ public class Player : ISingleton<Player> {
 
     public PlayableDirector pd;
     public Image spr_OxygenBar;
+    public Image redImage;
     public Text reloadText;
     public Text oxygenText;
     
     List<Image> bullets = new List<Image>();
-
+    List<heartrateScript> heartRates = new List<heartrateScript>();
     [Header("[Player's Attributes]")]
 
     [Header("[Things to Set]")]
@@ -83,8 +84,11 @@ public class Player : ISingleton<Player> {
             new GameObject();
         parentOf.transform.SetParent(this.transform);
         parentOf.name = "VFX Container";
+        heartRates = new List<heartrateScript>(playerCanvas.GetComponentsInChildren<heartrateScript>());
+        Debug.Log(heartRates.Count);
+        //Debug.Log(heartRates.Count);
         StartCoroutine(MakeSureThisThing());
-
+        
         //PoolManager.Instance.ClearPool();
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
@@ -191,6 +195,10 @@ public class Player : ISingleton<Player> {
         AttributeReset();
         StartCoroutine(OxyDropping());
         playerCanvas.SetActive(true);
+        for(int i = 0; i < heartRates.Count; i ++)
+        {
+            heartRates[i].Init();
+        }
         StartCoroutine(UIUpdate());
         StartCoroutine(GameplayUpdate()); // Settle these coroutines properly can alrd
             // make sure they stop updating when player die
@@ -235,6 +243,7 @@ public class Player : ISingleton<Player> {
         StartCoroutine(TriggerTentacles());        
     }
     bool uglyStop = false;
+    public bool fuckW = false;
     IEnumerator GameplayUpdate()
     {
         yield return new WaitUntil(() => playerCanvas.activeInHierarchy);
@@ -250,7 +259,7 @@ public class Player : ISingleton<Player> {
             Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
 
             if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
-
+            fuckW = false;
             if (Input.GetMouseButton(0))
             {
                 
@@ -269,16 +278,17 @@ public class Player : ISingleton<Player> {
                         {
                             targetHit = hit.transform.gameObject;
                             pointHit = hit.point;
-
+                            fuckW = true;
                             if (hit.transform.GetComponent<AI>())
                                 DamageShark(targetHit, pointHit);
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
                             else if (hit.transform.GetComponent<Boss>())
                                 hit.transform.GetComponent<Boss>().OnHit();
+                            else if (hit.transform.GetComponentInChildren<Canvas>())
+                                Debug.Log("Canvas " + hit.transform.name);
                             else
-                            {
-                                Debug.Log(hit.transform.name);
+                            { 
                                 //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
                                 //else
@@ -301,7 +311,6 @@ public class Player : ISingleton<Player> {
 
             }
             if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
-            
             yield return null;
 
         }
@@ -311,6 +320,7 @@ public class Player : ISingleton<Player> {
     {
         //Fade back to scene 1
         Debug.Log("DEATH!");
+        SceneChanger.Instance.Fading(0);
         uglyStop = true;
     }
 
@@ -419,8 +429,7 @@ public class Player : ISingleton<Player> {
         {
             if (this.transform.localPosition != Vector3.zero) { 
             this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, Vector3.zero, 4f);
-
-            Debug.Log(this.transform.localPosition);
+                
         }
             yield return null;
         }
@@ -464,30 +473,56 @@ public class Player : ISingleton<Player> {
     {
         Vector3 pos = Camera.main.WorldToScreenPoint(tipPos);
         Debug.Log(pos);
-        Vector3 originValue = this.transform.localEulerAngles;
-        if(!CB)
+        Vector3 originValue = parentCam.transform.localEulerAngles;
+        if (!CB)
             CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         CB.enabled = false;
-        Vector3 val = (pos.x > Screen.width / 2) ?
-            new Vector3(0, 30f, 0) : new Vector3(0, -30f, 0);
-        
-        this.transform.localEulerAngles += val/2;
-        yield return null;
-        this.transform.localEulerAngles += val/2;
 
-        float timer = 0; //timerNow = 1f;
-        
-        while (timer < 1.3f)
+        int rndToGo = Random.Range(0, 3);
+        Vector3 val;
+        switch (rndToGo)
         {
-            timer += Time.deltaTime;
-            this.transform.localEulerAngles = Vector3.Lerp(this.transform.localEulerAngles, originValue, Time.deltaTime * 2f);
-            yield return null;
+            case 0:
+                val = (pos.x > Screen.width / 2) ?
+                    new Vector3(0, 30f, 0) : new Vector3(0, -30f, 0);
+
+                break;
+            case 1:
+                val = new Vector3(30,0,0);
+                break;
+
+            case 2:
+                val = new Vector3(-30,0,0);
+                break;
+            default:
+                val = new Vector3(-20,0,0);
+                break;
         }
 
+
+        parentCam.transform.localEulerAngles += val / 2;
+        yield return null;
+        parentCam.transform.localEulerAngles += val / 2;
+        float timer = 0;
+        while (timer < 1f)
+        {
+            timer += Time.deltaTime;
+            parentCam.transform.localEulerAngles = Vector3.Lerp(parentCam.transform.localEulerAngles, originValue, Time.deltaTime * 2f);
+            yield return null;
+        }
         CB.enabled = true;
 
     }
 
+    IEnumerator GotHit()
+    {
+        //Should go Up to a number then go down back to zero again
+        yield return new WaitUntil(() => currHealth < maxHealth / 2);
+        while (currHealth < maxHealth / 2)
+        {
+            yield return null;
+        }
+    }
     #endregion
 
     #region Shooting

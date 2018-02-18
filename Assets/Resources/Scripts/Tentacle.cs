@@ -13,7 +13,7 @@ public class Tentacle : MonoBehaviour
     public GameObject tipAKAwhereToShootAt;
     CirclePosUpdate circle;
 
-    public bool selectOne = false;
+    public bool selectOne = false, uglyStop= false;
 
     bool attack = false;
 
@@ -71,6 +71,7 @@ public class Tentacle : MonoBehaviour
             DontDestroyOnLoad(go2);
         }
         //Debug.Log(circlePrefab.GetInstanceID());
+        StartCoroutine(GameplayUpdate());
         StartCoroutine(DebugUIUpdate());
         origin = this.transform.rotation;
         //StartCoroutine(AIUpdate());
@@ -88,78 +89,113 @@ public class Tentacle : MonoBehaviour
         }
     }
 
-    //IEnumerator AIUpdate()
-    //{
-    //    AnimatorClipInfo[] animClips;
-    //    while (true)
-    //    {
-    //        animClips = anim.GetCurrentAnimatorClipInfo(0);
-
-    //        if(!selectOne || animClips.Length  == 0)
-    //        {
-
-
-    //        }
-    //        else
-    //        {
-
-    //        }
-
-
-
-
-
-
-    //        yield return new WaitForFixedUpdate();
-    //    }
-    //}
-
-
-    void Update()
+    IEnumerator GameplayUpdate()
     {
-        if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
-        if (!selectOne)
+        yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
+        AnimatorClipInfo[] newA;
+        while (true)
         {
-            DamagedToFalse(); return;
-        }
+            if (SceneChanger.Instance.transitting || uglyStop) yield break;
 
-        AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
-
-        if (newA.Length == 0) return;
-
-        if (newA[0].clip.name == animClips[4]) { DamagedToFalse(); NullifyCircle(); }
-
-        if (newA[0].clip.name != "Attack_Up_After" &&
-            newA[0].clip.name != "Attack_Up_Release") {
-            Vector3 temp = new Vector3(
-              Player.Instance.transform.position.x + offSet.x,
-              this.transform.position.y,
-              Player.Instance.transform.position.z + offSet.z);
-            if(newA[0].clip.name != "Damaged")
-            this.transform.LookAt(temp);
-        }
-        //this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
-        if (!nearAttack && !rangeAttack) return;
-        if (currentTimer > attackTimer)
-        {
-            if (newA[0].clip.name == animClips[0] || newA[0].clip.name == animClips[1])
+            if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
+            if (selectOne)
             {
-                SetFalse();
-                if (rangeAttack)
+                newA = anim.GetCurrentAnimatorClipInfo(0);
+
+                if (newA.Length > 0)
                 {
-                    anim.Play(animClips[5], -1);
-                    StartCoroutine(WaitTillThrow());
+
+                    if (newA[0].clip.name == animClips[4])
+                    {
+                        DamagedToFalse();
+                        NullifyCircle();
+                    }
+
+                    if (newA[0].clip.name != "Attack_Up_After" &&
+                        newA[0].clip.name != "Attack_Up_Release" &&
+                        newA[0].clip.name != "Damaged")
+                    {
+                        Vector3 temp = new Vector3(
+                        Player.Instance.transform.position.x + offSet.x,
+                        this.transform.position.y,
+                        Player.Instance.transform.position.z + offSet.z);
+                        this.transform.LookAt(temp);
+                    }
+                    if (nearAttack || rangeAttack)
+                    {
+                        if (currentTimer > attackTimer)
+                        {
+                            if (newA[0].clip.name == animClips[0] || newA[0].clip.name == animClips[1])
+                            {
+                                SetFalse();
+                                if (rangeAttack)
+                                {
+                                    anim.Play(animClips[5], -1);
+                                    StartCoroutine(WaitTillThrow());
+                                }
+                                else if (nearAttack)
+                                {
+                                    anim.Play((anim.GetBool("LOOKUP") ? animClips[2] : animClips[3]), -1);
+                                    StartCoroutine(Charge());
+                                }
+                                currentTimer = 0f;
+                                attackTimer = Random.Range(3f, 6f);
+                            }
+                        }
+                    }
                 }
-                else if (nearAttack)
-                {
-                    anim.Play((anim.GetBool("LOOKUP") ? animClips[2] : animClips[3]), -1);
-                    StartCoroutine(Charge());
-                }
-                currentTimer = 0f;
-                attackTimer = Random.Range(3f, 6f);
-            }
+            }else DamagedToFalse();
+            
+            yield return null;
         }
     }
+
+
+    //void Update()
+    //{
+    //    if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
+    //    if (!selectOne)
+    //    {
+    //        DamagedToFalse(); return;
+    //    }
+
+    //    AnimatorClipInfo[] newA = anim.GetCurrentAnimatorClipInfo(0);
+
+    //    if (newA.Length == 0) return;
+
+    //    if (newA[0].clip.name == animClips[4]) { DamagedToFalse(); NullifyCircle(); }
+
+    //    if (newA[0].clip.name != "Attack_Up_After" &&
+    //        newA[0].clip.name != "Attack_Up_Release" &&
+    //        newA[0].clip.name != "Damaged") {
+    //        Vector3 temp = new Vector3(
+    //          Player.Instance.transform.position.x + offSet.x,
+    //          this.transform.position.y,
+    //          Player.Instance.transform.position.z + offSet.z);
+    //        this.transform.LookAt(temp);
+    //    }
+    //    //this.transform.localEulerAngles = this.transform.localEulerAngles + new Vector3(0, 180f, 0);
+    //    if (!nearAttack && !rangeAttack) return;
+    //    if (currentTimer > attackTimer)
+    //    {
+    //        if (newA[0].clip.name == animClips[0] || newA[0].clip.name == animClips[1])
+    //        {
+    //            SetFalse();
+    //            if (rangeAttack)
+    //            {
+    //                anim.Play(animClips[5], -1);
+    //                StartCoroutine(WaitTillThrow());
+    //            }
+    //            else if (nearAttack)
+    //            {
+    //                anim.Play((anim.GetBool("LOOKUP") ? animClips[2] : animClips[3]), -1);
+    //                StartCoroutine(Charge());
+    //            }
+    //            currentTimer = 0f;
+    //            attackTimer = Random.Range(3f, 6f);
+    //        }
+    //    }
+    //}
 
     public void OnHit()
     {
@@ -227,12 +263,8 @@ public class Tentacle : MonoBehaviour
         {
             //rotation = Quaternion.LookRotation(newZero);
             this.transform.localRotation = Quaternion.RotateTowards(this.transform.localRotation, origin, maxMagDelta * Time.deltaTime);
-            Debug.Log(this.transform.localRotation);
             yield return null;
         }
-        
-
-
         //CameraManager.Instance.transform.localRotation = Quaternion.RotateTowards(CameraManager.Instance.transform.rotation, rotation, 60 * Time.deltaTime);
 
 

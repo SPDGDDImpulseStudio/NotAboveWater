@@ -15,17 +15,22 @@ public class SceneChanger : ISingleton<SceneChanger> {
     public Text text;
     public bool transitting = false;
     private bool levelLoaded = false;
-
     Canvas currSceneCanvas;
     bool firstLoad = true;
 
-    //First Time's Attributes
-    bool haventRepeat = true;
+    public GameObject inputParent;
+    public InputField saveName;
+
+    public System.Action ToCallWhenSceneLoad;
+
+    //First Time's Attributes]
+    [Header("[FIRST TIMER ATTRIBUTES]")]
     public Image instructionPanel;
     public Text instructionText;
     public Button button;
     public Text pressAny;
-    
+    bool haventRepeat = true;
+    #region Useful Functions
 
     void OnEnable()
     {
@@ -33,18 +38,9 @@ public class SceneChanger : ISingleton<SceneChanger> {
     }
     void Start()
     {
-        //allSingletons = new List<GameObject>()
-        //{
-        //    AudioManager.Instance.gameObject,
-        //    CircleManager.Instance.gameObject,
-        //    CratesManager.Instance.gameObject,
-        //    GameManager.Instance.gameObject,
-        //    Player.Instance.gameObject,
-        //    PoolManager.Instance.gameObject,
-        //    Stats.Instance.gameObject,
-        //};
         ChangeOfCurrScene();
-    } 
+    }
+
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnLevelLoaded;
@@ -53,21 +49,21 @@ public class SceneChanger : ISingleton<SceneChanger> {
     public void OnLevelLoaded(Scene scene, LoadSceneMode mode)
     {
         ChangeOfCurrScene();
-        if(currSceneCanvas)
-        currSceneCanvas.sortingOrder = 0;
+        if (currSceneCanvas)
+            currSceneCanvas.sortingOrder = 0;
         levelLoaded = true;
         StartCoroutine(WhenFaderFades(scene.buildIndex));
         if (firstLoad) firstLoad = false;
 
         ToCallWhenSceneLoad();
-
     }
-    public void RegisterInScene()
+
+    void OnDestroy()
     {
-        
-        //allSingletons.
+        sceneChangingCanvas.sortingOrder = 0;
+        transitting = false;
+        GetComponent<SceneChanger>().image.color = Color.clear;
     }
-
     void ChangeOfCurrScene()
     {
         Canvas[] canvases = FindObjectsOfType<Canvas>();
@@ -80,28 +76,18 @@ public class SceneChanger : ISingleton<SceneChanger> {
             }
         }
     }
-    Dictionary<int, List<GameObject>> allSingletons = new Dictionary<int, List<GameObject>>();
-    Dictionary<List<GameObject>, System.Action> GOReturnAction = new Dictionary<List<GameObject>, System.Action>();
 
-    Dictionary<int, Dictionary<List<GameObject>, System.Action>> x = new Dictionary<int, Dictionary<List<GameObject>, System.Action>>();
-    public System.Action ToCallWhenSceneLoad;
-    
-    void RefreshSingletons()
-    {
-        
-
-    }
 
     IEnumerator WhenFaderFades(int levelIndex)
     {
         yield return new WaitUntil(() => !levelLoaded);
-        
+
         switch (levelIndex)
         {
             case 0:
                 break; //Main Menu
-                           //Somewhere i reset the whole thing i needa turn all singletons except this off and on again.
-                           //In a sense, this becomes the 'gameManager'
+                       //Somewhere i reset the whole thing i needa turn all singletons except this off and on again.
+                       //In a sense, this becomes the 'gameManager'
             case 1: break;
             case 2: break;
             case 3: break;
@@ -113,10 +99,10 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         switch (toLoad)
         {
-            case "Credit":      Instance.StartFadeCoroutine(1);  break;
-            case "New Game":    Instance.StartFadeCoroutine(2);  break;
-            case "Instructions":Instance.StartFadeCoroutine(3);  break;
-            default:            Instance.StartFadeCoroutine(0); break;
+            case "Credit": Instance.StartFadeCoroutine(1); break;
+            case "New Game": Instance.StartFadeCoroutine(2); break;
+            case "Instructions": Instance.StartFadeCoroutine(3); break;
+            default: Instance.StartFadeCoroutine(0); break;
         }
     }
 
@@ -133,7 +119,9 @@ public class SceneChanger : ISingleton<SceneChanger> {
       Application.Quit();
 #endif
     }
-    
+
+    #endregion
+
     void StartFadeCoroutine(int toLoad)
     {
         if (!Instance.gameObject.activeInHierarchy)
@@ -143,6 +131,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
         image.color = Color.clear;
         Instance.StartCoroutine(FadeIn(toLoad));
     }
+
     #region OneTimedTutorial
 
     IEnumerator PopUpTutorial()
@@ -175,6 +164,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
     }
 
     #endregion
+
     IEnumerator FadeIn(int levelToLoad)
     {
         if (transitting) yield break;
@@ -191,10 +181,25 @@ public class SceneChanger : ISingleton<SceneChanger> {
         }
         image.color = Color.black;
 
+        if (levelToLoad == 0) { 
+            inputParent.SetActive(true);
+            someRnd = true;
+        }
+        StartCoroutine(FadeOut(levelToLoad, temp));
+    }
+   
+    public void PostTypingName(string _name)
+    {
+        Stats.Instance.SaveStats(_name);
+        someRnd = false;
+    }
 
+    bool someRnd = false;
+    IEnumerator FadeOut(int levelToLoad, int temp) {
         //if (haventRepeat) StartCoroutine(PopUpTutorial());
 
         //yield return new WaitUntil(() => !haventRepeat);
+        yield return new WaitUntil(() => !someRnd);
         StartCoroutine(LoadText(3f, levelToLoad));
         
         yield return new WaitUntil(() => levelLoaded);
@@ -203,7 +208,7 @@ public class SceneChanger : ISingleton<SceneChanger> {
         loadText = false;
 
         //Load Text
-        tempSpd = fadeSpeed + Random.Range(1.7f, 2.6f);
+        float tempSpd = fadeSpeed + Random.Range(1.7f, 2.6f);
 
         while (image.color != Color.clear)
         {
@@ -214,8 +219,6 @@ public class SceneChanger : ISingleton<SceneChanger> {
         currSceneCanvas.sortingOrder = 1;
         transitting = false;
         levelLoaded = false;
-        //gameObject.SetActive(false);
-
     }
 
     IEnumerator LoadText(float _seconds, int toLoad)
@@ -256,10 +259,4 @@ public class SceneChanger : ISingleton<SceneChanger> {
         text.enabled = false;
     }
     bool loadText = false;
-    void OnDestroy()
-    {
-        sceneChangingCanvas.sortingOrder = 0;
-        transitting = false;
-        GetComponent<SceneChanger>().image.color = Color.clear;
-    }
 }

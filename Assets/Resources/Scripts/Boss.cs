@@ -55,6 +55,10 @@ public class Boss : MonoBehaviour {
     IEnumerator BossDie()
     {
         //yield return new WaitUntil(()=> )
+        for(int i = 0; i< tentacles.Count; i++)
+        {
+            tentacles[i].uglyStop = true;
+        }
         yield return null;
         Debug.Log("Boss DIe");
         SceneChanger.Instance.Fading(0);
