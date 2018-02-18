@@ -51,6 +51,7 @@ public class CirclePosUpdate : PoolObject,
         }
 
     }
+
     IEnumerator PosUpdate()
     {
         Vector3 posOnScreen;
@@ -71,7 +72,6 @@ public class CirclePosUpdate : PoolObject,
 
             if (0 > posOnScreen.x || posOnScreen.x > Screen.width || 0> posOnScreen.y || posOnScreen.y > Screen.height)
             {
-                Debug.Log("OUT");
                 TurnOff();
                 break;
             }
@@ -110,16 +110,6 @@ public class CirclePosUpdate : PoolObject,
         newScale.y = originScale.y / 2;
     }
   
-
-    void DestroySelf()
-    {
-        if (Player.Instance.currBullet != 0)
-        {
-            CircleManager.Instance.RemoveThisBut(this);
-            TurnOff();
-        }
-    }
-
     public override void Init()
     {
         //Debug.Log(")
@@ -136,6 +126,14 @@ public class CirclePosUpdate : PoolObject,
         StartCoroutine(ScaleDown());
         StartCoroutine(RotateBoi());
         StartCoroutine(DestroyAft90());
+        StartCoroutine(Pop());
+    }
+    IEnumerator Pop()
+    {
+        yield return new WaitUntil(() =>  onHit);
+        //Debug.Log("Pop");
+        //afterPop();
+        //TurnOff();
     }
     Vector3 thisPos;
    
@@ -146,7 +144,11 @@ public class CirclePosUpdate : PoolObject,
         bulletCheck = false;
         this.transform.localScale = originScale;
         thisPos = Vector3.zero;
+        afterPop = null;
+        onHit = false;
+
         this.gameObject.SetActive(false);
+
     }
 
     public void CheckUI()
@@ -157,28 +159,41 @@ public class CirclePosUpdate : PoolObject,
   
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(Player.Instance.currBullet> 0 && Input.GetMouseButton(0))
+        //if(Player.Instance.fuckW)
+        //Debug.Log(Player.Instance.fuckW);
+        //Debug.Log(eventData);
+        if (Player.Instance.currBullet> 0 && Input.GetMouseButton(0))
         {
             if (!bulletCheck)
                 _ref.GetComponentInParent<Tentacle>().OnHit();
             else
                 _ref.GetComponent<BulletScript>().TurnOff();
+
+
             TurnOff();
+
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        //eventData.p
+        //Debug.Log(eventData);   
+        //if (Player.Instance.fuckW)
+        //Debug.Log(Player.Instance.fuckW);
         if (Player.Instance.currBullet> 0 && Input.GetMouseButton(0))
         {
-
             if (!bulletCheck)
-
                 _ref.GetComponentInParent<Tentacle>().OnHit();
             else
                 _ref.GetComponent<BulletScript>().TurnOff();
+
             TurnOff();
+    
         }
     }
 
+    
+    public bool onHit;
+    public Action afterPop;
 }
