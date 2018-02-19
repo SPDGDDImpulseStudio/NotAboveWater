@@ -60,6 +60,7 @@ public class Player : ISingleton<Player> {
     {
         titleCanvas.SetActive(false);
         transform.localPosition = new Vector3(0, 0, 0);
+        Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
         Debug.Log("Pressed");
         PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
         for (int i = 0; i < playables.Length; i++)
@@ -72,7 +73,7 @@ public class Player : ISingleton<Player> {
         }
         StartCoroutine(PlayerHax());
         StartCoroutine(HardcodedDisgustingEvents());
-
+        Debug.Log(originScreen);
     }
     void Start () {
         gunASource = GetComponent<AudioSource>();
@@ -93,8 +94,10 @@ public class Player : ISingleton<Player> {
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
-        
+        originScreen = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+
     }
+    Vector2 originScreen;
     IEnumerator SharkAttack()
     {
         yield return new WaitUntil(() => pd != null);
