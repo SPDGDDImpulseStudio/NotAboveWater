@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource), typeof(AudioSource))]
 public class AudioManager : ISingleton<AudioManager>
 {
     [Tooltip("Please put the audioclips in the same order of scene build index.")]
     public List<AudioClip> loopingAmbienceClips = new List<AudioClip>();
-    public AudioSource audioSource, audioSource2, sfxAS;
+
+    public List<AudioClip> dialogueClips = new List<AudioClip>();
+
+    public AudioSource audioSource, audioSource2, sfxAS, dialogueAudioSource;
 
     int currInt, rndInt;
 
@@ -23,14 +25,7 @@ public class AudioManager : ISingleton<AudioManager>
     }
     void Call()
     {
-        AudioSource[] allAS = FindObjectsOfType<AudioSource>();
-        allASScene.Clear();
-        allASScene = new List<AudioSource>(allAS);
-        for (int i = 0; i < allASScene.Count; i++)
-        {
-            if (allASScene[i])
-                allASScene[i].volume = PlayerPrefs.GetFloat(masterVol);
-        }
+        ChangeVolumeOfAllAS();
 
         switch (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex)
         {
@@ -42,6 +37,18 @@ public class AudioManager : ISingleton<AudioManager>
 
             case 2: Instance.FadeFromSceneChanger(0, 1); break;
 
+        }
+    }
+
+    public void ChangeVolumeOfAllAS()
+    {
+        AudioSource[] allAS = FindObjectsOfType<AudioSource>();
+        Instance.allASScene.Clear();
+        Instance.allASScene = new List<AudioSource>(allAS);
+        for (int i = 0; i < Instance. allASScene.Count; i++)
+        {
+            if (Instance.allASScene[i])
+                Instance. allASScene[i].volume = PlayerPrefs.GetFloat(masterVol);
         }
     }
     public List<AudioSource> allASScene;

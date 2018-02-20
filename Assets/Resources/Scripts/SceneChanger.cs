@@ -82,18 +82,18 @@ public class SceneChanger : ISingleton<SceneChanger> {
     {
         yield return new WaitUntil(() => !levelLoaded);
 
-        switch (levelIndex)
-        {
-            case 0:
-                break; //Main Menu
-                       //Somewhere i reset the whole thing i needa turn all singletons except this off and on again.
-                       //In a sense, this becomes the 'gameManager'
-            case 1: break;
-            case 2: break;
-            case 3: break;
-        }
+        //switch (levelIndex)
+        //{
+        //    case 0:
+        //        break; //Main Menu
+        //               //Somewhere i reset the whole thing i needa turn all singletons except this off and on again.
+        //               //In a sense, this becomes the 'gameManager'
+        //    case 1: break;
+        //    case 2: break;
+        //    case 3: break;
+        //}
 
-        Debug.Log(levelIndex);
+        //Debug.Log(levelIndex);
     }
     public void Fading(string toLoad)
     {
@@ -181,7 +181,8 @@ public class SceneChanger : ISingleton<SceneChanger> {
         }
         image.color = Color.black;
 
-        if (levelToLoad == 0) { 
+        if (levelToLoad == 0) {
+            Player.Instance.playerCanvas.gameObject.SetActive(false);
             inputParent.SetActive(true);
             someRnd = true;
         }

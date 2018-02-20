@@ -64,6 +64,7 @@ public class VolumeSetter : MonoBehaviour {
         PlayerPrefs.SetFloat(AudioManager.masterVol, masterVSlider.value);
         PlayerPrefs.SetFloat(AudioManager.sfxVol, sfxSlider.value);
         PlayerPrefs.Save();
+        AudioManager.Instance.ChangeVolumeOfAllAS();
     }
 
     public void SetBGMVolume()

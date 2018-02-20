@@ -283,7 +283,7 @@ public class Tentacle : MonoBehaviour
             aSource.clip = hitSFXClips[x];
             aSource.Play();
         }
-        Player.Instance.ShakeCam(tipAKAwhereToShootAt.transform.position);
+        Player.Instance.ShakeCam();
         Debug.LogError("AJA");
 
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();

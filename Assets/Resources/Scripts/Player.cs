@@ -25,6 +25,7 @@ public class Player : ISingleton<Player> {
     [Header("[AudioClips]")]
     public AudioClip gunFire;
     public AudioClip reloadingClip, emptyGunFire;
+    public List< AudioClip> characterDamagedClips = new List<AudioClip>(); 
 
     [Header("[Various UI]")]
     public GameObject ammoCounterBar;
@@ -34,8 +35,8 @@ public class Player : ISingleton<Player> {
     public PlayableDirector pd;
     public Image spr_OxygenBar;
     public Image redImage;
-    public Text reloadText;
-    public Text oxygenText;
+    public Text reloadText, oxygenText, comboText;
+
     
     List<Image> bullets = new List<Image>();
     List<heartrateScript> heartRates = new List<heartrateScript>();
@@ -60,6 +61,7 @@ public class Player : ISingleton<Player> {
     {
         titleCanvas.SetActive(false);
         transform.localPosition = new Vector3(0, 0, 0);
+        currentHighestComboCount = 0;
         Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
         Debug.Log("Pressed");
         PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
@@ -340,9 +342,12 @@ public class Player : ISingleton<Player> {
         StartCoroutine(AddOx(x));
     }
 
-    public void ShakeCam(Vector3 pos)
-    {   //Called From tentacle
-        StartCoroutine(ShakerShaker(pos));
+    public void ShakeCam ()
+    {   
+        StartCoroutine(ShakerShaker());
+        int rnd = Random.Range(0, characterDamagedClips.Count);
+        PlayerAudioPlay(characterDamagedClips[rnd]);
+        //playerASource.Play();
     }
 
     #endregion
@@ -472,10 +477,8 @@ public class Player : ISingleton<Player> {
             yield return new WaitForFixedUpdate();
         }
     }
-    IEnumerator ShakerShaker(Vector3 tipPos)
+    IEnumerator ShakerShaker()
     {
-        Vector3 pos = Camera.main.WorldToScreenPoint(tipPos);
-        Debug.Log(pos);
         Vector3 originValue = parentCam.transform.localEulerAngles;
         if (!CB)
             CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
@@ -486,8 +489,8 @@ public class Player : ISingleton<Player> {
         switch (rndToGo)
         {
             case 0:
-                val = (pos.x > Screen.width / 2) ?
-                    new Vector3(0, 30f, 0) : new Vector3(0, -30f, 0);
+                val =// (pos.x > Screen.width / 2) ?
+                    new Vector3(0, 30f, 0);
 
                 break;
             case 1:
@@ -502,7 +505,7 @@ public class Player : ISingleton<Player> {
                 break;
         }
 
-
+        StartCoroutine(GotHit());
         parentCam.transform.localEulerAngles += val / 2;
         yield return null;
         parentCam.transform.localEulerAngles += val / 2;
@@ -517,15 +520,48 @@ public class Player : ISingleton<Player> {
 
     }
 
+    //public void Damaged()
+    //{
+    //    StartCoroutine(GotHit())
+    //}
+
     IEnumerator GotHit()
     {
+        //put alpha up to 25 then cut down in a second
+        redImage.color = new Color(1, 0, 0, 0.25f);
         //Should go Up to a number then go down back to zero again
-        yield return new WaitUntil(() => currHealth < maxHealth / 2);
-        while (currHealth < maxHealth / 2)
+        //yield return new WaitUntil(() => currHealth < maxHealth / 2);
+
+        float timer = 1f, timerNow = 0f;
+        while (timerNow < timer)
         {
+            timerNow += Time.deltaTime;
+            redImage.color = Color.Lerp(redImage.color, Color.clear, Time.deltaTime);
             yield return null;
         }
+        redImage.color = Color.clear;
     }
+    bool comboCounting;
+    int currentComboCount;
+    int currentHighestComboCount = 0;
+    IEnumerator ComboText()
+    {
+        currentComboCount++;
+        comboText.color = Color.white;
+        comboText.text = currentComboCount.ToString();
+        if (comboCounting) yield break;
+        comboCounting = true;
+        while(comboText.color.a  > 0)
+        {
+            comboText.color = Color.Lerp(comboText.color, Color.clear, Time.deltaTime);
+            yield return null;
+        }
+        if (currentComboCount > currentHighestComboCount)
+            currentHighestComboCount = currentComboCount;
+        currentComboCount = 0;
+        comboCounting = false;
+    }
+
     #endregion
 
     #region Shooting
@@ -554,6 +590,13 @@ public class Player : ISingleton<Player> {
     {
         gunASource.clip = clip;
         gunASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
+    }
+
+    void PlayerAudioPlay(AudioClip clip)
+    {
+        //int rnd = Random.Range(0, characterDamagedClips.Count);
+        playerASource.clip = clip;
+        playerASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
     }
     #endregion
 }

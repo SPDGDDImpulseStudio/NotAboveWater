@@ -17,36 +17,48 @@ public class CirclePosUpdate : PoolObject,
     Camera cam;
     bool bootUp = false;
     public bool bulletCheck = false;
+    public List <Text> healthNumber = new List<Text>();
+
+    public Image circleImage;
+
+    int health = 0;
     #region Coroutines
 
     IEnumerator RotateBoi()
     {
-        Vector3 newRot = this.transform.localEulerAngles;
+        Vector3 newRot = circleImage.transform.localEulerAngles;
 
-        while (this.transform.localEulerAngles.z < 180)
+        while (circleImage.transform.localEulerAngles.z < 180)
         {
             if (_ref == null) break;
             newRot.z += 15 * Time.deltaTime; ;
-            this.transform.localEulerAngles = newRot;
+            circleImage.transform.localEulerAngles = newRot;
 
             yield return null;
         }
         Debug.Log("END");
-        this.transform.localEulerAngles = Vector3.zero;
+        circleImage.transform.localEulerAngles = Vector3.zero;
     }
     IEnumerator ScaleDown()
     {
-        Vector3 theScale = this.transform.localScale;
-        int Rnd = UnityEngine.Random.Range(1, 5);
+        Vector3 theScale = circleImage.transform.localScale;
+        int Rnd = UnityEngine.Random.Range(100,200);
 
-        while (this.transform.localScale.x > 0.013f)
+        while (true)
         {
-
             if (_ref == null) break;
-            theScale.x -= Rnd * Time.deltaTime / 100;
-            theScale.y -= Rnd * Time.deltaTime / 100;
+            if (circleImage.transform.localScale.x < 0.75f)
+            {
+                theScale.x -= Rnd * Time.deltaTime;
+                theScale.y -= Rnd * Time.deltaTime;
 
-            this.transform.localScale = theScale;
+            }else if (circleImage.transform.localScale.x > 1.25f)
+            {
+                theScale.x += Rnd * Time.deltaTime;
+                theScale.y += Rnd * Time.deltaTime;
+            }
+            circleImage.transform.localScale = theScale;
+
             yield return new WaitForFixedUpdate();
         }
 
@@ -58,6 +70,8 @@ public class CirclePosUpdate : PoolObject,
         while (true)
         {
             //if()
+             healthNumber[0].text = health.ToString();
+            
             if (_ref == null) break;
 
             posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
@@ -105,7 +119,9 @@ public class CirclePosUpdate : PoolObject,
         if (bootUp) return;
         bootUp = true;
         cam = Camera.main;
-        originScale = this.transform.localScale;
+        circleImage = GetComponentInChildren<Image>();
+        originScale = circleImage.transform.localScale;
+        
         newScale.x = originScale.x * 2;
         newScale.y = originScale.y / 2;
     }
@@ -120,6 +136,7 @@ public class CirclePosUpdate : PoolObject,
     { 
         this.gameObject.SetActive(true);
         _ref = obj;
+        health = UnityEngine.Random.Range(2, 3);
         thisPos = _ref.transform.position;
         Init();
         StartCoroutine(PosUpdate());
@@ -142,7 +159,7 @@ public class CirclePosUpdate : PoolObject,
         BootUp();
         _ref = null;
         bulletCheck = false;
-        this.transform.localScale = originScale;
+        circleImage.transform.localScale = originScale;
         thisPos = Vector3.zero;
         afterPop = null;
         onHit = false;
@@ -162,16 +179,20 @@ public class CirclePosUpdate : PoolObject,
         //if(Player.Instance.fuckW)
         //Debug.Log(Player.Instance.fuckW);
         //Debug.Log(eventData);
-        if (Player.Instance.currBullet> 0 && Input.GetMouseButton(0))
+        if (Player.Instance.currBullet> 0 && (Player.Instance.shootTimerNow> Player.Instance.shootEvery) && Input.GetMouseButton(0))
         {
-            if (!bulletCheck)
-                _ref.GetComponentInParent<Tentacle>().OnHit();
-            else
-                _ref.GetComponent<BulletScript>().TurnOff();
+            health--;
+            if (health == 0)
+            {
+                if (!bulletCheck)
+                    _ref.GetComponentInParent<Tentacle>().OnHit();
+                else
+                    _ref.GetComponent<BulletScript>().TurnOff();
 
 
-            TurnOff();
-
+                Debug.Log(bulletCheck);
+                TurnOff();
+            }
         }
     }
 
@@ -181,15 +202,19 @@ public class CirclePosUpdate : PoolObject,
         //Debug.Log(eventData);   
         //if (Player.Instance.fuckW)
         //Debug.Log(Player.Instance.fuckW);
-        if (Player.Instance.currBullet> 0 && Input.GetMouseButton(0))
+        if (Player.Instance.currBullet> 0 && (Player.Instance.shootTimerNow > Player.Instance.shootEvery) && Input.GetMouseButton(0))
         {
-            if (!bulletCheck)
-                _ref.GetComponentInParent<Tentacle>().OnHit();
-            else
-                _ref.GetComponent<BulletScript>().TurnOff();
+            health--;
+            if (health == 0)
+            {
+                if (!bulletCheck)
+                    _ref.GetComponentInParent<Tentacle>().OnHit();
+                else
+                    _ref.GetComponent<BulletScript>().TurnOff();
+                Debug.Log(bulletCheck);
 
-            TurnOff();
-    
+                TurnOff();
+            }
         }
     }
 

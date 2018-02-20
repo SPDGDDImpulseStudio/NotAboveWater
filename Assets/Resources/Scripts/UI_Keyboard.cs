@@ -19,7 +19,7 @@ public class UI_Keyboard : MonoBehaviour
 
     public void ClickKey(string character)
     {
-        Debug.Log(character);
+        //Debug.Log(character);
         if (input.text.Length > 7)
         {
             StartCoroutine(ChangeText("Please keep your name 8 characters long"));

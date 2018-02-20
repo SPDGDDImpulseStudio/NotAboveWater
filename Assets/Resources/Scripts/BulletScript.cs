@@ -14,23 +14,21 @@ public class BulletScript : PoolObject {
 
     public Transform target;
     public CirclePosUpdate circle;
-    float speed = 100f, rotSpeed = 5f;
+    float speed = 100f, rotSpeed = 3.6f;
     Rigidbody rb;
     void FixedUpdate()
     {
         if (!target) return;
 
         this.transform.position = Vector3.MoveTowards(this.transform.position, target.position + anyHow, rotSpeed);
-        if (Vector3.Distance(this.transform.localPosition, Player.Instance.transform.position) < 4.8f)
-            Hit();
+        //if (Vector3.Distance(this.transform.localPosition, Player.Instance.transform.position) < 4.8f)
+        //    Hit();
         //Debug.Log(Vector3.Distance(this.transform.localPosition, Player.Instance.transform.localPosition) + " " +
         // Vector3.Distance(this.transform.position, Player.Instance.transform.position) + " " +
         //    Vector3.Distance(this.transform.localPosition, Player.Instance.transform.position) + " " +         
         //    Vector3.Distance(this.transform.position, Player.Instance.transform.localPosition) //+ " " +
 
-
-
-
+        
 
 
             //);
@@ -38,18 +36,35 @@ public class BulletScript : PoolObject {
         ////rb.angularVelocity = -rotateAmt * rotSpeed;
         //rb.velocity = transform.up * speed;
     }
+    /*
+        To Check for player getting damaged by blobs
 
-    //void OnTriggerEnter(Collider x)
-    //{
-    //    TurnOff();
-    //    if (x.transform.GetComponent<Player>())
-    //    {
-    //        Debug.Log("HIT"); Debug.Log(Vector3.Distance(this.transform.position, Player.Instance.transform.position));
+        Choice 1:
+            OnTriggerEnter 
+        
+        Choice 2:
+            Check for distance 
 
-    //        Player.Instance.currHealth -= 15f;
-    //        TurnOff();
-    //    }
-    //}
+
+         
+         
+         
+         */
+    void OnTriggerEnter(Collider x)
+    {
+        //TurnOff();
+        Debug.Log(x.name);
+        if (x.transform.GetComponentInChildren<Player>())
+        {
+            Debug.Log("HIT");
+            Debug.Log(Vector3.Distance(this.transform.position, Player.Instance.transform.position));
+
+            //Player.Instance.currHealth -= 15f;
+            //TurnOff();
+            Hit();
+        }
+    }
+
     Vector3 anyHow;
     public override void Init()
     {
@@ -62,13 +77,14 @@ public class BulletScript : PoolObject {
         circle = cir;
         circle.Init_(this.gameObject);
         circle.bulletCheck = true;
-        circle.afterPop += Hit;
+        circle.afterPop += TurnOff;
         anyHow = transform.right * UnityEngine.Random.Range(1f, 4f);
         if (Time.timeScale == 1.0f) Time.timeScale = 0.6f;
     }
     void Hit()
     {
-        Debug.Log("Kena");
+        Player.Instance.ShakeCam();
+        Player.Instance.currHealth -= 15f;
         TurnOff();
     }
     public override void TurnOff()
