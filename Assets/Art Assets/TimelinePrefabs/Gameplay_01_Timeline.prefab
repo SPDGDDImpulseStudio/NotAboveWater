@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1536030690845686}
+  m_IsPrefabParent: 1
+--- !u!1 &1536030690845686
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4463895419645094}
+  - component: {fileID: 320278494482747538}
+  m_Layer: 0
+  m_Name: Gameplay_01_Timeline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4463895419645094
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1536030690845686}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!320 &320278494482747538
+PlayableDirector:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1536030690845686}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 114106700504076386, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 114151417286178624, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 114739668413589854, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 114192590990685130, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 114817048151691210, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: 114874129913681182, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 114959595164282366, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 114548499971122180, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
+    value: {fileID: 0}
+  m_ExposedReferences:
+    m_References:
+    - d0013757c5054e543bb4e2491a6c8dd2: {fileID: 0}
+    - ce22a3a2fcdc3054698c5a7cc9e274c4: {fileID: 0}
+    - b8c5c3e956396cb4ba09336c097eb017: {fileID: 0}
+    - a65d57084a12cfb4db508774b4ffe934: {fileID: 0}
+    - 545f8cf1567da524e80a6d5cebb538f5: {fileID: 0}
+    - 0adccadba242bdf4cb433e04b484d5a9: {fileID: 0}
+    - bf0bca4be3f7fa841bf5c507873c42bb: {fileID: 0}
+    - 4bc15ef582890484ea856aaab4406e10: {fileID: 0}
+    - 13b87737a2c063c4f9b103470be0552d: {fileID: 0}
+    - 356606694ad5de64f91e55ec633968f9: {fileID: 0}
+    - 26fb1bd163a453741a9e5dfc24a97876: {fileID: 0}
+    - 584fe06bd00e2cf4c806021b9a482908: {fileID: 0}
+    - 22b0e906a7dbe604b81160922ff00a87: {fileID: 0}
+    - d30f9077486de724ba21db1df20eb4ef: {fileID: 0}
+    - 54abed7f0f199ba42a801551c18d8eee: {fileID: 0}
+    - bded1b09e5ccfd74284190a684f41a3f: {fileID: 0}
+    - 843f78fbceee105409523ba1d4bc88b4: {fileID: 0}
+    - f5e787a74b05b8b48a4da4874e4c6764: {fileID: 0}
+    - 22355d3ca48acb642b32560c528897cd: {fileID: 0}
+    - 1e0eb4e686a07834ab9910521f05696c: {fileID: 0}
+    - 8729e4a1420235d4e80d89e61f6311ea: {fileID: 0}
+    - 14c258035be2dfb4ab955529022f41a3: {fileID: 0}
+    - b1ea6a9f96acdd940a4463a1100ab988: {fileID: 0}
+    - 058420976516d2641ad60bf772d8ea12: {fileID: 0}
+    - 46d9ee6631878684e98a42f8d2c674ea: {fileID: 0}
