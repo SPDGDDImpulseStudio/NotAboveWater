@@ -336,8 +336,9 @@ public class Player : ISingleton<Player> {
                                 hit.transform.GetComponent<InteractableObj>().Interact();
                             else if (hit.transform.GetComponent<Boss>())
                                 hit.transform.GetComponent<Boss>().OnHit();
-                            else if (hit.transform.GetComponentInChildren<Canvas>())
-                                Debug.Log("Canvas " + hit.transform.name);
+                            else if (hit.transform.GetComponentInChildren<Destroyable>())
+                                hit.transform.GetComponent<Destroyable>().OnHit();
+
                             else
                             { 
                                 //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
@@ -369,9 +370,13 @@ public class Player : ISingleton<Player> {
   
     void PlayerDeath()
     {
-        //Fade back to scene 1
+        //Fade back to scene 0
         Debug.Log("DEATH!");
+
+        if(currentPD.time < duration)
+        currentPD.Pause();
         SceneChanger.Instance.Fading(0);
+
         uglyStop = true;
     }
 
