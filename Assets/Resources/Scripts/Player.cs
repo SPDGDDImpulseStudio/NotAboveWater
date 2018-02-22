@@ -68,9 +68,8 @@ public class Player : ISingleton<Player> {
         PlayableDirectorsParent = GameObject.Find("PlaybleDirectors");
         Debug.Log(PlayableDirectorsParent);
 
-        SwitchingTimeline(0);
-
         playables = FindObjectsOfType<PlayableDirector>();
+
         StartCoroutine(PlayerHax());
         StartCoroutine(DisgustingShit());
         Debug.Log(originScreen);
@@ -95,7 +94,9 @@ public class Player : ISingleton<Player> {
     
     IEnumerator DisgustingShit()
     {
+        SwitchingTimeline(0);
         duration = (float)currentPD.duration;
+
         yield return new WaitUntil(() => currentPD.time + 2 > duration);
         yield return new WaitUntil(() => Input.anyKeyDown);
         SwitchingTimeline(1);
