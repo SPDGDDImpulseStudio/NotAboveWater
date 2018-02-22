@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 #if UNITY_EDITOR
 using UnityEditor;
 using System.Text.RegularExpressions;
@@ -29,6 +30,26 @@ public class SceneCamera : MonoBehaviour {
             //SceneView.lastActiveSceneView.AlignViewToObject(Selection.activeGameObject.transform);
 
         }
+    }
+
+
+    [MenuItem("Tools/DirtyPD")]
+    public static void SetDirty()
+    {
+        PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
+   
+         for (int i =0; i < playables.Length; i++)
+        {
+            Debug.Log(playables[i].name);
+            EditorUtility.SetDirty(playables[i]);
+
+        }
+    }
+
+    [MenuItem("Tools/DirtyScene")]
+    public static void SetSceneDirty()
+    {
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
     }
 
     [MenuItem("Tools/Renames")]
