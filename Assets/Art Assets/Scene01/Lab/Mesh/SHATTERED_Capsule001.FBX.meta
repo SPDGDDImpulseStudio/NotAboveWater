@@ -1,0 +1,227 @@
+fileFormatVersion: 2
+guid: 630d32ac520ae2a489f1d36ca5c72c83
+timeCreated: 1517251144
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Capsule005
+    100002: Object
+    100004: Object001_Part_1
+    100006: Object001_Part_10
+    100008: Object001_Part_11
+    100010: Object001_Part_12
+    100012: Object001_Part_13
+    100014: Object001_Part_14
+    100016: Object001_Part_15
+    100018: Object001_Part_16
+    100020: Object001_Part_17
+    100022: Object001_Part_18
+    100024: Object001_Part_19
+    100026: Object001_Part_2
+    100028: Object001_Part_20
+    100030: Object001_Part_21
+    100032: Object001_Part_22
+    100034: Object001_Part_24
+    100036: Object001_Part_25
+    100038: Object001_Part_3
+    100040: Object001_Part_4
+    100042: Object001_Part_5
+    100044: Object001_Part_7
+    100046: Object001_Part_8
+    100048: Object001_Part_9
+    100050: Object003
+    100052: Object004
+    100054: //RootNode
+    400000: Capsule005
+    400002: Object
+    400004: Object001_Part_1
+    400006: Object001_Part_10
+    400008: Object001_Part_11
+    400010: Object001_Part_12
+    400012: Object001_Part_13
+    400014: Object001_Part_14
+    400016: Object001_Part_15
+    400018: Object001_Part_16
+    400020: Object001_Part_17
+    400022: Object001_Part_18
+    400024: Object001_Part_19
+    400026: Object001_Part_2
+    400028: Object001_Part_20
+    400030: Object001_Part_21
+    400032: Object001_Part_22
+    400034: Object001_Part_24
+    400036: Object001_Part_25
+    400038: Object001_Part_3
+    400040: Object001_Part_4
+    400042: Object001_Part_5
+    400044: Object001_Part_7
+    400046: Object001_Part_8
+    400048: Object001_Part_9
+    400050: Object003
+    400052: Object004
+    400054: //RootNode
+    2300000: Capsule005
+    2300002: Object
+    2300004: Object001_Part_1
+    2300006: Object001_Part_10
+    2300008: Object001_Part_11
+    2300010: Object001_Part_12
+    2300012: Object001_Part_13
+    2300014: Object001_Part_14
+    2300016: Object001_Part_15
+    2300018: Object001_Part_16
+    2300020: Object001_Part_17
+    2300022: Object001_Part_18
+    2300024: Object001_Part_19
+    2300026: Object001_Part_2
+    2300028: Object001_Part_20
+    2300030: Object001_Part_21
+    2300032: Object001_Part_22
+    2300034: Object001_Part_24
+    2300036: Object001_Part_25
+    2300038: Object001_Part_3
+    2300040: Object001_Part_4
+    2300042: Object001_Part_5
+    2300044: Object001_Part_7
+    2300046: Object001_Part_8
+    2300048: Object001_Part_9
+    2300050: Object003
+    2300052: Object004
+    3300000: Capsule005
+    3300002: Object
+    3300004: Object001_Part_1
+    3300006: Object001_Part_10
+    3300008: Object001_Part_11
+    3300010: Object001_Part_12
+    3300012: Object001_Part_13
+    3300014: Object001_Part_14
+    3300016: Object001_Part_15
+    3300018: Object001_Part_16
+    3300020: Object001_Part_17
+    3300022: Object001_Part_18
+    3300024: Object001_Part_19
+    3300026: Object001_Part_2
+    3300028: Object001_Part_20
+    3300030: Object001_Part_21
+    3300032: Object001_Part_22
+    3300034: Object001_Part_24
+    3300036: Object001_Part_25
+    3300038: Object001_Part_3
+    3300040: Object001_Part_4
+    3300042: Object001_Part_5
+    3300044: Object001_Part_7
+    3300046: Object001_Part_8
+    3300048: Object001_Part_9
+    3300050: Object003
+    3300052: Object004
+    4300000: Capsule005
+    4300002: Object001_Part_1
+    4300004: Object001_Part_2
+    4300006: Object001_Part_3
+    4300008: Object001_Part_4
+    4300010: Object001_Part_5
+    4300012: Object001_Part_7
+    4300014: Object001_Part_8
+    4300016: Object001_Part_9
+    4300018: Object001_Part_10
+    4300020: Object001_Part_11
+    4300022: Object001_Part_12
+    4300024: Object001_Part_13
+    4300026: Object001_Part_14
+    4300028: Object001_Part_15
+    4300030: Object001_Part_16
+    4300032: Object001_Part_17
+    4300034: Object001_Part_18
+    4300036: Object001_Part_19
+    4300038: Object001_Part_20
+    4300040: Object001_Part_21
+    4300042: Object001_Part_22
+    4300044: Object001_Part_24
+    4300046: Object001_Part_25
+    4300048: Object
+    4300050: Object003
+    4300052: Object004
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 01 - Default
+    second: {fileID: 2100000, guid: 473200a580957bb40a4f8e9cad080909, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
