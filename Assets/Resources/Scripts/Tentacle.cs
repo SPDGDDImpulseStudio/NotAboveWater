@@ -353,7 +353,7 @@ public class Tentacle : MonoBehaviour
     void StoneAttack()
     {
         GameObject Bul = PoolManager.Instance.ReturnGOFromList(stonePrefab);
-        Bul.GetComponent<PoolObject>().Init();
+        Bul.GetComponent<BulletScript>().Init();
         BulletScript b = RepositionStone(Bul.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position, Quaternion.identity);
         // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
         //GetCircle(Bul);

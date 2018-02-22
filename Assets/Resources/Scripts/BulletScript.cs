@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletScript : PoolObject {
+public class BulletScript : MonoBehaviour, PoolObject {
     
 	void Start () {
         Init();
@@ -66,7 +66,7 @@ public class BulletScript : PoolObject {
     }
 
     Vector3 anyHow;
-    public override void Init()
+    public  void Init()
     {
         gameObject.SetActive(true); 
     }
@@ -87,7 +87,7 @@ public class BulletScript : PoolObject {
         Player.Instance.currHealth -= 15f;
         TurnOff();
     }
-    public override void TurnOff()
+    public  void TurnOff()
     {
         Time.timeScale = 1f;
         target = null;

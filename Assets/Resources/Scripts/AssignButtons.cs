@@ -18,17 +18,8 @@ public class AssignButtons : MonoBehaviour {
 	}
     void SceneFade()
     {
-        UnityEngine.Playables.PlayableDirector[] playables = FindObjectsOfType<UnityEngine.Playables.PlayableDirector>();
-        for (int i = 0; i < playables.Length; i++)
-        {
-            if (playables[i].gameObject.name == "GameplayTimeline")
-            {
-                pd = playables[i];
-                break;
-            }
-        }
-        pd.Play();
         Player.Instance.PlayerTurnOnTitleOff();
+  
 
     }
 

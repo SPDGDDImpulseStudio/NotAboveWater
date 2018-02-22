@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-public class CirclePosUpdate : PoolObject, 
+public class CirclePosUpdate : Button , PoolObject, 
     IPointerEnterHandler ,
     IPointerDownHandler  
 {
@@ -109,9 +109,11 @@ public class CirclePosUpdate : PoolObject,
     } 
     #endregion
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         BootUp();
+        this.onClick.AddListener(OnHit);
     }
 
     void BootUp()
@@ -126,7 +128,7 @@ public class CirclePosUpdate : PoolObject,
         newScale.y = originScale.y / 2;
     }
   
-    public override void Init()
+    public void Init()
     {
         //Debug.Log(")
         BootUp();
@@ -135,6 +137,8 @@ public class CirclePosUpdate : PoolObject,
     public void Init_(GameObject obj)
     { 
         this.gameObject.SetActive(true);
+
+
         _ref = obj;
         health = UnityEngine.Random.Range(2, 3);
         thisPos = _ref.transform.position;
@@ -154,7 +158,7 @@ public class CirclePosUpdate : PoolObject,
     }
     Vector3 thisPos;
    
-    public override void TurnOff()
+    public  void TurnOff()
     {
         BootUp();
         _ref = null;
@@ -163,7 +167,7 @@ public class CirclePosUpdate : PoolObject,
         thisPos = Vector3.zero;
         afterPop = null;
         onHit = false;
-
+        //this.onClick.RemoveAllListeners();
         this.gameObject.SetActive(false);
 
     }
@@ -174,12 +178,20 @@ public class CirclePosUpdate : PoolObject,
     }
 
   
-    public void OnPointerEnter(PointerEventData eventData)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
         //if(Player.Instance.fuckW)
         //Debug.Log(Player.Instance.fuckW);
         //Debug.Log(eventData);
         if (Player.Instance.currBullet> 0 && (Player.Instance.shootTimerNow> Player.Instance.shootEvery) && Input.GetMouseButton(0))
+        {
+            //OnHit();
+        }
+    }
+    void OnHit()
+    {
+        Debug.Log("PR");
+        if (Player.Instance.currBullet > 0 && Input.GetMouseButton(0))
         {
             health--;
             if (health == 0)
@@ -193,10 +205,12 @@ public class CirclePosUpdate : PoolObject,
                 Debug.Log(bulletCheck);
                 TurnOff();
             }
+
+            Debug.Log("PR");
         }
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public override void OnPointerDown(PointerEventData eventData)
     {
         //eventData.p
         //Debug.Log(eventData);   
@@ -204,17 +218,7 @@ public class CirclePosUpdate : PoolObject,
         //Debug.Log(Player.Instance.fuckW);
         if (Player.Instance.currBullet> 0 && (Player.Instance.shootTimerNow > Player.Instance.shootEvery) && Input.GetMouseButton(0))
         {
-            health--;
-            if (health == 0)
-            {
-                if (!bulletCheck)
-                    _ref.GetComponentInParent<Tentacle>().OnHit();
-                else
-                    _ref.GetComponent<BulletScript>().TurnOff();
-                Debug.Log(bulletCheck);
-
-                TurnOff();
-            }
+            //OnHit();
         }
     }
 

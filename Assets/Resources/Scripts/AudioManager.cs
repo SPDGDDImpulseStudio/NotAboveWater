@@ -25,6 +25,7 @@ public class AudioManager : ISingleton<AudioManager>
     }
     void Call()
     {
+        RefreshAllASList();
         ChangeVolumeOfAllAS();
 
         switch (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex)
@@ -40,11 +41,15 @@ public class AudioManager : ISingleton<AudioManager>
         }
     }
 
-    public void ChangeVolumeOfAllAS()
+    void RefreshAllASList()
     {
         AudioSource[] allAS = FindObjectsOfType<AudioSource>();
         Instance.allASScene.Clear();
         Instance.allASScene = new List<AudioSource>(allAS);
+    }
+
+    public void ChangeVolumeOfAllAS()
+    {
         for (int i = 0; i < Instance. allASScene.Count; i++)
         {
             if (Instance.allASScene[i])

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VFX : PoolObject {
+public class VFX : MonoBehaviour, PoolObject {
     ParticleSystem pSystem;
     void Start()
     {
@@ -11,7 +11,7 @@ public class VFX : PoolObject {
             pSystem = GetComponentInChildren<ParticleSystem>();
 
     }
-    public override void Init()
+    public  void Init()
     {
         this.gameObject.SetActive(true);
         if(!pSystem)
@@ -22,7 +22,7 @@ public class VFX : PoolObject {
         pSystem.Play();
     }
 
-    public override void TurnOff()
+    public  void TurnOff()
     {
         //if (!pSystem)
         //    pSystem = GetComponentInChildren<ParticleSystem>();

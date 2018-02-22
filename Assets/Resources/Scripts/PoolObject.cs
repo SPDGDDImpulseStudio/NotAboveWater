@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PoolObject:MonoBehaviour {
+public interface PoolObject{
 
-    public abstract void Init();
+    void Init();
 
-    public abstract void TurnOff();
+   void TurnOff();
   
 }
