@@ -37,13 +37,21 @@ public class SceneCamera : MonoBehaviour {
     public static void SetDirty()
     {
         PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
-   
+        Debug.Log(GUI.changed);
          for (int i =0; i < playables.Length; i++)
         {
-            Debug.Log(playables[i].name);
-            EditorUtility.SetDirty(playables[i]);
+            //Debug.Log(playables[i].name);
+            //if (playables[i])
+            //{
+            //    var track = playables[i].playableAsset.outputs.ToString();
+            //    Debug.Log(track);
+            //}
+            if(playables[i].playableAsset != null)
+            EditorUtility.SetDirty(playables[i].playableAsset);
 
         }
+        Debug.Log(GUI.changed);
+
     }
 
     [MenuItem("Tools/DirtyScene")]
