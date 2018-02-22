@@ -32,7 +32,7 @@ public class Player : ISingleton<Player> {
     public Slider compassSlider, oxygenBar;
     public GameObject playerCanvas, titleCanvas, leaderboardUI;
 
-    public PlayableDirector pd;
+    public PlayableDirector currentPD;
     public Image spr_OxygenBar;
     public Image redImage;
     public Text reloadText, oxygenText, comboText;
@@ -55,7 +55,8 @@ public class Player : ISingleton<Player> {
     public float currHealth, currOxygen, shootTimerNow;
     public GameObject parentCam;
     public Cinemachine.CinemachineBrain CB;
-
+    public GameObject PlayableDirectorsParent;
+    PlayableDirector[] playables;
     #endregion
     public void PlayerTurnOnTitleOff()
     {
@@ -63,20 +64,64 @@ public class Player : ISingleton<Player> {
         transform.localPosition = new Vector3(0, 0, 0);
         currentHighestComboCount = 0;
         Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
-        Debug.Log("Pressed");
-        PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
+
+        PlayableDirectorsParent = GameObject.Find("PlaybleDirectors");
+        Debug.Log(PlayableDirectorsParent);
+
+        SwitchingTimeline(0);
+
+        playables = FindObjectsOfType<PlayableDirector>();
+        StartCoroutine(PlayerHax());
+        StartCoroutine(DisgustingShit());
+        Debug.Log(originScreen);
+    }
+
+    void SwitchingTimeline(int x)
+    {
+
         for (int i = 0; i < playables.Length; i++)
         {
-            if (playables[i].gameObject.name == "GameplayTimeline")
+            if (playables[i].gameObject.name == "Gameplay_0" + x + "_Timeline")
             {
-                pd = playables[i];
+                currentPD = playables[i];
                 break;
             }
         }
-        StartCoroutine(PlayerHax());
-        StartCoroutine(HardcodedDisgustingEvents());
-        Debug.Log(originScreen);
+        
+        currentPD.Play();
     }
+    float duration;
+
+    
+    IEnumerator DisgustingShit()
+    {
+        duration = (float)currentPD.duration;
+        yield return new WaitUntil(() => currentPD.time + 2 > duration);
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(1);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 2 > duration);
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(2);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 2 > duration);
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(3);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 2 > duration);
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(4);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 2 > duration);
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        //SwitchingTimeline(1);
+
+    }
+
     void Start () {
         gunASource = GetComponent<AudioSource>();
         CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
@@ -102,8 +147,8 @@ public class Player : ISingleton<Player> {
     Vector2 originScreen;
     IEnumerator SharkAttack()
     {
-        yield return new WaitUntil(() => pd != null);
-        yield return new WaitUntil(() => pd.duration > 48f);
+        yield return new WaitUntil(() => currentPD != null);
+        yield return new WaitUntil(() => currentPD.duration > 48f);
 
     }
     IEnumerator PlayerHax()
@@ -120,7 +165,7 @@ public class Player : ISingleton<Player> {
         {
             if (Input.GetKeyDown(KeyCode.Semicolon))
             {
-                pd.time += 2f;
+                currentPD.time += 2f;
 
             }
             yield return null;
@@ -130,21 +175,21 @@ public class Player : ISingleton<Player> {
 
     IEnumerator HardcodedDisgustingEvents()
     {
-        yield return new WaitUntil(() => pd.time > 16f);
+        yield return new WaitUntil(() => currentPD.time > 16f);
         //Shoot At Door
-        pd.Pause(); 
+        currentPD.Pause(); 
         yield return new WaitUntil(() => Input.anyKeyDown);
-        pd.Resume();
-        yield return new WaitUntil(() => pd.time > 18f);
-        pd.Pause();
+        currentPD.Resume();
+        yield return new WaitUntil(() => currentPD.time > 18f);
+        currentPD.Pause();
         yield return new WaitUntil(() => Input.anyKeyDown);
-        pd.Resume();
-        yield return new WaitUntil(() => pd.time > 37f);
-        pd.Pause();
+        currentPD.Resume();
+        yield return new WaitUntil(() => currentPD.time > 37f);
+        currentPD.Pause();
         yield return new WaitUntil(() => Input.anyKeyDown);
-        pd.Resume();
+        currentPD.Resume();
 
-        yield return new WaitUntil(() => pd.time > 50f);
+        yield return new WaitUntil(() => currentPD.time > 50f);
         //Pop circle on it but dont kill it
         Debug.Log("Shark");
 
@@ -188,15 +233,15 @@ public class Player : ISingleton<Player> {
         {
             if (playables[i].gameObject.name == "GameplayTimeline")
             {
-                pd = playables[i];
+                currentPD = playables[i];
                 break;
             }
         }
 
-        yield return new WaitUntil(() => pd != null);
-        yield return new WaitUntil(() => pd.time > 5f);
+        yield return new WaitUntil(() => currentPD != null);
+        yield return new WaitUntil(() => currentPD.time > 5f);
         StartCoroutine(PlayerHax());
-        yield return new WaitUntil(() => pd.time > 20f);
+        yield return new WaitUntil(() => currentPD.time > 20f);
         AttributeReset();
         StartCoroutine(OxyDropping());
         playerCanvas.SetActive(true);
@@ -235,9 +280,9 @@ public class Player : ISingleton<Player> {
     IEnumerator CheapFadeToNextScene()
     {
         //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
-        if (pd == null) yield break;
-        yield return new WaitUntil(() => pd.state != PlayState.Paused);
-        yield return new WaitUntil(() => pd.time + 5f > pd.duration);
+        if (currentPD == null) yield break;
+        yield return new WaitUntil(() => currentPD.state != PlayState.Paused);
+        yield return new WaitUntil(() => currentPD.time + 5f > currentPD.duration);
         SceneChanger.Instance.Fading(1);
     }
 
@@ -346,7 +391,7 @@ public class Player : ISingleton<Player> {
     {   
         StartCoroutine(ShakerShaker());
         int rnd = Random.Range(0, characterDamagedClips.Count);
-        PlayerAudioPlay(characterDamagedClips[rnd]);
+        ForcedPlayerAudioPlay(characterDamagedClips[rnd]);
         //playerASource.Play();
     }
 
@@ -589,14 +634,25 @@ public class Player : ISingleton<Player> {
     void GunAudioPlay(AudioClip clip)//, float volume = 1.0f)
     {
         gunASource.clip = clip;
-        gunASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
+        gunASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.masterVol));
     }
 
-    void PlayerAudioPlay(AudioClip clip)
+    void ForcedPlayerAudioPlay(AudioClip clip)
     {
         //int rnd = Random.Range(0, characterDamagedClips.Count);
         playerASource.clip = clip;
-        playerASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.sfxVol));
+        playerASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.masterVol));
     }
+
+    void CheckedPlayerAudioPlay(AudioClip clip)
+    {
+        if (!playerASource.isPlaying)
+        {
+            playerASource.clip = clip;
+            playerASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.masterVol));
+
+        }
+    }
+
     #endregion
 }
