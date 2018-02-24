@@ -75,7 +75,7 @@ public class BulletScript : MonoBehaviour, PoolObject {
         Init();
         target = target_;
         circle = cir;
-        circle.Init_(this.gameObject);
+        circle.Init_(this.gameObject ,  this .GetComponent<Collider>());
         circle.bulletCheck = true;
         circle.afterPop += TurnOff;
         anyHow = transform.right * UnityEngine.Random.Range(1f, 4f);

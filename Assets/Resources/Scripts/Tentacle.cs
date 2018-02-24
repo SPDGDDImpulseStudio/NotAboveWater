@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tentacle : MonoBehaviour
+public class Tentacle : MonoBehaviour , CircleAttached
 {
     float attackTimer = 4f, currentTimer = 0f;
     //Control from outside
@@ -28,6 +28,11 @@ public class Tentacle : MonoBehaviour
     public List<AudioClip> gotHitSFX = new List<AudioClip>();
 
     public AudioSource aSource;
+
+    public void ToCircle()
+    {
+
+    }
 
     void Start()
     {
@@ -308,7 +313,7 @@ public class Tentacle : MonoBehaviour
     void GetCircle(GameObject x)
     {
         circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        circle.Init_(x);
+        circle.Init_(x, tipAKAwhereToShootAt.GetComponent<Collider>());
         circle.afterPop += OnHit;
     }
     void NullifyCircle()

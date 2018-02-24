@@ -20,7 +20,7 @@ public class CirclePosUpdate : Button , PoolObject,
     public List <Text> healthNumber = new List<Text>();
 
     public Image circleImage;
-
+    Collider refCollider;
     int health = 0;
     #region Coroutines
 
@@ -134,12 +134,13 @@ public class CirclePosUpdate : Button , PoolObject,
         BootUp();
         cam = Camera.main;
     }
-    public void Init_(GameObject obj)
+    public void Init_(GameObject obj , Collider col)
     { 
         this.gameObject.SetActive(true);
-
-
+       
         _ref = obj;
+        refCollider = col;
+
         health = UnityEngine.Random.Range(2, 3);
         thisPos = _ref.transform.position;
         Init();
@@ -162,6 +163,8 @@ public class CirclePosUpdate : Button , PoolObject,
     {
         BootUp();
         _ref = null;
+        refCollider = null;
+
         bulletCheck = false;
         circleImage.transform.localScale = originScale;
         thisPos = Vector3.zero;
@@ -225,4 +228,11 @@ public class CirclePosUpdate : Button , PoolObject,
     
     public bool onHit;
     public Action afterPop;
+}
+
+public interface CircleAttached
+{
+     void ToCircle();
+
+    
 }

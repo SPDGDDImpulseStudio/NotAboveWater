@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class Destroyable : MonoBehaviour {
 
     public GameObject afterPop;
 
     [Tooltip("The rigidbodies of what i want to push away from the player")]
     public List<Rigidbody> rb = new List<Rigidbody>();
-
-
+    
     [Range(1f,1000f)]
     public float force = 1f;
 
@@ -19,6 +18,7 @@ public class Destroyable : MonoBehaviour {
     
     public void OnHit()
     {
+        gameObject.SetActive(false);
         afterPop.SetActive(true);
         if (shootAway)
         {

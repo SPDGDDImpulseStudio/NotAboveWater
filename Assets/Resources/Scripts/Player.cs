@@ -17,15 +17,17 @@ public class Player : ISingleton<Player> {
     [Header("[None of this should be empty]")]
     public AudioSource gunASource;
     public AudioSource playerASource;
+
     [Header("[VFX]")]
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
     public GameObject VFX_BulletSpark;
     public Image SlimeTexture;
+
     [Header("[AudioClips]")]
     public AudioClip gunFire;
     public AudioClip reloadingClip, emptyGunFire;
-    public List< AudioClip> characterDamagedClips = new List<AudioClip>(); 
+    public List<AudioClip> characterDamagedClips = new List<AudioClip>(); 
 
     [Header("[Various UI]")]
     public GameObject ammoCounterBar;
@@ -36,7 +38,6 @@ public class Player : ISingleton<Player> {
     public Image spr_OxygenBar;
     public Image redImage;
     public Text reloadText, oxygenText, comboText;
-
     
     List<Image> bullets = new List<Image>();
     List<heartrateScript> heartRates = new List<heartrateScript>();
@@ -55,75 +56,18 @@ public class Player : ISingleton<Player> {
     public float currHealth, currOxygen, shootTimerNow;
     public GameObject parentCam;
     public Cinemachine.CinemachineBrain CB;
+
     public GameObject PlayableDirectorsParent;
     PlayableDirector[] playables;
-    #endregion
-    public void PlayerTurnOnTitleOff()
-    {
-        titleCanvas.SetActive(false);
-        transform.localPosition = new Vector3(0, 0, 0);
-        currentHighestComboCount = 0;
-        Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
-
-        PlayableDirectorsParent = GameObject.Find("PlaybleDirectors");
-        Debug.Log(PlayableDirectorsParent);
-
-        playables = FindObjectsOfType<PlayableDirector>();
-
-        StartCoroutine(PlayerHax());
-        StartCoroutine(DisgustingShit());
-        Debug.Log(originScreen);
-    }
-
-    void SwitchingTimeline(int x)
-    {
-
-        for (int i = 0; i < playables.Length; i++)
-        {
-            if (playables[i].gameObject.name == "Gameplay_0" + x + "_Timeline")
-            {
-                currentPD = playables[i];
-                break;
-            }
-        }
-        
-        currentPD.Play();
-    }
     float duration;
-
+    #endregion
     
-    IEnumerator DisgustingShit()
+
+    #region OnlyCallOnce
+   
+    Vector2 originScreen;
+    void Start()
     {
-        SwitchingTimeline(0);
-        duration = (float)currentPD.duration;
-
-        yield return new WaitUntil(() => currentPD.time + 2 > duration);
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        SwitchingTimeline(1);
-        duration = (float)currentPD.duration;
-
-        yield return new WaitUntil(() => currentPD.time + 2 > duration);
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        SwitchingTimeline(2);
-        duration = (float)currentPD.duration;
-
-        yield return new WaitUntil(() => currentPD.time + 2 > duration);
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        SwitchingTimeline(3);
-        duration = (float)currentPD.duration;
-
-        yield return new WaitUntil(() => currentPD.time + 2 > duration);
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        SwitchingTimeline(4);
-        duration = (float)currentPD.duration;
-
-        yield return new WaitUntil(() => currentPD.time + 2 > duration);
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        //SwitchingTimeline(1);
-
-    }
-
-    void Start () {
         gunASource = GetComponent<AudioSource>();
         CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         if (!ammoCounterBar) ammoCounterBar = GameObject.Find("AmmoCounterBar");
@@ -134,18 +78,35 @@ public class Player : ISingleton<Player> {
         parentOf.transform.SetParent(this.transform);
         parentOf.name = "VFX Container";
         heartRates = new List<heartrateScript>(playerCanvas.GetComponentsInChildren<heartrateScript>());
-        Debug.Log(heartRates.Count);
-        //Debug.Log(heartRates.Count);
         StartCoroutine(MakeSureThisThing());
-        
-        //PoolManager.Instance.ClearPool();
+        StartCoroutine(SceneZeroFunction());
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
-        originScreen = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
-
+        originScreen = new Vector2(1920f, 1080f);
     }
-    Vector2 originScreen;
+
+
+
+
+    #endregion
+
+    void SwitchingTimeline(int x)
+    {
+        for (int i = 0; i < playables.Length; i++)
+        {
+            if (playables[i].gameObject.name == "Gameplay_0" + x + "_Timeline")
+            {
+                currentPD = playables[i];
+                break;
+            }
+        }
+        Debug.Log("Playing " + x + " timeline");
+
+        currentPD.Play();
+    }
+
+   
     IEnumerator SharkAttack()
     {
         yield return new WaitUntil(() => currentPD != null);
@@ -167,35 +128,13 @@ public class Player : ISingleton<Player> {
             if (Input.GetKeyDown(KeyCode.Semicolon))
             {
                 currentPD.time += 2f;
-
             }
             yield return null;
         }
 #endif
     }
+    #region Scene Related functions
 
-    IEnumerator HardcodedDisgustingEvents()
-    {
-        yield return new WaitUntil(() => currentPD.time > 16f);
-        //Shoot At Door
-        currentPD.Pause(); 
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        currentPD.Resume();
-        yield return new WaitUntil(() => currentPD.time > 18f);
-        currentPD.Pause();
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        currentPD.Resume();
-        yield return new WaitUntil(() => currentPD.time > 37f);
-        currentPD.Pause();
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        currentPD.Resume();
-
-        yield return new WaitUntil(() => currentPD.time > 50f);
-        //Pop circle on it but dont kill it
-        Debug.Log("Shark");
-
-
-    }
     public override void RegisterSelf()
     {
         base.RegisterSelf();
@@ -221,40 +160,28 @@ public class Player : ISingleton<Player> {
     bool setPos = false;
     IEnumerator SceneZeroFunction()
     {
+        Debug.Log("HERE");
         if (!setPos) setPos = true;
-        
         else
         {
             playerCanvas.SetActive(false);
             titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
         }
-        PlayableDirector[] playables = FindObjectsOfType<PlayableDirector>();
-        for (int i = 0; i < playables.Length; i++)
-        {
-            if (playables[i].gameObject.name == "GameplayTimeline")
-            {
-                currentPD = playables[i];
-                break;
-            }
-        }
 
         yield return new WaitUntil(() => currentPD != null);
-        yield return new WaitUntil(() => currentPD.time > 5f);
-        StartCoroutine(PlayerHax());
-        yield return new WaitUntil(() => currentPD.time > 20f);
+        //yield return new WaitUntil(() => currentPD.time > 5f);
+        //StartCoroutine(PlayerHax());
+        //yield return new WaitUntil(() => currentPD.time > 20f);
         AttributeReset();
         StartCoroutine(OxyDropping());
         playerCanvas.SetActive(true);
-        for(int i = 0; i < heartRates.Count; i ++)
+        for (int i = 0; i < heartRates.Count; i++)
         {
             heartRates[i].Init();
         }
         StartCoroutine(UIUpdate());
-        StartCoroutine(GameplayUpdate()); // Settle these coroutines properly can alrd
-            // make sure they stop updating when player die
-            //make sure they only update when player play
-        StartCoroutine(CheapFadeToNextScene());
+        StartCoroutine(GameplayUpdate());
     }
 
     void AttributeReset()
@@ -272,29 +199,78 @@ public class Player : ISingleton<Player> {
         }
         uglyStop = false;
     }
-    public void Init()
+    IEnumerator DisgustingShit()
     {
+        SwitchingTimeline(0);
+        duration = (float)currentPD.duration;
 
+        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        //yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(1);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time > 40);
+        //currentPD.time
+
+        Time.timeScale = 0.4f;
+        //Pop Circles
+
+        Time.timeScale = 1f;
+
+        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        //yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(2);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        //yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(3);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        //yield return new WaitUntil(() => Input.anyKeyDown);
+        SwitchingTimeline(4);
+        duration = (float)currentPD.duration;
+
+        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        //yield return new WaitUntil(() => Input.anyKeyDown);
+
+        StartCoroutine(CheapFadeToNextScene());
 
     }
+    public void PlayerTurnOnTitleOff()
+    {
+        titleCanvas.SetActive(false);
+        //playerCanvas.SetActive(true);
+        transform.localPosition = new Vector3(0, 0, 0);
+        currentHighestComboCount = 0;
+        Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
 
+        PlayableDirectorsParent = GameObject.Find("PlaybleDirectors");
+        playables = FindObjectsOfType<PlayableDirector>();
+        
+        StartCoroutine(PlayerHax());
+        StartCoroutine(DisgustingShit());
+    }
     IEnumerator CheapFadeToNextScene()
     {
-        //pd = FindObjectOfType<UnityEngine.Playables.PlayableDirector>();
-        if (currentPD == null) yield break;
-        yield return new WaitUntil(() => currentPD.state != PlayState.Paused);
-        yield return new WaitUntil(() => currentPD.time + 5f > currentPD.duration);
+        yield return new WaitUntil(() => currentPD == null);
         SceneChanger.Instance.Fading(1);
     }
-
+    public void Init()
+    {
+    }
     List<Tentacle> tentacles;
     public void AssignTentacleList()
     {
         tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
-        StartCoroutine(TriggerTentacles());        
+        StartCoroutine(TriggerTentacles());
     }
+
     bool uglyStop = false;
-    public bool fuckW = false;
+
+    #endregion
+
     IEnumerator GameplayUpdate()
     {
         yield return new WaitUntil(() => playerCanvas.activeInHierarchy);
@@ -310,7 +286,6 @@ public class Player : ISingleton<Player> {
             Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
 
             if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
-            fuckW = false;
             if (Input.GetMouseButton(0))
             {
                 
@@ -329,22 +304,28 @@ public class Player : ISingleton<Player> {
                         {
                             targetHit = hit.transform.gameObject;
                             pointHit = hit.point;
-                            fuckW = true;
                             if (hit.transform.GetComponent<AI>())
                                 DamageShark(targetHit, pointHit);
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
+
+                            //else if (hit.transform.GetComponent<CircleAttached>())
                             else if (hit.transform.GetComponent<Boss>())
                                 hit.transform.GetComponent<Boss>().OnHit();
                             else if (hit.transform.GetComponentInChildren<Destroyable>())
-                                hit.transform.GetComponent<Destroyable>().OnHit();
-
+                                hit.transform.GetComponentInChildren<Destroyable>().OnHit();
+                            else if (hit.transform.CompareTag("Circle"))
+                                Debug.Log("AK");
+                            //hit.transform.GetComponent<CircleAttached>().ToCircle();
                             else
-                            { 
-                                //if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                                //    hit.transform.GetComponentInParent<Tentacle>().OnHit();
-                                //else
-                                DamageProps(targetHit, pointHit);
+                            {
+                                if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                    Debug.Log("Tentacle");
+
+                                if (hit.transform.name == "")
+                                    //else
+                                    DamageProps(targetHit, pointHit);
+                                //hit.transform.GetComponent<CircleAttached>().ToCircle();
                             }
                         }
                         if (currBullet - 1 == 0)
@@ -660,5 +641,32 @@ public class Player : ISingleton<Player> {
         }
     }
 
+    #endregion
+
+
+
+    #region Obsolete
+    
+    IEnumerator HardcodedDisgustingEvents()
+    {
+        yield return new WaitUntil(() => currentPD.time > 16f);
+        //Shoot At Door
+        currentPD.Pause();
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        currentPD.Resume();
+        yield return new WaitUntil(() => currentPD.time > 18f);
+        currentPD.Pause();
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        currentPD.Resume();
+        yield return new WaitUntil(() => currentPD.time > 37f);
+        currentPD.Pause();
+        yield return new WaitUntil(() => Input.anyKeyDown);
+        currentPD.Resume();
+
+        yield return new WaitUntil(() => currentPD.time > 50f);
+        //Pop circle on it but dont kill it
+        Debug.Log("Shark");
+    }
+    
     #endregion
 }
