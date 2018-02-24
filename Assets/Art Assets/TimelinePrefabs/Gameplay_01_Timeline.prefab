@@ -71,4 +71,14 @@ PlayableDirector:
   - key: {fileID: 114192590990685130, guid: 34eaa8422678eff468937ef2ecb1e3c1, type: 2}
     value: {fileID: 0}
   m_ExposedReferences:
-    m_References: []
+    m_References:
+    - 545f8cf1567da524e80a6d5cebb538f5: {fileID: 0}
+    - bf0bca4be3f7fa841bf5c507873c42bb: {fileID: 0}
+    - 4bc15ef582890484ea856aaab4406e10: {fileID: 0}
+    - 13b87737a2c063c4f9b103470be0552d: {fileID: 0}
+    - 22b0e906a7dbe604b81160922ff00a87: {fileID: 0}
+    - d30f9077486de724ba21db1df20eb4ef: {fileID: 0}
+    - bded1b09e5ccfd74284190a684f41a3f: {fileID: 0}
+    - 843f78fbceee105409523ba1d4bc88b4: {fileID: 0}
+    - f5e787a74b05b8b48a4da4874e4c6764: {fileID: 0}
+    - 058420976516d2641ad60bf772d8ea12: {fileID: 0}
