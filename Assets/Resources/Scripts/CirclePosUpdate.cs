@@ -21,7 +21,7 @@ public class CirclePosUpdate : Button , PoolObject,
 
     public Image circleImage;
     Collider refCollider;
-    int health = 0;
+    public int health = 0;
     #region Coroutines
 
     IEnumerator RotateBoi()
@@ -66,6 +66,7 @@ public class CirclePosUpdate : Button , PoolObject,
 
     IEnumerator PosUpdate()
     {
+        float timerNow =0f, timer =3f;
         Vector3 posOnScreen;
         while (true)
         {
@@ -84,11 +85,18 @@ public class CirclePosUpdate : Button , PoolObject,
             //    (posOnScreen.y < 0) ? 0 : Screen.height;
 
 
-            if (0 > posOnScreen.x || posOnScreen.x > Screen.width || 0> posOnScreen.y || posOnScreen.y > Screen.height)
+            if (0 > posOnScreen.x || posOnScreen.x > Screen.width || 0 > posOnScreen.y || posOnScreen.y > Screen.height)
             {
-                TurnOff();
-                break;
+                timerNow += Time.deltaTime;
+                if (timerNow > timer)
+                {
+                    TurnOff();
+                    break;
+                }
             }
+            else timerNow = 0f;
+
+            
             if ((posOnScreen.x + offSet.x) < Screen.width && (posOnScreen.x + offSet.x) > 0) posOnScreen.x += offSet.x;
 
             if ((posOnScreen.y + offSet.y) < Screen.height && (posOnScreen.y + offSet.y) > 0) posOnScreen.y += offSet.y;
@@ -115,7 +123,10 @@ public class CirclePosUpdate : Button , PoolObject,
         BootUp();
         this.onClick.AddListener(OnHit);
     }
-
+    public void HealthDown()
+    {
+        health--;
+    }
     void BootUp()
     {
         if (bootUp) return;

@@ -6023,7 +6023,7 @@ MonoBehaviour:
   playerCanvas: {fileID: 1361786117408466}
   titleCanvas: {fileID: 1788192907669908}
   leaderboardUI: {fileID: 1098069267652000}
-  pd: {fileID: 0}
+  currentPD: {fileID: 0}
   spr_OxygenBar: {fileID: 0}
   redImage: {fileID: 114995722898021506}
   reloadText: {fileID: 0}
@@ -6041,7 +6041,12 @@ MonoBehaviour:
   shootTimerNow: 0.3733333
   parentCam: {fileID: 0}
   CB: {fileID: 0}
-  fuckW: 0
+  playableDirParent: {fileID: 0}
+  blobs: []
+  circlePrefab: {fileID: 1873096305130890, guid: 87e9b26f0df1012488b608b432d889e8,
+    type: 2}
+  Shark: {fileID: 0}
+  skip: 1
   triggerTenTime: 3.2
 --- !u!114 &114679302339712224
 MonoBehaviour:

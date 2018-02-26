@@ -16,6 +16,17 @@ public class BulletScript : MonoBehaviour, PoolObject {
     public CirclePosUpdate circle;
     float speed = 100f, rotSpeed = 3.6f;
     Rigidbody rb;
+
+    public void DeductCircleHealth()
+    {
+        circle.health--;
+        if (circle.health < 1)
+        {
+            Debug.Log(circle.health);
+            TurnOff();
+            circle.TurnOff();
+        }
+    }
     void FixedUpdate()
     {
         if (!target) return;

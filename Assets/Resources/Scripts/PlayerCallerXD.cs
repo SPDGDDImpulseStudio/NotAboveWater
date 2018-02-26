@@ -40,11 +40,16 @@ public class PlayerCallerXD : MonoBehaviour {
             Player.Instance.parentCam = g.gameObject;
             Debug.Log("True");
         }
-  
+
+        Player.Instance.blobs = blobsInOrder;
+        Player.Instance.CallCircleBlobEvent();
         if (!FindObjectOfType<AudioManager>())
         {
             AudioManager.Instance.RegisterSelf();
         }
 
     }
+
+
+    public List<GameObject> blobsInOrder = new List<GameObject>();
 }

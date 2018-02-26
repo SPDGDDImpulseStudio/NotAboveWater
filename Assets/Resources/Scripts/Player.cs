@@ -57,9 +57,13 @@ public class Player : ISingleton<Player> {
     public GameObject parentCam;
     public Cinemachine.CinemachineBrain CB;
 
-    public GameObject PlayableDirectorsParent;
+    public GameObject playableDirParent;
     PlayableDirector[] playables;
     float duration;
+
+    public List<GameObject> blobs = new List<GameObject>();
+
+    public GameObject circlePrefab;
     #endregion
     
 
@@ -106,7 +110,68 @@ public class Player : ISingleton<Player> {
         currentPD.Play();
     }
 
-   
+    public void CallCircleBlobEvent()
+    {
+        StartCoroutine(CircleOnBlobs());
+        GetCircle();
+        nextNum = 0;
+    }
+
+    void GetCircle()
+    {
+        if (!(GameObject.Find("Circle parent")))
+        {
+            GameObject go = new GameObject();
+            go.name = "Circle parent";
+            Canvas[] canvases = FindObjectsOfType<Canvas>();
+            for (int i = 0; i < canvases.Length; i++)
+            {
+                if (!canvases[i].GetComponent<SceneChanger>())
+                {
+                    go.transform.SetParent(canvases[i].transform);
+                    break;
+                }
+            }
+            PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
+        }
+    }
+    void SetCircle(GameObject x)
+    {
+        CirclePosUpdate circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
+        circle.Init_(x, x.GetComponent<Collider>());
+        x.GetComponent<BulletScript>().circle = circle;
+        Debug.Log("Set Circle on blob number: " + nextNum);
+        nextNum++;
+
+    }
+    int nextNum = 0;
+    IEnumerator CircleOnBlobs()
+    {
+        yield return new WaitUntil(() => currentPD != null);
+        yield return new WaitUntil(() => currentPD.name == "Gameplay_02_Timeline");
+        yield return new WaitUntil(() => currentPD.time > 15);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 18);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 24);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 28);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 31.7f);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 36);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 38.6f);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 40.7f);
+        SetCircle(blobs[nextNum]);
+        yield return new WaitUntil(() => currentPD.time > 42.5f);
+        SetCircle(blobs[nextNum]);
+
+
+    }
+
+
     IEnumerator SharkAttack()
     {
         yield return new WaitUntil(() => currentPD != null);
@@ -199,6 +264,13 @@ public class Player : ISingleton<Player> {
         }
         uglyStop = false;
     }
+
+    bool ThreeCircle()
+    {
+        return true;
+    }
+    public GameObject Shark;
+    public bool skip = true;
     IEnumerator DisgustingShit()
     {
         SwitchingTimeline(0);
@@ -206,16 +278,35 @@ public class Player : ISingleton<Player> {
 
         yield return new WaitUntil(() => currentPD.time + 1 > duration);
         //yield return new WaitUntil(() => Input.anyKeyDown);
-        SwitchingTimeline(1);
-        duration = (float)currentPD.duration;
 
-        yield return new WaitUntil(() => currentPD.time > 40);
-        //currentPD.time
+        if (!skip)
+        {
+            SwitchingTimeline(1);
+            duration = (float)currentPD.duration;
 
-        Time.timeScale = 0.4f;
-        //Pop Circles
+            yield return new WaitUntil(() => currentPD.time > 40);
+            //currentPD.time
 
-        Time.timeScale = 1f;
+            Time.timeScale = 0.4f;
+            //Three Circles show up
+
+
+            yield return new WaitUntil(() => currentPD.time > 41);
+            Time.timeScale = 1.0f;
+
+            if (ThreeCircle())
+                Shark.SetActive(false);
+            else
+            {
+                PlayerDeath();
+                yield break;
+            }
+
+            //All Popped > move on
+
+
+            // else Dead
+        }
 
         yield return new WaitUntil(() => currentPD.time + 1 > duration);
         //yield return new WaitUntil(() => Input.anyKeyDown);
@@ -234,7 +325,7 @@ public class Player : ISingleton<Player> {
 
         yield return new WaitUntil(() => currentPD.time + 1 > duration);
         //yield return new WaitUntil(() => Input.anyKeyDown);
-
+        currentPD = null;
         StartCoroutine(CheapFadeToNextScene());
 
     }
@@ -246,7 +337,7 @@ public class Player : ISingleton<Player> {
         currentHighestComboCount = 0;
         Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
 
-        PlayableDirectorsParent = GameObject.Find("PlaybleDirectors");
+        playableDirParent = GameObject.Find("PlaybleDirectors");
         playables = FindObjectsOfType<PlayableDirector>();
         
         StartCoroutine(PlayerHax());
@@ -308,6 +399,13 @@ public class Player : ISingleton<Player> {
                                 DamageShark(targetHit, pointHit);
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
+                            else if (hit.transform.name == "Bone023") // Tentacles
+                                Debug.Log("Tentacle");
+                            else if (hit.transform.name == "Blob") // Scene 0's blobs
+                                                                   //Debug.Log("Blob Scene 01");
+                                hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
+                            else if (hit.transform.name == "Shark")// Scene 
+                                Debug.Log("Shark");
 
                             //else if (hit.transform.GetComponent<CircleAttached>())
                             else if (hit.transform.GetComponent<Boss>())
@@ -320,11 +418,11 @@ public class Player : ISingleton<Player> {
                             else
                             {
                                 if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                                    Debug.Log("Tentacle");
 
-                                if (hit.transform.name == "")
-                                    //else
-                                    DamageProps(targetHit, pointHit);
+
+                                    if (hit.transform.name == "")
+                                        //else
+                                        DamageProps(targetHit, pointHit);
                                 //hit.transform.GetComponent<CircleAttached>().ToCircle();
                             }
                         }
