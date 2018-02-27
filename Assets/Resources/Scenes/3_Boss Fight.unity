@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.11480248, g: 0.11976801, b: 0.105756685, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -1785,8 +1785,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 226719340}
-  m_LocalRotation: {x: 0.0109532215, y: -0.68309134, z: 0.010247119, w: 0.73017895}
-  m_LocalPosition: {x: 17.446016, y: 68.66329, z: -4.2185583}
+  m_LocalRotation: {x: 0.05056231, y: 0.08116375, z: 0.004122763, w: -0.9954089}
+  m_LocalPosition: {x: 35.387928, y: 18.30396, z: -238.3049}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 317342720}
@@ -5663,6 +5663,11 @@ Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 630505700}
+--- !u!1 &630505702 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 630505700}
 --- !u!1001 &640494299
 Prefab:
   m_ObjectHideFlags: 0
@@ -8167,6 +8172,11 @@ Prefab:
 --- !u!4 &954647755 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 954647754}
+--- !u!1 &954647756 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 954647754}
 --- !u!114 &955538321 stripped
@@ -10733,6 +10743,11 @@ Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 1288927215}
+--- !u!1 &1288927217 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1288927215}
 --- !u!4 &1293415647 stripped
 Transform:
   m_PrefabParentObject: {fileID: 418706, guid: 30ded8fdd3abc9b40929e3fac0e665c6, type: 2}
@@ -12024,6 +12039,11 @@ Prefab:
 --- !u!4 &1421924701 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1421924700}
+--- !u!1 &1421924702 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 1421924700}
 --- !u!1001 &1424895856
@@ -13633,6 +13653,11 @@ Prefab:
 --- !u!4 &1569503028 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1569503027}
+--- !u!1 &1569503029 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 1569503027}
 --- !u!1001 &1570365781
@@ -15246,6 +15271,11 @@ Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 1825427161}
+--- !u!1 &1825427163 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1825427161}
 --- !u!4 &1825665064 stripped
 Transform:
   m_PrefabParentObject: {fileID: 418706, guid: 30ded8fdd3abc9b40929e3fac0e665c6, type: 2}
@@ -15641,6 +15671,11 @@ Prefab:
 --- !u!4 &1868410935 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4648706632521850, guid: 063f664d4abf2564685a7b4bb08369bb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1868410934}
+--- !u!1 &1868410936 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1324460376722576, guid: 063f664d4abf2564685a7b4bb08369bb,
     type: 2}
   m_PrefabInternal: {fileID: 1868410934}
 --- !u!1 &1890710217
@@ -16904,12 +16939,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bossCurrHealth: 0
-  bossMaxHealth: 200
+  bossMaxHealth: 600
+  protectorTentacles:
+  - {fileID: 1519290268}
+  - {fileID: 1421924702}
+  - {fileID: 1825427163}
+  - {fileID: 1868410936}
+  - {fileID: 954647756}
+  - {fileID: 1569503029}
+  - {fileID: 630505702}
+  - {fileID: 1288927217}
+  animatorTentacles: []
+  bossSlider: {fileID: 0}
+  tentacles: []
   sfxBoss:
   - {fileID: 8300000, guid: e92f0d8f7752f0b4faa7768cda14ede5, type: 3}
   - {fileID: 8300000, guid: 8182aca3a72e7d34385caa7d0e6a5cba, type: 3}
   - {fileID: 8300000, guid: 84f0af5e421db8248be27fdddd27c1b2, type: 3}
   aSource: {fileID: 2082488656}
+  someoneAttacking: 0
+  bossState: 0
   slider: {fileID: 0}
 --- !u!135 &2082488655
 SphereCollider:

@@ -60,11 +60,12 @@ public class Stats : ISingleton<Stats>
         }
     }
 
-    void SavePlayerPrefs(int x, float _score, float _accuracy, string name_)
+    void SavePlayerPrefs(int x, float _score, float _accuracy, float _time, string name_)
     {
         PlayerPrefs.SetFloat(GameManager.leaderboardScore + x.ToString(), _score);
         PlayerPrefs.SetString(GameManager.leaderboardName + x.ToString(), name_);
         PlayerPrefs.SetFloat(GameManager.leaderboardAccuracy + x.ToString(), _accuracy);
+        PlayerPrefs.SetFloat(GameManager.leaderboardTime + x.ToString(), _time);
         PlayerPrefs.SetInt(GameManager.leaderboard + x.ToString(), 1);
         PlayerPrefs.Save();
     }
@@ -80,14 +81,14 @@ public class Stats : ISingleton<Stats>
                 if (GetPlayerPrefScore(i) < gameScores)
                 {
                     ReplaceRanking(i);
-                    SavePlayerPrefs(i, gameScores , accuracy, _name);
+                    SavePlayerPrefs(i, gameScores,accuracy, timeTaken3, _name);
                     break;
                 }
                 else continue;
             }
             else
             {
-                SavePlayerPrefs(i, gameScores, accuracy, _name);
+                SavePlayerPrefs(i, gameScores, accuracy, timeTaken3, _name);
                 break;
             }
         }
@@ -110,31 +111,37 @@ public class Stats : ISingleton<Stats>
         return PlayerPrefs.GetFloat(GameManager.leaderboardAccuracy + i.ToString());
     }
 
+    float GetPlayerPrefTime(int i)
+    {
+        return PlayerPrefs.GetFloat(GameManager.leaderboardTime + i.ToString());
+    }
+
     public void ReplaceRanking(int currentIndex)
     {
         //if (currentIndex + 1 <= 5)
         //{
         string _tempName = GetPlayerPrefName(currentIndex);
         float _tempScore = GetPlayerPrefScore(currentIndex),
-        _tempAcc = GetPlayerPrefAcc(currentIndex);
+        _tempAcc = GetPlayerPrefAcc(currentIndex),
+        _tempTime = GetPlayerPrefTime(currentIndex);
         //Values Im pushing awayy TO, keeping it 
         string nextName = GetPlayerPrefName(currentIndex + 1);
         float nextScore = GetPlayerPrefScore(currentIndex + 1),
-        nextAcc = GetPlayerPrefAcc(currentIndex + 1);
-
+        nextAcc = GetPlayerPrefAcc(currentIndex + 1),
+        nextTime = GetPlayerPrefAcc(currentIndex + 1);
         for (int j = currentIndex + 1; j < 5; j++)
         {
-
-            
-            SavePlayerPrefs(j, _tempScore, _tempAcc ,_tempName);
+            SavePlayerPrefs(j, _tempScore, _tempAcc ,_tempTime,_tempName);
 
             _tempName = nextName;
             _tempScore = nextScore;
             _tempAcc = nextAcc;
+            _tempTime = nextTime;
 
             nextName = GetPlayerPrefName(j + 1);
             nextScore = GetPlayerPrefScore(j + 1);
             nextAcc = GetPlayerPrefAcc(j + 1);
+            nextTime = GetPlayerPrefTime(j + 1);
         }
         //   }
     }

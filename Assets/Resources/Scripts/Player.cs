@@ -33,7 +33,7 @@ public class Player : ISingleton<Player> {
     public GameObject ammoCounterBar;
     public Slider compassSlider, oxygenBar , bossHpSlider;
     public GameObject playerCanvas, titleCanvas, leaderboardUI;
-
+    public Image lowHp;
     public Image spr_OxygenBar;
     public Image redImage;
     public Text reloadText, oxygenText, comboText;
@@ -89,6 +89,7 @@ public class Player : ISingleton<Player> {
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
         originScreen = new Vector2(1920f, 1080f);
         sharkEventGO = GameObject.Find("NewSharkPrefab");
+        originC = lowHp.color;
     }
     #endregion
 
@@ -118,20 +119,20 @@ public class Player : ISingleton<Player> {
 
     void GetCircle()
     {
-       
-            GameObject go = new GameObject();
-            go.name = "Circle parent";
-            Canvas[] canvases = FindObjectsOfType<Canvas>();
-            for (int i = 0; i < canvases.Length; i++)
+
+        GameObject go = new GameObject();
+        go.name = "Circle parent";
+        Canvas[] canvases = FindObjectsOfType<Canvas>();
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (!canvases[i].GetComponent<SceneChanger>())
             {
-                if (!canvases[i].GetComponent<SceneChanger>())
-                {
-                    go.transform.SetParent(canvases[i].transform);
-                    break;
-                }
+                go.transform.SetParent(canvases[i].transform);
+                break;
             }
-            PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
-        
+        }
+        PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
+
     }
     int nextNum = 0;
     void SetCircle(GameObject x, bool b = false)
@@ -162,6 +163,7 @@ public class Player : ISingleton<Player> {
     IEnumerator CircleOnBlobs()
     {
         yield return new WaitUntil(() => currentPD != null);
+
         yield return new WaitUntil(() => currentPD.name == "Gameplay_02_Timeline");
 
         yield return new WaitUntil(() => currentPD.time > 16);
@@ -195,15 +197,7 @@ public class Player : ISingleton<Player> {
         SetCircle(blobs[nextNum]);
 
     }
-
-
-    IEnumerator SharkAttack()
-    {
-        yield return new WaitUntil(() => currentPD != null);
-        yield return new WaitUntil(() => currentPD.name == "Gameplay_01_Timeline");
-        Debug.Log("Around Where shark pops up i set circle on shark");
-        yield return new WaitUntil(() => currentPD.duration > 48f);
-    }
+    
     public void Reset()
     {
         if (pause) PauseFunction();
@@ -299,18 +293,20 @@ public class Player : ISingleton<Player> {
         yield return new WaitUntil(() => !pauseMenuUI.activeInHierarchy);
         yield return new WaitUntil(() => Input.anyKeyDown);
 
-    
-            if (Input.GetKeyDown(KeyCode.Semicolon))
-            {
-                currentPD.time += 2f;
-                playerHack = false;
-                StartCoroutine(PlayerHax());
-            }
-            else
-            {
-                playerHack = false;
-            }
+
+        if (Input.GetKeyDown(KeyCode.Semicolon))
+        {
+            currentPD.time += 2f;
+            playerHack = false;
+            StartCoroutine(PlayerHax());
+        }
+
+
+
+        else
+            playerHack = false;
         
+        Debug.Log("Out");        
     }
     #region Scene Related functions
     bool pause = false;
@@ -504,6 +500,7 @@ public class Player : ISingleton<Player> {
         
         StartCoroutine(PlayerHax());
         StartCoroutine(DisgustingShit());
+        StartCoroutine(RedImageBlink());
     }
     IEnumerator CheapFadeToNextScene()
     {
@@ -522,17 +519,47 @@ public class Player : ISingleton<Player> {
     bool uglyStop = false;
 
     #endregion
+    Color originC;
+    IEnumerator RedImageBlink()
+    {
+        yield return new WaitUntil(() => (currHealth / maxHealth < 0.25));
+        bool b = false;
+        lowHp.gameObject.SetActive(true);
+        Color x = Color.red;
+        x.a = 0;
+        while (currHealth / maxHealth < 0.25) {
+            if (b)
+            {
+                lowHp.color = Color.Lerp(lowHp.color, Color.red, Time.deltaTime);
+                if (lowHp.color.a > 0.6) b = !b;
+            }
+            else
+            {
+                lowHp.color = Color.Lerp(lowHp.color, x, Time.deltaTime);
+                if (lowHp.color.a < 0.1) b = !b;
 
+            }
+
+            yield return null;
+        }
+        lowHp.gameObject.SetActive(false);
+
+        StartCoroutine(RedImageBlink());
+   
+        
+    }
     IEnumerator GameplayUpdate()
     {
         yield return new WaitUntil(() => playerCanvas.activeInHierarchy);
         while (true)
         {
+            
             if (currHealth < 0 || currOxygen < 0)
             {
                 PlayerDeath();
                 yield break;
             }
+            
             if (SceneChanger.Instance.transitting && !playerCanvas.activeInHierarchy) yield break;
             Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
 
@@ -618,7 +645,7 @@ public class Player : ISingleton<Player> {
         }
     }
   
-  public  void PlayerDeath()
+  public void PlayerDeath()
     {
         //Fade back to scene 0
         Debug.Log("DEATH!");

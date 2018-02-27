@@ -36,7 +36,9 @@ public class LeaderboardDesu : MonoBehaviour
             {
                 txt_Names[i].text = PlayerPrefs.GetString(GameManager.leaderboardName + i);
                 txt_TotalScore[i].text = PlayerPrefs.GetFloat(GameManager.leaderboardScore + i).ToString();
-                txt_Accuracy[i].text = PlayerPrefs.GetFloat(GameManager.leaderboardAccuracy + i).ToString();
+                txt_Accuracy[i].text = System.Math.Round(PlayerPrefs.GetFloat(GameManager.leaderboardAccuracy + i),2).ToString();
+                
+                txt_TimeTaken[i].text = PlayerPrefs.GetFloat(GameManager.leaderboardTime + i).ToString();
             }
             else break;
         }
