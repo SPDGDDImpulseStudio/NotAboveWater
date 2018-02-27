@@ -5,7 +5,8 @@ using UnityEngine;
 public class Boss : MonoBehaviour {
 
     public float bossCurrHealth, bossMaxHealth;
-
+    public List<GameObject> protectorTentacles = new List<GameObject>();
+    public  List<Animator> animatorTentacles;
     List<Tentacle> tentacles = new List<Tentacle>();
     float timer = 3f, timerNow = 0f;
 
@@ -14,22 +15,39 @@ public class Boss : MonoBehaviour {
 
     void Start () {
         bossCurrHealth = bossMaxHealth;
+        animatorTentacles = new List<Animator>();
+        for (int i = 0; i< protectorTentacles.Count; i++)
+        {
+            Animator g = protectorTentacles[i].GetComponent<Animator>();
+            animatorTentacles.Add(g);
+        }
         tentacles = new List<Tentacle>(FindObjectsOfType<Tentacle>());
         if (!aSource)
             aSource = GetComponent<AudioSource>();
         StartCoroutine(HealthChecker());
         StartCoroutine(TriggerTen());
     }
+
     public UnityEngine.UI.Slider slider;
+
     IEnumerator HealthChecker()
     {
         while(bossCurrHealth > 0)
         {
             //slider.value = (bossCurrHealth / bossMaxHealth);
-
+            if (Input.GetKeyDown(KeyCode.M))
+                InvulnerableTentacle();
             yield return null;
         }
         StartCoroutine(BossDie());
+    }
+
+    public void InvulnerableTentacle()
+    {
+        for(int i = 0; i > animatorTentacles.Count; i++)
+        {
+            animatorTentacles[i].Play("RiseNProtect");
+        }
     }
 
     IEnumerator TriggerTen()
