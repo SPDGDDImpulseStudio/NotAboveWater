@@ -50,6 +50,11 @@ public class AudioManager : ISingleton<AudioManager>
         x.loop = _loop;
         x.Play();
     }
+
+    public void StopRainingVoice()
+    {
+        audioSource2.Stop();
+    }
     void RefreshAllASList()
     {
         AudioSource[] allAS = FindObjectsOfType<AudioSource>();

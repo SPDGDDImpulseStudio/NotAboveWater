@@ -415,6 +415,8 @@ public class Player : ISingleton<Player> {
         StartsGameplay();
         dx.Priority = 11;
         currentPD.Resume();
+        yield return new WaitUntil(() => currentPD.time > 13);
+        AudioManager.Instance.StopRainingVoice();
         yield return new WaitUntil(() => currentPD.time + 1 > duration);
         //yield return new WaitUntil(() => Input.anyKeyDown);
 
