@@ -7,10 +7,25 @@ public class Stats : ISingleton<Stats>
 {
     #region Attributes
 
-    public float roundsFired0, roundsHit1, damageTaken2, 
-        timeTaken3, oxygenLeftover4, oxygenLost5,
+    public float roundsFired0, roundsHit1, 
+        
+        
+        damageTaken2, 
+        timeTaken3, 
+        
+        
+        oxygenLeftover4, 
+        
+        
+        
+        oxygenLost5,
         healthCollected6, secretCollected7, chainComboCURRENT8, 
-        chainComboMAX9 , gameScores;
+        chainComboMAX9 , 
+        
+        
+        
+        
+        gameScores;
 
     bool s1 = false;
     bool s2 = false;
@@ -27,41 +42,21 @@ public class Stats : ISingleton<Stats>
     {
         switch (stats)
         {
-            case 0:
-                roundsFired0 += data;
-                break;
-            case 1:
-                roundsHit1 += data;
-                break;
-            case 2:
-                damageTaken2 += data;
-                break;
-            case 3:
-                timeTaken3 += data;
-                break;
-            case 4:
-                oxygenLeftover4 += data;
-                break;
-            case 5:
-                oxygenLost5 += data;
-                break;
-            case 6:
-                healthCollected6 += data;
-                break;
-            case 7:
-                secretCollected7 += data;
-                break;
+            case 0: roundsFired0 += data;   break;
+            case 1: roundsHit1 += data;     break;
+
+            case 2: damageTaken2 += data;   break;
+            case 3: timeTaken3 += data;     break;
+            case 4: oxygenLeftover4 += data;break;
+            case 5: oxygenLost5 += data;    break;
+            case 6: healthCollected6 += data;break;
+            case 7: secretCollected7 += data; break;
             case 8:
                 chainComboCURRENT8 += data;
                 ChainComboCounter();
                 break;
-            case 9:
-                chainComboMAX9 += data;
-                break;
-
-            case 10:
-                gameScores += data;
-                break;
+            case 9: chainComboMAX9 += data; break;
+            case 10: gameScores += data;  break;
         }
     }
 
@@ -76,7 +71,7 @@ public class Stats : ISingleton<Stats>
 
     public void SaveStats(string _name)
     { 
-        float accuracy =   roundsHit1 / roundsFired0;
+        float accuracy =  roundsHit1 / roundsFired0;
 
         for (int i = 0; i < 5; i++)
         {
@@ -225,37 +220,4 @@ public class Stats : ISingleton<Stats>
             chainTimer -= 1 * Time.deltaTime;
         }
     }
-}
-
-struct Ranking
-{
-    public float playerScores, playerAccuracy, treasuresShot;
-    public string playerName;
-
-    public Ranking(float _score, float _acc, float _shot, string _name)
-    {
-        playerScores = _score;
-        playerAccuracy = _acc;
-        treasuresShot = _shot;
-        playerName = _name;
-    }
-
-    public Ranking GetRankingByIndex(int i)
-    {
-        float _score = PlayerPrefs.GetFloat(GameManager.leaderboardScore + i);
-        string _name = PlayerPrefs.GetString(GameManager.leaderboardName + i);
-        float _acc = PlayerPrefs.GetFloat(GameManager.leaderboardAccuracy + i);
-        float _shot = PlayerPrefs.GetFloat(GameManager.leaderboardTreasures + i);
-        
-        return new Ranking(_score, _acc, _shot, _name);
-    }
-
-    public void SetRanking(float _score, float _acc , float _shot, string _name)
-    {
-        //PlayerPrefs.SetFloat(GameManager.leaderboardScore + x.ToString(), _score);
-        //PlayerPrefs.SetString(GameManager.leaderboardName + x.ToString(), name_);
-        //PlayerPrefs.SetInt(GameManager.leaderboard + x.ToString(), 1);
-        //PlayerPrefs.Save();
-    }
-    
 }

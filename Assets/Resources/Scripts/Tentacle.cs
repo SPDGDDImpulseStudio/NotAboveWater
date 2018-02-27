@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tentacle : MonoBehaviour 
 {
-    float attackTimer = 4f, currentTimer = 0f;
+    public float attackTimer = 4f, currentTimer = 0f;
     //Control from outside
     public bool rangeAttack = false, nearAttack = false;
 
@@ -33,7 +33,7 @@ public class Tentacle : MonoBehaviour
     {
 
     }
-
+    Boss boss;
     void Start()
     {
         if(!aSource)
@@ -79,6 +79,7 @@ public class Tentacle : MonoBehaviour
         StartCoroutine(GameplayUpdate());
         StartCoroutine(DebugUIUpdate());
         origin = this.transform.rotation;
+        boss = FindObjectOfType<Boss>();
         //StartCoroutine(AIUpdate());
     }
     Quaternion origin;
@@ -93,14 +94,21 @@ public class Tentacle : MonoBehaviour
             yield return null;
         }
     }
-
+    void StopTentacle()
+    {
+        anim.SetBool("DIE", true);
+    }
     IEnumerator GameplayUpdate()
     {
         yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
         AnimatorClipInfo[] newA;
         while (true)
         {
-            if (SceneChanger.Instance.transitting || uglyStop) yield break;
+            if (SceneChanger.Instance.transitting || uglyStop)
+            {
+                StopTentacle();
+                yield break;
+            }
 
             if (currentTimer < attackTimer) currentTimer += Time.deltaTime;
             if (selectOne)
@@ -109,7 +117,6 @@ public class Tentacle : MonoBehaviour
 
                 if (newA.Length > 0)
                 {
-
                     if (newA[0].clip.name == animClips[4])
                     {
                         DamagedToFalse();
@@ -146,6 +153,8 @@ public class Tentacle : MonoBehaviour
                                 currentTimer = 0f;
                                 attackTimer = Random.Range(3f, 6f);
                             }
+                            boss.AttackingUpdate();
+
                         }
                     }
                 }
@@ -289,7 +298,7 @@ public class Tentacle : MonoBehaviour
             aSource.Play();
         }
         Player.Instance.ShakeCam();
-        Debug.LogError("AJA");
+
 
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         this.transform.LookAt(temp);
@@ -310,12 +319,7 @@ public class Tentacle : MonoBehaviour
 
     }
 
-    void GetCircle(GameObject x)
-    {
-        circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        circle.Init_(x, false);
-        circle.afterPop += OnHit;
-    }
+  
     void NullifyCircle()
     {
         if (circle == null) return;
@@ -347,14 +351,21 @@ public class Tentacle : MonoBehaviour
                     break;
                 }
             }
-          //  else Debug.Log("ZEROOOOOOOO");
-           
             yield return null;
         }
         NullifyCircle();
         attack = false;
         //Time.timeScale = 1.0f;
     }
+
+    void GetCircle(GameObject x)
+    {
+        circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
+        circle.Init_(x, false);
+        circle.afterPop += OnHit;
+        circle.afterPop += boss.PopUpdate;
+    }
+
     void StoneAttack()
     {
         GameObject Bul = PoolManager.Instance.ReturnGOFromList(stonePrefab);
@@ -362,7 +373,9 @@ public class Tentacle : MonoBehaviour
         BulletScript b = RepositionStone(Bul.GetComponent<BulletScript>(), tipAKAwhereToShootAt.transform.position, Quaternion.identity);
         // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
         //GetCircle(Bul);
-        b.Init_(PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>(), Player.Instance.transform);
+        CirclePosUpdate x = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
+        x.afterPop += boss.PopUpdate;
+        b.Init_(x, Player.Instance.transform);
 
         Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
         //Bul.GetComponent<Rigidbody>().velocity = dir * 30    * Time.deltaTime;

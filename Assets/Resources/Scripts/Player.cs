@@ -31,7 +31,7 @@ public class Player : ISingleton<Player> {
 
     [Header("[Various UI]")]
     public GameObject ammoCounterBar;
-    public Slider compassSlider, oxygenBar;
+    public Slider compassSlider, oxygenBar , bossHpSlider;
     public GameObject playerCanvas, titleCanvas, leaderboardUI;
 
     public Image spr_OxygenBar;
@@ -62,7 +62,7 @@ public class Player : ISingleton<Player> {
     float duration;
     public List<GameObject> blobs = new List<GameObject>();
     public GameObject circlePrefab;
-
+    public GameObject pauseMenuUI;
 
     #endregion
     
@@ -194,6 +194,7 @@ public class Player : ISingleton<Player> {
     }
     public void GainScore(float toShow)
     {
+        Stats.Instance.TrackStats(10, toShow);
         Vector3 pos = Input.mousePosition;
         pos.z = 0;
         string toShowString = "+"+ toShow.ToString();
@@ -269,23 +270,30 @@ public class Player : ISingleton<Player> {
         }
         //comboText.font
     }
+    bool playerHack = false;
+    public void StartPlayerHax()
+    {
+        StartCoroutine(PlayerHax());
+    }
     IEnumerator PlayerHax()
     {
+        if (playerHack) yield break;
+        playerHack = true;
+        yield return new WaitUntil(() => !pauseMenuUI.activeInHierarchy);
         yield return new WaitUntil(() => Input.anyKeyDown);
 
-#if UNITY_EDITOR
-        while (true)
-        {
+    
             if (Input.GetKeyDown(KeyCode.Semicolon))
             {
                 currentPD.time += 2f;
+                playerHack = false;
+                StartCoroutine(PlayerHax());
             }
-            else if (Input.GetKeyDown(KeyCode.D))
-                PlayerDeath();
-            
-            yield return null;
-        }
-#endif
+            else
+            {
+                playerHack = false;
+            }
+        
     }
     #region Scene Related functions
     bool pause = false;
@@ -331,6 +339,7 @@ public class Player : ISingleton<Player> {
             titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
         }
+        bossHpSlider.gameObject.SetActive(false);
 
         yield return new WaitUntil(() => currentPD != null);
         //yield return new WaitUntil(() => currentPD.time > 5f);
@@ -457,7 +466,6 @@ public class Player : ISingleton<Player> {
         tentacles = new List<Tentacle>(GameObject.FindObjectsOfType<Tentacle>());
         StartCoroutine(TriggerTentacles());
     }
-
     bool uglyStop = false;
 
     #endregion
@@ -472,6 +480,7 @@ public class Player : ISingleton<Player> {
                 PlayerDeath();
                 yield break;
             }
+            if (SceneChanger.Instance.transitting && !playerCanvas.activeInHierarchy) yield break;
             Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
 
             if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
@@ -498,12 +507,15 @@ public class Player : ISingleton<Player> {
                                 DamageShark(targetHit, pointHit);
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
+
                             else if (hit.transform.name == "Bone023") // Tentacles
                                 Debug.Log("Tentacle");
                             else if (hit.transform.name == "Blob") // Scene 0's blobs
                                                                    //Debug.Log("Blob Scene 01");
                             {
                                 hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
+                                Stats.Instance.TrackStats(0, 1);
+                                Stats.Instance.TrackStats(1, 1);
                                 DamageProps(targetHit, pointHit);
                             }
                             else if (hit.transform.name == "Shark")// Scene 
@@ -536,7 +548,7 @@ public class Player : ISingleton<Player> {
                 }
 
             }
-            if (Input.GetKeyDown(KeyCode.R)) StartCoroutine(Reload());
+            if (Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1)) StartCoroutine(Reload());
             yield return null;
 
         }
@@ -719,19 +731,19 @@ public class Player : ISingleton<Player> {
             case 0:
                 val =// (pos.x > Screen.width / 2) ?
                     new Vector3(0, 30f, 0);
-
                 break;
             case 1:
                 val = new Vector3(30,0,0);
                 break;
 
             case 2:
-                val = new Vector3(-30,0,0);
+                val = new Vector3(0,50f,0);
                 break;
             default:
                 val = new Vector3(-20,0,0);
                 break;
         }
+        Debug.Log(rndToGo); 
 
         StartCoroutine(GotHit());
         parentCam.transform.localEulerAngles += val / 2;

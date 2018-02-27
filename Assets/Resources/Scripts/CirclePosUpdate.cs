@@ -36,7 +36,6 @@ public class CirclePosUpdate : Button , PoolObject,
 
             yield return null;
         }
-        Debug.Log("END");
         circleImage.transform.localEulerAngles = Vector3.zero;
     }
     IEnumerator ScaleDown()
@@ -172,7 +171,7 @@ public class CirclePosUpdate : Button , PoolObject,
     }
     Vector3 thisPos;
    
-    public  void TurnOff()
+    public void TurnOff()
     {
         BootUp();
         _ref = null;
@@ -180,12 +179,17 @@ public class CirclePosUpdate : Button , PoolObject,
 
         bulletCheck = false;
         circleImage.transform.localScale = originScale;
-        thisPos = Vector3.zero;
-        afterPop = null;
+        thisPos = Vector3.zero; 
         onHit = false;
-        //this.onClick.RemoveAllListeners();
+        Debug.Log("TURNOFF");
+        //this.onClick.RemoveAllListeners(); 
+        if (afterPop != null)
+        afterPop();
+
+        afterPop = null;
         this.gameObject.SetActive(false);
 
+       
     }
 
     public void CheckUI()
