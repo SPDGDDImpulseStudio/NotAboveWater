@@ -186,8 +186,8 @@ public class Player : ISingleton<Player> {
         yield return new WaitUntil(() => currentPD.name == "Gameplay_01_Timeline");
         Debug.Log("Around Where shark pops up i set circle on shark");
         yield return new WaitUntil(() => currentPD.duration > 48f);
-
     }
+
     public void GainScore(float toShow)
     {
         Vector3 pos = Input.mousePosition;
