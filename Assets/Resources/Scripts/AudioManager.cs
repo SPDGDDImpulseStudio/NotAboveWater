@@ -30,17 +30,26 @@ public class AudioManager : ISingleton<AudioManager>
 
         switch (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex)
         {
-            case 0: Instance.FadeFromSceneChanger(0, 1); break;
-            //0 and 1 for menu 
+            case 0: Instance.PlayAudioC(true, audioSource,loopingAmbienceClips[0]);
+                Instance.PlayAudioC(true, audioSource2, loopingAmbienceClips[1]); break;
 
-            case 1: Instance.FadeFromSceneChanger(5, 4); break;
-            //4 and 5 for boss fight
+            case 1:
+                Instance.PlayAudioC(true, audioSource, loopingAmbienceClips[2]);
+                Instance.PlayAudioC(true, audioSource2, loopingAmbienceClips[3]); break;
+                //0 and 1 for menu 
 
-            case 2: Instance.FadeFromSceneChanger(0, 1); break;
+                //case 1: Instance.FadeFromSceneChanger(5, 4); break;
+                ////4 and 5 for boss fight
+
+                //case 2: Instance.FadeFromSceneChanger(0, 1); break;
 
         }
     }
-
+    public void PlayAudioC(bool _loop, AudioSource x , AudioClip c) {
+        x.clip = c;
+        x.loop = _loop;
+        x.Play();
+    }
     void RefreshAllASList()
     {
         AudioSource[] allAS = FindObjectsOfType<AudioSource>();
@@ -64,7 +73,16 @@ public class AudioManager : ISingleton<AudioManager>
     }
     public List<AudioSource> allASScene;
 
+    public void WhenPlayBtnPress()
+    {
+        audioSource.Stop();
+        //PlayAudioC(true, audioSource, )
+    }
 
+    public void BossFightMusic()
+    {
+
+    }
     public const string masterVol = "MasterVol", sfxVol = "sfxVol" , bgmVol = "BGMVOL";
 
 
