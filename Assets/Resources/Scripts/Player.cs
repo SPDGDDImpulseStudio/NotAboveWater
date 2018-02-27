@@ -360,6 +360,8 @@ public class Player : ISingleton<Player> {
         //yield return new WaitUntil(() => currentPD.time > 5f);
         //StartCoroutine(PlayerHax());
         //yield return new WaitUntil(() => currentPD.time > 20f);
+
+     
         Debug.Log("IN");
        
     }
@@ -497,7 +499,7 @@ public class Player : ISingleton<Player> {
         playableDirParent = GameObject.Find("PlaybleDirectors");
         //DontDestroyOnLoad(playableDirParent);
         playables = FindObjectsOfType<PlayableDirector>();
-        
+        AudioManager.Instance.WhenPlayBtnPress();
         StartCoroutine(PlayerHax());
         StartCoroutine(DisgustingShit());
         StartCoroutine(RedImageBlink());
