@@ -615,7 +615,9 @@ public class Player : ISingleton<Player> {
                                 GainScore(rnd);
                                 hit.transform.GetComponentInChildren<Shark>().DeductCircleHealth();
                             }
+                            else if (hit.transform.GetComponent<TreasureChest>())
 
+                                hit.transform.GetComponent<TreasureChest>().OnHit();
                             //else if (hit.transform.GetComponent<CircleAttached>())
                             else if (hit.transform.GetComponent<Boss>())
                                 hit.transform.GetComponent<Boss>().OnHit();
