@@ -187,7 +187,11 @@ public class Player : ISingleton<Player> {
         Debug.Log("Around Where shark pops up i set circle on shark");
         yield return new WaitUntil(() => currentPD.duration > 48f);
     }
-
+    public void Reset()
+    {
+        if (pause) PauseFunction();
+        SceneChanger.Instance.Fading(0);
+    }
     public void GainScore(float toShow)
     {
         Vector3 pos = Input.mousePosition;
