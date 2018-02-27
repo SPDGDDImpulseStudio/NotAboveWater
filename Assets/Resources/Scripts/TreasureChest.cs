@@ -12,7 +12,7 @@ public class TreasureChest : MonoBehaviour {
     {
         if(Player.Instance.currBullet> 0)
         {
-            Instantiate(toReplaceTo);
+            Instantiate(toReplaceTo, this.transform.position,this.transform.rotation);
             Stats.Instance.TrackStats(7, 1);
             Destroy(this.gameObject);
         }
