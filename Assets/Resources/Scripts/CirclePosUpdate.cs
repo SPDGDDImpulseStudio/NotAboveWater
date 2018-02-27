@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-public class CirclePosUpdate : Button , PoolObject, 
+public class CirclePosUpdate : MonoBehaviour , PoolObject, 
     IPointerEnterHandler ,
     IPointerDownHandler  
 {
@@ -67,13 +67,18 @@ public class CirclePosUpdate : Button , PoolObject,
     {
         float timerNow =0f, timer =3f;
         Vector3 posOnScreen;
+        yield return new WaitUntil(() => _ref.activeInHierarchy);
         while (true)
         {
             //if()
              healthNumber[0].text = health.ToString();
-            
-            if (_ref == null) break;
 
+            if (_ref == null ||!_ref.activeInHierarchy)
+            {
+                TurnOff();
+          
+                break;
+            }
             posOnScreen = cam.WorldToScreenPoint(_ref.transform.position);
 
 
@@ -116,11 +121,9 @@ public class CirclePosUpdate : Button , PoolObject,
     } 
     #endregion
 
-    protected override void Start()
+     void Start()
     {
-        base.Start();
         BootUp();
-        this.onClick.AddListener(OnHit);
     }
     public void HealthDown()
     {
@@ -174,6 +177,8 @@ public class CirclePosUpdate : Button , PoolObject,
     public void TurnOff()
     {
         BootUp();
+        if(_ref != null)
+        Debug.Log("TurnOff "+ _ref.name + " of circle "+ gameObject.name);
         _ref = null;
         useCollider = false;
 
@@ -191,14 +196,8 @@ public class CirclePosUpdate : Button , PoolObject,
 
        
     }
-
-    public void CheckUI()
-    {
-        Debug.Log(this.gameObject.name);
-    }
-
   
-    public override void OnPointerEnter(PointerEventData eventData)
+    public  void OnPointerEnter(PointerEventData eventData)
     {
         //if(Player.Instance.fuckW)
         //Debug.Log(Player.Instance.fuckW);
@@ -228,7 +227,7 @@ public class CirclePosUpdate : Button , PoolObject,
         }
     }
 
-    public override void OnPointerDown(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         if (Player.Instance.currBullet> 0 && (Player.Instance.shootTimerNow > Player.Instance.shootEvery) && Input.GetMouseButton(0))
         {

@@ -4235,7 +4235,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -4247,7 +4247,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -4259,7 +4259,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
 --- !u!114 &114010404431793290
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9001,8 +9001,8 @@ MonoBehaviour:
   circlePrefab: {fileID: 1873096305130890, guid: 87e9b26f0df1012488b608b432d889e8,
     type: 2}
   pauseMenuUI: {fileID: 1555511111681500}
-  Shark: {fileID: 0}
-  skip: 1
+  sharkEventGO: {fileID: 0}
+  skip: 0
   triggerTenTime: 3.2
 --- !u!114 &114679032447528526
 MonoBehaviour:

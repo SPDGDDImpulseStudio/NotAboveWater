@@ -63,7 +63,8 @@ public class Player : ISingleton<Player> {
     public List<GameObject> blobs = new List<GameObject>();
     public GameObject circlePrefab;
     public GameObject pauseMenuUI;
-
+    GameObject grenade;
+    GameObject block;
     #endregion
     
 
@@ -87,6 +88,7 @@ public class Player : ISingleton<Player> {
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
         originScreen = new Vector2(1920f, 1080f);
+        sharkEventGO = GameObject.Find("NewSharkPrefab");
     }
     #endregion
 
@@ -116,8 +118,7 @@ public class Player : ISingleton<Player> {
 
     void GetCircle()
     {
-        if (!(GameObject.Find("Circle parent")))
-        {
+       
             GameObject go = new GameObject();
             go.name = "Circle parent";
             Canvas[] canvases = FindObjectsOfType<Canvas>();
@@ -130,16 +131,32 @@ public class Player : ISingleton<Player> {
                 }
             }
             PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
-        }
+        
     }
     int nextNum = 0;
-    void SetCircle(GameObject x)
+    void SetCircle(GameObject x, bool b = false)
     {
         CirclePosUpdate circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        circle.Init_(x, true);
-        x.GetComponent<BulletScript>().circle = circle;
-        Debug.Log("Set Circle on blob number: " + nextNum);
-        nextNum++;
+
+        if(x.name == "Grenade" || x.name == "Block") {
+            circle.Init_(x, true);
+            x.GetComponent<KeyObject>().circle = circle;
+        }
+        else {
+            if (!b)
+            {
+                circle.Init_(x, true);
+                x.GetComponent<BulletScript>().circle = circle;
+                Debug.Log("Set Circle on blob number: " + nextNum);
+                nextNum++;
+            }
+            else
+            {
+                circle.Init_(x, true);
+                x.GetComponentInChildren<Shark>().circle = circle;
+                // x = > sshark
+            }
+        }
     }
 
     IEnumerator CircleOnBlobs()
@@ -147,7 +164,7 @@ public class Player : ISingleton<Player> {
         yield return new WaitUntil(() => currentPD != null);
         yield return new WaitUntil(() => currentPD.name == "Gameplay_02_Timeline");
 
-        yield return new WaitUntil(() => currentPD.time > 15);
+        yield return new WaitUntil(() => currentPD.time > 16);
         SetCircle(blobs[nextNum]);
 
         yield return new WaitUntil(() => currentPD.time > 18);
@@ -340,14 +357,22 @@ public class Player : ISingleton<Player> {
             leaderboardUI.SetActive(true);
         }
         bossHpSlider.gameObject.SetActive(false);
-
+        sharkEventGO = GameObject.Find("NewSharkPrefab");
+        grenade = GameObject.Find("Grenade");
+        block = GameObject.Find("Block");
         yield return new WaitUntil(() => currentPD != null);
         //yield return new WaitUntil(() => currentPD.time > 5f);
         //StartCoroutine(PlayerHax());
         //yield return new WaitUntil(() => currentPD.time > 20f);
+        Debug.Log("IN");
+       
+    }
+
+    void StartsGameplay()
+    {
+        playerCanvas.SetActive(true);
         AttributeReset();
         StartCoroutine(OxyDropping());
-        playerCanvas.SetActive(true);
         for (int i = 0; i < heartRates.Count; i++)
         {
             heartRates[i].Init();
@@ -376,14 +401,22 @@ public class Player : ISingleton<Player> {
     {
         return true;
     }
-    public GameObject Shark;
+    public GameObject sharkEventGO;
     public bool skip = true;
     IEnumerator DisgustingShit()
     {
 
         SwitchingTimeline(0);
         duration = (float)currentPD.duration;
-
+        Cinemachine.CinemachineVirtualCamera dx = GameObject.Find("CM_DollyCam_Gameplay_00").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        dx.Priority = 13;
+        yield return new WaitUntil(() => currentPD.time > 11f);
+        currentPD.Pause();
+        Interact_CompulCrates x = FindObjectOfType <Interact_CompulCrates>();
+        yield return new WaitUntil(() => !x);
+        StartsGameplay();
+        dx.Priority = 11;
+        currentPD.Resume();
         yield return new WaitUntil(() => currentPD.time + 1 > duration);
         //yield return new WaitUntil(() => Input.anyKeyDown);
 
@@ -392,23 +425,21 @@ public class Player : ISingleton<Player> {
             SwitchingTimeline(1);
             duration = (float)currentPD.duration;
 
-            yield return new WaitUntil(() => currentPD.time > 40);
+            yield return new WaitUntil(() => currentPD.time > 41.2f);
             //currentPD.time
-
+            SetCircle(sharkEventGO, true);
             Time.timeScale = 0.4f;
-            //Three Circles show up
 
-
-            yield return new WaitUntil(() => currentPD.time > 41);
+            yield return new WaitUntil(() => currentPD.time > 42.3f);
             Time.timeScale = 1.0f;
 
-            if (ThreeCircle())
-                Shark.SetActive(false);
-            else
-            {
-                PlayerDeath();
-                yield break;
-            }
+            //if (ThreeCircle())
+            //    Shark.SetActive(false);
+            //else
+            //{
+            //    PlayerDeath();
+            //    yield break;
+            //}
 
             //All Popped > move on
 
@@ -420,18 +451,40 @@ public class Player : ISingleton<Player> {
         //yield return new WaitUntil(() => Input.anyKeyDown);
         SwitchingTimeline(2);
         duration = (float)currentPD.duration;
-
+        
         yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        dx.Priority = 11;
         //yield return new WaitUntil(() => Input.anyKeyDown);
         SwitchingTimeline(3);
         duration = (float)currentPD.duration;
+        dx = GameObject.Find("CM_AimGrenade_Gameplay_03").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        dx.Priority = 13;
+        yield return new WaitUntil(() => currentPD.time > 57.6f);
+        SetCircle(grenade);
+        currentPD.Pause();
+    
+        yield return new WaitUntil(() => !grenade.activeInHierarchy);
+  
+        dx.Priority = 11;
+        currentPD.Resume();
 
-        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+
+
+        yield return new WaitUntil(() => currentPD.time > 58f);
+
         //yield return new WaitUntil(() => Input.anyKeyDown);
         SwitchingTimeline(4);
         duration = (float)currentPD.duration;
+        dx = GameObject.Find("CM_AimBlock_Gameplay_04").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        dx.Priority = 13;
+        yield return new WaitUntil(() => currentPD.time > 14);
 
-        yield return new WaitUntil(() => currentPD.time + 1 > duration);
+        SetCircle(GameObject.Find("Block"));
+        currentPD.Pause();
+        yield return new WaitUntil(() => !block.activeInHierarchy);
+        currentPD.Resume();
+        yield return new WaitUntil(() => currentPD.time > 22);
+
         //yield return new WaitUntil(() => Input.anyKeyDown);
         currentPD = null;
         StartCoroutine(CheapFadeToNextScene());
@@ -494,6 +547,8 @@ public class Player : ISingleton<Player> {
                     Debug.DrawRay(point.origin,point.direction* 100f,Color.red,1f);
                     if (currBullet > 0)
                     {
+                        Stats.Instance.TrackStats(0, 1);
+
                         bullets[(maxBullet - currBullet)].gameObject.SetActive (false);
                         shootTimerNow = 0;
                         GunAudioPlay(gunFire);
@@ -508,18 +563,27 @@ public class Player : ISingleton<Player> {
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
 
-                            else if (hit.transform.name == "Bone023") // Tentacles
-                                Debug.Log("Tentacle");
+                            else if (hit.transform.name == "Block") // Tentacles
+                                hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
                             else if (hit.transform.name == "Blob") // Scene 0's blobs
                                                                    //Debug.Log("Blob Scene 01");
                             {
                                 hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
-                                Stats.Instance.TrackStats(0, 1);
-                                Stats.Instance.TrackStats(1, 1);
                                 DamageProps(targetHit, pointHit);
                             }
-                            else if (hit.transform.name == "Shark")// Scene 
+                            else if (hit.transform.name == "Grenade")
+                            {
+                                hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
+                            }
+                            else if (hit.transform.GetComponentInChildren<Shark>())// == "Shark")// Scene 
+                            {
                                 Debug.Log("Shark");
+                                Stats.Instance.TrackStats(1, 1);
+                                float rnd = Random.Range(50, 60);
+                                Stats.Instance.TrackStats(10, rnd);
+                                GainScore(rnd);
+                                hit.transform.GetComponentInChildren<Shark>().DeductCircleHealth();
+                            }
 
                             //else if (hit.transform.GetComponent<CircleAttached>())
                             else if (hit.transform.GetComponent<Boss>())
@@ -554,7 +618,7 @@ public class Player : ISingleton<Player> {
         }
     }
   
-    void PlayerDeath()
+  public  void PlayerDeath()
     {
         //Fade back to scene 0
         Debug.Log("DEATH!");

@@ -7,6 +7,7 @@ public class Interact_CompulCrates : Interact_Crates {
     public override void Interact()
     {
         base.Interact();
+        gameObject.SetActive(false);
 
     }
     
@@ -15,6 +16,9 @@ public class Interact_CompulCrates : Interact_Crates {
         //if(Application.isPlaying)
         
     }
-
+    public void OnMouseDown()
+    {
+        Destroy(gameObject);
+    }
    
 }
