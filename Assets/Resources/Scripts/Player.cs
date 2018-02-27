@@ -17,7 +17,7 @@ public class Player : ISingleton<Player> {
     [Header("[None of this should be empty]")]
     public AudioSource gunASource;
     public AudioSource playerASource;
-
+    public Text gainScoreText; 
     [Header("[VFX]")]
     public GameObject VFX_HitShark;
     public GameObject VFX_BulletMark;
@@ -60,10 +60,10 @@ public class Player : ISingleton<Player> {
     public GameObject playableDirParent;
     PlayableDirector[] playables;
     float duration;
-
     public List<GameObject> blobs = new List<GameObject>();
-
     public GameObject circlePrefab;
+
+
     #endregion
     
 
@@ -88,16 +88,12 @@ public class Player : ISingleton<Player> {
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
         originScreen = new Vector2(1920f, 1080f);
     }
-
-
-
-
     #endregion
 
     void SwitchingTimeline(int x)
     {
-        if (playables.Length < 1)
-            playables = FindObjectsOfType<PlayableDirector>();
+        if (playables.Length < 1) playables = FindObjectsOfType<PlayableDirector>();
+
         for (int i = 0; i < playables.Length; i++)
         {
             if (playables[i].gameObject.name == "Gameplay_0" + x + "_Timeline")
@@ -107,7 +103,6 @@ public class Player : ISingleton<Player> {
             }
         }
         Debug.Log("Playing " + x + " timeline");
-        Debug.Log(playables.Length);
 
         currentPD.Play();
     }
@@ -137,6 +132,7 @@ public class Player : ISingleton<Player> {
             PoolManager.RequestCreatePool(circlePrefab, 10, go.transform);
         }
     }
+    int nextNum = 0;
     void SetCircle(GameObject x)
     {
         CirclePosUpdate circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
@@ -144,48 +140,135 @@ public class Player : ISingleton<Player> {
         x.GetComponent<BulletScript>().circle = circle;
         Debug.Log("Set Circle on blob number: " + nextNum);
         nextNum++;
-
     }
-    int nextNum = 0;
+
     IEnumerator CircleOnBlobs()
     {
         yield return new WaitUntil(() => currentPD != null);
         yield return new WaitUntil(() => currentPD.name == "Gameplay_02_Timeline");
+
         yield return new WaitUntil(() => currentPD.time > 15);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 18);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 24);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 28);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 31.7f);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 36);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 38.6f);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 40.7f);
         SetCircle(blobs[nextNum]);
+
         yield return new WaitUntil(() => currentPD.time > 42.5f);
         SetCircle(blobs[nextNum]);
+
+        yield return new WaitUntil(() => currentPD.time > 45f);
+        SetCircle(blobs[nextNum]);
+
     }
 
 
     IEnumerator SharkAttack()
     {
         yield return new WaitUntil(() => currentPD != null);
+        yield return new WaitUntil(() => currentPD.name == "Gameplay_01_Timeline");
+        Debug.Log("Around Where shark pops up i set circle on shark");
         yield return new WaitUntil(() => currentPD.duration > 48f);
 
     }
+    public void GainScore(float toShow)
+    {
+        Vector3 pos = Input.mousePosition;
+        pos.z = 0;
+        string toShowString = "+"+ toShow.ToString();
+        StartCoroutine(ScoreText(pos, toShowString));
+    }
+
+    public void GainCombo()
+    {
+        StartCoroutine(ComboText());
+    }
+    bool scoring = false;
+
+    IEnumerator ScoreText(Vector3 pos , string textToShow)
+    {
+        //t.text = System.Math.Round(masterVSlider.value, 2).ToString();
+        gainScoreText.text = textToShow;
+        gainScoreText.color = Color.white;
+        gainScoreText.transform.position = pos;
+        if (!scoring)
+        {
+            gainScoreText.gameObject.SetActive(true);
+            scoring = true;
+            Debug.Log(gainScoreText + " 1");
+            while (gainScoreText.color != Color.clear)
+            {
+                gainScoreText.color = Color.Lerp(gainScoreText.color, Color.clear, Time.deltaTime);
+                yield return null;
+            }
+            scoring = false;
+            gainScoreText.gameObject.SetActive(false);
+        }
+    }
+
+    bool comboCounting;
+    int currentComboCount;
+    int currentHighestComboCount = 0;
+
+    IEnumerator ComboText()
+    {
+        currentComboCount++;
+        comboText.color = Color.white;
+        comboText.text = currentComboCount.ToString();
+        StartCoroutine(PopUp());
+        if (comboCounting) yield break;
+
+        comboCounting = true;
+        while (comboText.color.a < 30)
+        {
+            comboText.color = Color.Lerp(comboText.color, Color.clear, Time.deltaTime/10);
+            yield return null;
+        }
+        comboText.gameObject.SetActive(false);
+
+        if (currentComboCount > currentHighestComboCount)
+            currentHighestComboCount = currentComboCount;
+        currentComboCount = 0;
+        comboCounting = false;
+    }
+    IEnumerator PopUp()
+    {//combotext font = 24
+
+        comboText.gameObject.SetActive(true);
+        while (comboText.fontSize < 60)
+        {
+            comboText.fontSize += 4;
+            yield return null;
+        }
+
+        while(comboText.fontSize > 24)
+        {
+            comboText.fontSize -= 4;
+            yield return null;
+        }
+        //comboText.font
+    }
     IEnumerator PlayerHax()
     {
-        Debug.Log("OUTSIDE");
         yield return new WaitUntil(() => Input.anyKeyDown);
-
-        //if (Input.GetKeyDown(KeyCode.Semicolon))
-        //{
-        //    Debug.Log("IN");
+        
 #if UNITY_EDITOR
 
         while (true)
@@ -227,14 +310,12 @@ public class Player : ISingleton<Player> {
     bool setPos = false;
     IEnumerator SceneZeroFunction()
     {
-        Debug.Log("HERE" + setPos);
         if (!setPos) setPos = true;
         else
         {
             playerCanvas.SetActive(false);
             titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
-            Debug.Log("false but go thr");
         }
 
         yield return new WaitUntil(() => currentPD != null);
@@ -373,7 +454,6 @@ public class Player : ISingleton<Player> {
         while (true)
         {
             if (!playerCanvas.activeInHierarchy) yield break;
-
             if (currHealth < 0)
             {
                 PlayerDeath();
@@ -384,7 +464,7 @@ public class Player : ISingleton<Player> {
             if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
             if (Input.GetMouseButton(0))
             {
-                
+               
                 if (shootTimerNow > shootEvery && !reloading)
                 {
                     RaycastHit hit;
@@ -564,10 +644,11 @@ public class Player : ISingleton<Player> {
     {
         while (true)
         {
-            if (this.transform.localPosition != Vector3.zero) { 
-            this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, Vector3.zero, 4f);
-                
-        }
+            if (this.transform.localPosition != Vector3.zero)
+            {
+                this.transform.localPosition = Vector3.MoveTowards(this.transform.localPosition, Vector3.zero, 4f);
+
+            }
             yield return null;
         }
     }
@@ -670,26 +751,7 @@ public class Player : ISingleton<Player> {
         }
         redImage.color = Color.clear;
     }
-    bool comboCounting;
-    int currentComboCount;
-    int currentHighestComboCount = 0;
-    IEnumerator ComboText()
-    {
-        currentComboCount++;
-        comboText.color = Color.white;
-        comboText.text = currentComboCount.ToString();
-        if (comboCounting) yield break;
-        comboCounting = true;
-        while(comboText.color.a  > 0)
-        {
-            comboText.color = Color.Lerp(comboText.color, Color.clear, Time.deltaTime);
-            yield return null;
-        }
-        if (currentComboCount > currentHighestComboCount)
-            currentHighestComboCount = currentComboCount;
-        currentComboCount = 0;
-        comboCounting = false;
-    }
+
 
     #endregion
 
