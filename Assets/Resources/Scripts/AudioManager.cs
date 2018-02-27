@@ -56,10 +56,16 @@ public class AudioManager : ISingleton<AudioManager>
                 Instance. allASScene[i].volume = PlayerPrefs.GetFloat(masterVol);
         }
     }
+
+    public void ChangeBGMVolume(float vol)
+    {
+        audioSource.volume = vol;
+        audioSource2.volume = vol;
+    }
     public List<AudioSource> allASScene;
 
 
-    public const string masterVol = "MasterVol", sfxVol = "sfxVol";
+    public const string masterVol = "MasterVol", sfxVol = "sfxVol" , bgmVol = "BGMVOL";
 
 
     //The fn i call from scenechanger x when scene change

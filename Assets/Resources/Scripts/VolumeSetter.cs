@@ -30,7 +30,7 @@ public class VolumeSetter : MonoBehaviour {
         if (!calledForMasterVSlider)
         {
             calledForMasterVSlider = true;
-            Debug.Log(t + " 1");
+
             while (t.color != Color.clear)
             {
                 t.color = Color.Lerp(t.color, Color.clear, Time.deltaTime);
@@ -83,8 +83,6 @@ public class VolumeSetter : MonoBehaviour {
         PlayerPrefs.SetFloat(AudioManager.masterVol, masterVSlider.value);
         PlayerPrefs.SetFloat(AudioManager.sfxVol, sfxSlider.value);
         PlayerPrefs.SetFloat(AudioManager.bgmVol, bgmSlider.value);
-
-
         PlayerPrefs.Save();
         AudioManager.Instance.ChangeVolumeOfAllAS();
         AudioManager.Instance.ChangeBGMVolume(bgmSlider.value * masterVSlider.value);

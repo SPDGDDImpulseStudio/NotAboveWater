@@ -542,9 +542,11 @@ public class Player : ISingleton<Player> {
     {
         //Fade back to scene 0
         Debug.Log("DEATH!");
-
-        if(currentPD.time < duration)
-        currentPD.Pause();
+        if (currentPD != null)
+        {
+            if (currentPD.time < duration)
+                currentPD.Pause();
+        }
         SceneChanger.Instance.Fading(0);
 
         uglyStop = true;
@@ -668,7 +670,7 @@ public class Player : ISingleton<Player> {
     {
         while (true)
         {
-            if (!SceneChanger.Instance.transitting)
+            if (!SceneChanger.Instance.transitting && !pause)
             {
                 if (uglyStop) yield break;
                 currOxygen -= oxyDrop;
@@ -779,6 +781,7 @@ public class Player : ISingleton<Player> {
     void DamageProps(GameObject targetHitName, Vector3 pointHitPosition)
     {
         Debug.Log("Damaged");
+        Debug.Log(targetHitName.name);
         Quaternion newRotation = Quaternion.FromToRotation(transform.up, pointHitPosition.normalized);
         GetGOWithPrefab(VFX_BulletSpark, pointHitPosition, targetHitName.transform.rotation);
         GetGOWithPrefab(VFX_BulletMark, pointHitPosition, targetHitName.transform.rotation);
