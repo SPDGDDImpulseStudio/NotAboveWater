@@ -22,9 +22,16 @@ public class BulletScript : MonoBehaviour, PoolObject {
         circle.health--;
         if (circle.health < 1)
         {
-            Debug.Log(circle.health);
             TurnOff();
+            Pop();
         }
+    }
+
+    void Pop()
+    {
+        Debug.Log("Pop");
+        Player.Instance.GainScore(UnityEngine.Random.Range(95, 105)) ;
+        Player.Instance.GainCombo();
     }
     void FixedUpdate()
     {

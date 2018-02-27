@@ -268,9 +268,8 @@ public class Player : ISingleton<Player> {
     IEnumerator PlayerHax()
     {
         yield return new WaitUntil(() => Input.anyKeyDown);
-        
-#if UNITY_EDITOR
 
+#if UNITY_EDITOR
         while (true)
         {
             if (Input.GetKeyDown(KeyCode.Semicolon))
@@ -279,12 +278,23 @@ public class Player : ISingleton<Player> {
             }
             else if (Input.GetKeyDown(KeyCode.D))
                 PlayerDeath();
+            
             yield return null;
         }
 #endif
     }
     #region Scene Related functions
+    bool pause = false;
 
+    public void PauseFunction()
+    {
+        
+            if (!pause) Time.timeScale = 0f;
+            else Time.timeScale = 1f;
+
+            pause = !pause;
+        
+    }
     public override void RegisterSelf()
     {
         base.RegisterSelf();
@@ -453,8 +463,7 @@ public class Player : ISingleton<Player> {
         yield return new WaitUntil(() => playerCanvas.activeInHierarchy);
         while (true)
         {
-            if (!playerCanvas.activeInHierarchy) yield break;
-            if (currHealth < 0)
+            if (currHealth < 0 || currOxygen < 0)
             {
                 PlayerDeath();
                 yield break;
@@ -489,7 +498,10 @@ public class Player : ISingleton<Player> {
                                 Debug.Log("Tentacle");
                             else if (hit.transform.name == "Blob") // Scene 0's blobs
                                                                    //Debug.Log("Blob Scene 01");
+                            {
                                 hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
+                                DamageProps(targetHit, pointHit);
+                            }
                             else if (hit.transform.name == "Shark")// Scene 
                                 Debug.Log("Shark");
 
@@ -502,7 +514,7 @@ public class Player : ISingleton<Player> {
                             else
                             {
                                 //else
-                                        DamageProps(targetHit, pointHit);
+                                DamageProps(targetHit, pointHit);
                             }
                         }
                         if (currBullet - 1 == 0)
@@ -766,6 +778,7 @@ public class Player : ISingleton<Player> {
 
     void DamageProps(GameObject targetHitName, Vector3 pointHitPosition)
     {
+        Debug.Log("Damaged");
         Quaternion newRotation = Quaternion.FromToRotation(transform.up, pointHitPosition.normalized);
         GetGOWithPrefab(VFX_BulletSpark, pointHitPosition, targetHitName.transform.rotation);
         GetGOWithPrefab(VFX_BulletMark, pointHitPosition, targetHitName.transform.rotation);
@@ -775,12 +788,13 @@ public class Player : ISingleton<Player> {
         GameObject x = PoolManager.Instance.ReturnGOFromList(prefab);
         x.transform.position = pos;
         x.transform.rotation = quat;
+        x.SetActive(true);
         return x;
     }
     void GunAudioPlay(AudioClip clip)//, float volume = 1.0f)
     {
         gunASource.clip = clip;
-        gunASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.masterVol));
+        gunASource.PlayOneShot(clip, PlayerPrefs.GetFloat(AudioManager.masterVol) * PlayerPrefs.GetFloat(AudioManager.sfxVol));
     }
 
     void ForcedPlayerAudioPlay(AudioClip clip)
