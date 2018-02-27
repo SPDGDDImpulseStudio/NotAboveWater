@@ -38,9 +38,9 @@ public class PlayerCallerXD : MonoBehaviour {
             DontDestroyOnLoad(g.gameObject);
 
             Player.Instance.parentCam = g.gameObject;
-            Debug.Log("True");
         }
 
+        Player.Instance.CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         Player.Instance.blobs = blobsInOrder;
         Player.Instance.CallCircleBlobEvent();
         if (!FindObjectOfType<AudioManager>())

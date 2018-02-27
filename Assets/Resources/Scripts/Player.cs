@@ -34,7 +34,6 @@ public class Player : ISingleton<Player> {
     public Slider compassSlider, oxygenBar;
     public GameObject playerCanvas, titleCanvas, leaderboardUI;
 
-    public PlayableDirector currentPD;
     public Image spr_OxygenBar;
     public Image redImage;
     public Text reloadText, oxygenText, comboText;
@@ -57,6 +56,7 @@ public class Player : ISingleton<Player> {
     public GameObject parentCam;
     public Cinemachine.CinemachineBrain CB;
 
+    public PlayableDirector currentPD;
     public GameObject playableDirParent;
     PlayableDirector[] playables;
     float duration;
@@ -83,7 +83,6 @@ public class Player : ISingleton<Player> {
         parentOf.name = "VFX Container";
         heartRates = new List<heartrateScript>(playerCanvas.GetComponentsInChildren<heartrateScript>());
         StartCoroutine(MakeSureThisThing());
-        StartCoroutine(SceneZeroFunction());
         PoolManager.RequestCreatePool(VFX_BulletMark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_BulletSpark, 60, parentOf.transform);
         PoolManager.RequestCreatePool(VFX_HitShark, 60, parentOf.transform);
@@ -97,6 +96,8 @@ public class Player : ISingleton<Player> {
 
     void SwitchingTimeline(int x)
     {
+        if (playables.Length < 1)
+            playables = FindObjectsOfType<PlayableDirector>();
         for (int i = 0; i < playables.Length; i++)
         {
             if (playables[i].gameObject.name == "Gameplay_0" + x + "_Timeline")
@@ -106,6 +107,7 @@ public class Player : ISingleton<Player> {
             }
         }
         Debug.Log("Playing " + x + " timeline");
+        Debug.Log(playables.Length);
 
         currentPD.Play();
     }
@@ -138,7 +140,7 @@ public class Player : ISingleton<Player> {
     void SetCircle(GameObject x)
     {
         CirclePosUpdate circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        circle.Init_(x, x.GetComponent<Collider>());
+        circle.Init_(x, true);
         x.GetComponent<BulletScript>().circle = circle;
         Debug.Log("Set Circle on blob number: " + nextNum);
         nextNum++;
@@ -167,8 +169,6 @@ public class Player : ISingleton<Player> {
         SetCircle(blobs[nextNum]);
         yield return new WaitUntil(() => currentPD.time > 42.5f);
         SetCircle(blobs[nextNum]);
-
-
     }
 
 
@@ -194,6 +194,8 @@ public class Player : ISingleton<Player> {
             {
                 currentPD.time += 2f;
             }
+            else if (Input.GetKeyDown(KeyCode.D))
+                PlayerDeath();
             yield return null;
         }
 #endif
@@ -225,13 +227,14 @@ public class Player : ISingleton<Player> {
     bool setPos = false;
     IEnumerator SceneZeroFunction()
     {
-        Debug.Log("HERE");
+        Debug.Log("HERE" + setPos);
         if (!setPos) setPos = true;
         else
         {
             playerCanvas.SetActive(false);
             titleCanvas.SetActive(true);
             leaderboardUI.SetActive(true);
+            Debug.Log("false but go thr");
         }
 
         yield return new WaitUntil(() => currentPD != null);
@@ -273,6 +276,7 @@ public class Player : ISingleton<Player> {
     public bool skip = true;
     IEnumerator DisgustingShit()
     {
+
         SwitchingTimeline(0);
         duration = (float)currentPD.duration;
 
@@ -338,6 +342,7 @@ public class Player : ISingleton<Player> {
         Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
 
         playableDirParent = GameObject.Find("PlaybleDirectors");
+        //DontDestroyOnLoad(playableDirParent);
         playables = FindObjectsOfType<PlayableDirector>();
         
         StartCoroutine(PlayerHax());
@@ -395,6 +400,7 @@ public class Player : ISingleton<Player> {
                         {
                             targetHit = hit.transform.gameObject;
                             pointHit = hit.point;
+
                             if (hit.transform.GetComponent<AI>())
                                 DamageShark(targetHit, pointHit);
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
@@ -412,18 +418,11 @@ public class Player : ISingleton<Player> {
                                 hit.transform.GetComponent<Boss>().OnHit();
                             else if (hit.transform.GetComponentInChildren<Destroyable>())
                                 hit.transform.GetComponentInChildren<Destroyable>().OnHit();
-                            else if (hit.transform.CompareTag("Circle"))
-                                Debug.Log("AK");
-                            //hit.transform.GetComponent<CircleAttached>().ToCircle();
+
                             else
                             {
-                                if (hit.transform.name == "Bone023")                          //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-
-
-                                    if (hit.transform.name == "")
-                                        //else
+                                //else
                                         DamageProps(targetHit, pointHit);
-                                //hit.transform.GetComponent<CircleAttached>().ToCircle();
                             }
                         }
                         if (currBullet - 1 == 0)

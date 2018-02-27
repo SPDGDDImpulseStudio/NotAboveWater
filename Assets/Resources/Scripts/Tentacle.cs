@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tentacle : MonoBehaviour , CircleAttached
+public class Tentacle : MonoBehaviour 
 {
     float attackTimer = 4f, currentTimer = 0f;
     //Control from outside
@@ -313,7 +313,7 @@ public class Tentacle : MonoBehaviour , CircleAttached
     void GetCircle(GameObject x)
     {
         circle = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        circle.Init_(x, tipAKAwhereToShootAt.GetComponent<Collider>());
+        circle.Init_(x, false);
         circle.afterPop += OnHit;
     }
     void NullifyCircle()

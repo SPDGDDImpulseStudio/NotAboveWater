@@ -145,12 +145,14 @@ public class CirclePosUpdate : Button , PoolObject,
         BootUp();
         cam = Camera.main;
     }
-    public void Init_(GameObject obj , Collider col)
+
+    bool useCollider;
+    public void Init_(GameObject obj , bool _useCollider)
     { 
         this.gameObject.SetActive(true);
        
         _ref = obj;
-        refCollider = col;
+        useCollider = _useCollider;
 
         health = UnityEngine.Random.Range(2, 3);
         thisPos = _ref.transform.position;
@@ -174,7 +176,7 @@ public class CirclePosUpdate : Button , PoolObject,
     {
         BootUp();
         _ref = null;
-        refCollider = null;
+        useCollider = false;
 
         bulletCheck = false;
         circleImage.transform.localScale = originScale;
@@ -204,46 +206,33 @@ public class CirclePosUpdate : Button , PoolObject,
     }
     void OnHit()
     {
-        Debug.Log("PR");
-        if (Player.Instance.currBullet > 0 && Input.GetMouseButton(0))
-        {
-            health--;
-            if (health == 0)
+        if (!useCollider) {
+            if (Player.Instance.currBullet > 0 && Input.GetMouseButtonDown(0))
             {
-                if (!bulletCheck)
-                    _ref.GetComponentInParent<Tentacle>().OnHit();
-                else
-                    _ref.GetComponent<BulletScript>().TurnOff();
+                health--;
+                if (health == 0)
+                {
+                    if (!bulletCheck)
+                        _ref.GetComponentInParent<Tentacle>().OnHit();
+                    else
+                        _ref.GetComponent<BulletScript>().TurnOff();
 
-
-                Debug.Log(bulletCheck);
-                TurnOff();
+                    
+                    TurnOff();
+                }
             }
-
-            Debug.Log("PR");
         }
     }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        //eventData.p
-        //Debug.Log(eventData);   
-        //if (Player.Instance.fuckW)
-        //Debug.Log(Player.Instance.fuckW);
         if (Player.Instance.currBullet> 0 && (Player.Instance.shootTimerNow > Player.Instance.shootEvery) && Input.GetMouseButton(0))
         {
-            //OnHit();
+            OnHit();
         }
     }
 
     
     public bool onHit;
     public Action afterPop;
-}
-
-public interface CircleAttached
-{
-     void ToCircle();
-
-    
 }

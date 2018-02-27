@@ -24,7 +24,6 @@ public class BulletScript : MonoBehaviour, PoolObject {
         {
             Debug.Log(circle.health);
             TurnOff();
-            circle.TurnOff();
         }
     }
     void FixedUpdate()
@@ -86,9 +85,8 @@ public class BulletScript : MonoBehaviour, PoolObject {
         Init();
         target = target_;
         circle = cir;
-        circle.Init_(this.gameObject ,  this .GetComponent<Collider>());
+        circle.Init_(this.gameObject,  false);
         circle.bulletCheck = true;
-        circle.afterPop += TurnOff;
         anyHow = transform.right * UnityEngine.Random.Range(1f, 4f);
         if (Time.timeScale == 1.0f) Time.timeScale = 0.6f;
     }
@@ -97,12 +95,19 @@ public class BulletScript : MonoBehaviour, PoolObject {
         Player.Instance.ShakeCam();
         Player.Instance.currHealth -= 15f;
         TurnOff();
+
     }
-    public  void TurnOff()
+    public void TurnOff()
     {
         Time.timeScale = 1f;
         target = null;
+        if(circle!= null)
+        circle.TurnOff();
         gameObject.SetActive(false);
+    }
 
+    void OnDestroy()
+    {
+        TurnOff();
     }
 }
