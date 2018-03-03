@@ -112,14 +112,13 @@ public class Player : ISingleton<Player> {
 
     public void CallCircleBlobEvent()
     {
-        StartCoroutine(CircleOnBlobs());
+        StartCoroutine(Timeline3Event());
         GetCircle();
         nextNum = 0;
     }
 
     void GetCircle()
     {
-
         GameObject go = new GameObject();
         go.name = "Circle parent";
         Canvas[] canvases = FindObjectsOfType<Canvas>();
@@ -142,8 +141,7 @@ public class Player : ISingleton<Player> {
         if(x.name == "Grenade" || x.name == "Block") {
             circle.Init_(x, true);
             x.GetComponent<KeyObject>().circle = circle;
-        }
-        else {
+        }else {
             if (!b)
             {
                 circle.Init_(x, true);
@@ -160,7 +158,7 @@ public class Player : ISingleton<Player> {
         }
     }
 
-    IEnumerator CircleOnBlobs()
+    IEnumerator Timeline3Event()
     {
         yield return new WaitUntil(() => currentPD != null);
 
