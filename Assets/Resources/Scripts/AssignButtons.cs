@@ -18,9 +18,7 @@ public class AssignButtons : MonoBehaviour {
 	}
     void SceneFade()
     {
-        Player.Instance.PlayerTurnOnTitleOff();
-  
-
+        Player.Instance.StartButtonPressed();
     }
 
     void SceneStop()

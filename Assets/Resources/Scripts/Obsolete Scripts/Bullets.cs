@@ -7,7 +7,7 @@ public class Bullets : MonoBehaviour {
     public float damage;
 	// Use this for initialization
 	void Start () {
-        damage = Player.Instance.bulletDamage;
+
 	}
 	
 	// Update is called once per frame
