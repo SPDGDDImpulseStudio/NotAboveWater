@@ -23,15 +23,17 @@ public class PlayerCallerXD : MonoBehaviour {
         if (!FindObjectOfType<Player>())
         {
             Debug.Log("False");
-            GameObject x = Instantiate( playerPrefab);
+            GameObject x = Instantiate(playerPrefab);
             x.transform.SetParent(Camera.main.transform);
-            DontDestroyOnLoad(Camera.main.gameObject);
+            DontDestroyOnLoad(Camera.main.transform.root.gameObject);
 
             Player.Instance.parentCam = Camera.main.gameObject;
             //Player.Instance.transform.position = new Vector3(-90.3f, 2.973083f, -417.26f);
             //Player.Instance.transform.localEulerAngles = new Vector3(-18.945f, -2.145f, 0f);
             Player.Instance.RegisterSelf();
-        } else {
+        }
+        else
+        {
             List<Camera> z = new List<Camera>(FindObjectsOfType<Camera>());
             Camera g = z.Find(p => (!p.GetComponentInChildren<Player>() && p.name == "Main Camera"));
             Player.Instance.transform.SetParent(g.transform);
@@ -39,19 +41,19 @@ public class PlayerCallerXD : MonoBehaviour {
 
             Destroy(n.gameObject);
 
-            DontDestroyOnLoad(g.gameObject);
+            DontDestroyOnLoad(g.transform.root.gameObject);
 
             Player.Instance.parentCam = g.gameObject;
         }
 
         #region CallWhenSceneZeroLoads
 
-        if (!cam1)
-            cam1 = GameObject.Find("CM_DollyCam_Gameplay_00").GetComponent<Cinemachine.CinemachineVirtualCamera>();
-        if (!cam2)
-            cam1 = GameObject.Find("CM_AimGrenade_Gameplay_03").GetComponent<Cinemachine.CinemachineVirtualCamera>();
-        if (!cam3)
-            cam1 = GameObject.Find("CM_AimBlock_Gameplay_04").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        if (!cam1) cam1 = GameObject.Find("CM_DollyCam_Gameplay_00").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        if (!cam2) cam2 = GameObject.Find("CM_AimGrenade_Gameplay_03").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        if (!cam3) cam3 = GameObject.Find("CM_AimBlock_Gameplay_04").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        if (!sharkGO) sharkGO = GameObject.Find("NewSharkPrefab");
+        if (!grenadeGO) grenadeGO = GameObject.Find("Grenade");
+        if (!blockGO) blockGO = GameObject.Find("Block");
 
         Player.Instance.CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
         Player.Instance.blobs = blobsInOrder;
@@ -67,7 +69,7 @@ public class PlayerCallerXD : MonoBehaviour {
 
         #endregion
 
-        if (!FindObjectOfType<AudioManager>())AudioManager.Instance.RegisterSelf();
+        if (!FindObjectOfType<AudioManager>()) AudioManager.Instance.RegisterSelf();
 
 
     }
