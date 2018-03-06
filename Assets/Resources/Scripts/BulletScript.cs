@@ -19,11 +19,14 @@ public class BulletScript : MonoBehaviour, PoolObject {
 
     public void DeductCircleHealth()
     {
-        circle.health--;
-        if (circle.health < 1)
+        if (circle)
         {
-            TurnOff();
-            Pop();
+            circle.health--;
+            if (circle.health < 1)
+            {
+                TurnOff();
+                Pop();
+            }
         }
     }
 
@@ -70,7 +73,7 @@ public class BulletScript : MonoBehaviour, PoolObject {
     void OnTriggerEnter(Collider x)
     {
         //TurnOff();
-        Debug.Log(x.name);
+
         if (x.transform.GetComponentInChildren<Player>())
         {
             Debug.Log("HIT");
@@ -87,13 +90,13 @@ public class BulletScript : MonoBehaviour, PoolObject {
     {
         gameObject.SetActive(true); 
     }
-    public void Init_(CirclePosUpdate cir, Transform target_)
+    public void Init_(CirclePosUpdate cir,  Transform target_, bool circleBool = false)
     {
         Init();
         target = target_;
         circle = cir;
-        circle.Init_(this.gameObject,  false);
-        circle.bulletCheck = true;
+        circle.Init_(this.gameObject, circleBool);
+        //circle.bulletCheck = true;
         anyHow = transform.right * UnityEngine.Random.Range(1f, 4f);
         if (Time.timeScale == 1.0f) Time.timeScale = 0.6f;
     }
