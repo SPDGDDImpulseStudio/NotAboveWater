@@ -20,7 +20,15 @@ public class MouseCursor : MonoBehaviour
             Cursor.SetCursor(targetTexture, hotspot, curMode);
         else
             Cursor.SetCursor(defaultAimTexture, hotspot, curMode);
-        
+    }
+
+    public void Update()
+    {
+        if(Input.GetMouseButton(0))
+            Cursor.SetCursor(targetTexture, hotspot, curMode);
+        else
+        Cursor.SetCursor(defaultAimTexture, hotspot, curMode);
+
     }
 
 }

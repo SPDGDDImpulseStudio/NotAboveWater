@@ -39,7 +39,7 @@ public class PlayerCallerXD : MonoBehaviour {
             Player.Instance.transform.SetParent(g.transform);
             Camera n = z.Find(p => (!p.GetComponentInChildren<Player>() && p.name == "Main Camera"));
 
-            Destroy(n.gameObject);
+            Destroy(n.transform.root.gameObject);
 
             DontDestroyOnLoad(g.transform.root.gameObject);
 
@@ -66,10 +66,13 @@ public class PlayerCallerXD : MonoBehaviour {
         Player.Instance.cam03 = cam3;
         Player.Instance.CallCircleBlobEvent();
 
-
+        if (!Player.Instance.transform.root.GetComponent<EZCameraShake.CameraShaker>().enabled)
+            Player.Instance.transform.root.GetComponent<EZCameraShake.CameraShaker>().enabled = true;
+        //This temporarily fixes the problem
+        //But doesnt stop the 
         #endregion
 
-        if (!FindObjectOfType<AudioManager>()) AudioManager.Instance.RegisterSelf();
+            if (!FindObjectOfType<AudioManager>()) AudioManager.Instance.RegisterSelf();
 
 
     }

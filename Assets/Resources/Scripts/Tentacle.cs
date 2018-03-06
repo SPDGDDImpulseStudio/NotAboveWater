@@ -374,9 +374,11 @@ public class Tentacle : MonoBehaviour
         // Instantiate(stonePrefab, tipAKAwhereToShootAt.transform.position + 3* Vector3.forward, Quaternion.identity);
         //GetCircle(Bul);
         CirclePosUpdate x = PoolManager.Instance.ReturnGOFromList(circlePrefab).GetComponent<CirclePosUpdate>();
-        x.afterPop += boss.PopUpdate;
-        b.Init_(x, Player.Instance.transform);
+        //x.afterPop += boss.PopUpdate;
+        //b.Init_(x, Player.Instance.transform);
 
+        b.Init_(x,  Player.Instance.transform, true);
+        x.afterPop += boss.PopUpdate;
         Vector3 dir = (Player.Instance.transform.position - tipAKAwhereToShootAt.transform.position) + Random.Range(3,7)*transform.up - Random.Range(25,30)*transform.right;
         //Bul.GetComponent<Rigidbody>().velocity = dir * 30    * Time.deltaTime;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Playables;
-
+using EZCameraShake;
 [RequireComponent(typeof(AudioSource))]
 public class Player : ISingleton<Player>
 {
@@ -37,6 +37,9 @@ public class Player : ISingleton<Player>
     public GameObject playerCanvas, titleCanvas, leaderboardUI, pauseMenuUI;
     public Text reloadText, oxygenText, comboText;
     public GameObject circlePrefab;
+    public Text totalScoreText;
+    public Text animatedText;
+
 
     [Header("[Player's Attributes]")]
 
@@ -90,7 +93,7 @@ public class Player : ISingleton<Player>
 
         StartCoroutine(MakeSureThisThing());
         originScreen = new Vector2(1920f, 1080f);
-        sharkEventGO = GameObject.Find("NewSharkPrefab");
+        //sharkEventGO =  GameObject.Find("NewSharkPrefab");
         originC = redImageForLowHP.color;
     }
 
@@ -165,7 +168,9 @@ public class Player : ISingleton<Player>
         Vector3 pos = Input.mousePosition;
         pos.z = 0;
         string toShowString = "+" + toShow.ToString();
+        totalScoreText.text =  Stats.Instance.gameScores.ToString();
         StartCoroutine(ScoreText(pos, toShowString));
+        StartCoroutine(AnimateText(toShow));
     }
     bool scoring = false;
 
@@ -206,9 +211,9 @@ public class Player : ISingleton<Player>
         if (comboCounting) yield break;
 
         comboCounting = true;
-        while (comboText.color.a < 30)
+        while (comboText.color.a > 0.5)
         {
-            comboText.color = Color.Lerp(comboText.color, Color.clear, Time.deltaTime / 10);
+            comboText.color = Color.Lerp(comboText.color, Color.clear, Time.deltaTime / 5);
             yield return null;
         }
         comboText.gameObject.SetActive(false);
@@ -233,6 +238,33 @@ public class Player : ISingleton<Player>
             comboText.fontSize -= 4;
             yield return null;
         }
+    }
+    float recordScore = 0;
+    bool animated = false;
+    float posYForText = 351.6f;
+    IEnumerator AnimateText(float score)
+    {
+        recordScore += score;
+        animatedText.text = "+" + recordScore.ToString();
+        animatedText.color = Color.white;
+        animatedText.transform.position = new Vector2(animatedText.transform.position.x, posYForText);
+        GainCombo();
+        if (animated) yield break;
+        animated = true;
+        Vector3 target = animatedText.transform.position + new Vector3(0, 30, 0);
+        while (animatedText.color.a > 0.5)
+        {
+            animatedText.transform.position = Vector3.MoveTowards(animatedText.transform.position, target, 10f * Time.deltaTime);
+            animatedText.color = Color.Lerp(animatedText.color, Color.clear, Time.deltaTime / 5);
+            yield return null;
+        }
+        animatedText.color = Color.clear;
+        animated = false;
+        //totalScoreText.text
+        recordScore = 0;
+
+        animatedText.transform.position = new Vector2(animatedText.transform.position.x, posYForText);
+
     }
     #endregion
     #region Miscellaneous
@@ -283,9 +315,7 @@ public class Player : ISingleton<Player>
             leaderboardUI.SetActive(true);
         }
         bossHpSlider.gameObject.SetActive(false);
-        sharkEventGO = GameObject.Find("NewSharkPrefab");
-        grenade = GameObject.Find("Grenade");
-        block = GameObject.Find("Block");
+ 
         yield return new WaitUntil(() => currentPD != null);
     }
     public void StartButtonPressed()
@@ -301,37 +331,50 @@ public class Player : ISingleton<Player>
         StartCoroutine(SceneZeroEvents());
         StartCoroutine(RedImageBlink());
     }
+    public bool skip;
     IEnumerator SceneZeroEvents()
     {
         SwitchingTimeline(0);
         currentPDDuration = (float)currentPD.duration;
-        Cinemachine.CinemachineVirtualCamera dx = GameObject.Find("CM_DollyCam_Gameplay_00").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        Cinemachine.CinemachineVirtualCamera dx = cam01; //GameObject.Find("CM_DollyCam_Gameplay_00").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         dx.Priority = 13;
         yield return new WaitUntil(() => currentPD.time > 11f);
-        currentPD.Pause();
-        Interact_CompulCrates x = FindObjectOfType<Interact_CompulCrates>();
-        yield return new WaitUntil(() => !x);
+         if (boxSuitGO)
+        {
+            currentPD.Pause();
+       
+            Interact_CompulCrates x = boxSuitGO.GetComponent<Interact_CompulCrates>();
+            yield return new WaitUntil(() => !x);
+        }
         StartsGameplay();
         dx.Priority = 11;
         currentPD.Resume();
         yield return new WaitUntil(() => currentPD.time > 13);
         AudioManager.Instance.StopRainingVoice();
         yield return new WaitUntil(() => currentPD.time + 1 > currentPDDuration);
-        SwitchingTimeline(1);
-        currentPDDuration = (float)currentPD.duration;
-        yield return new WaitUntil(() => currentPD.time > 41.2f);
-        SetCircle(sharkEventGO, true);
-        Time.timeScale = 0.4f;
-        yield return new WaitUntil(() => currentPD.time > 42.3f);
-        Time.timeScale = 1.0f;
-        yield return new WaitUntil(() => currentPD.time + 1 > currentPDDuration);
+
+        if (!skip)
+        {
+            SwitchingTimeline(1);
+            currentPDDuration = (float)currentPD.duration;
+            yield return new WaitUntil(() => currentPD.time > 41.2f);
+            SetCircle(sharkEventGO, true);
+            Time.timeScale = 0.4f;
+            yield return new WaitUntil(() => currentPD.time > 42.3f);
+            Time.timeScale = 1.0f;
+            yield return new WaitUntil(() => currentPD.time + 1 > currentPDDuration);
+        }
+
+
         SwitchingTimeline(2);
         currentPDDuration = (float)currentPD.duration;
         yield return new WaitUntil(() => currentPD.time + 1 > currentPDDuration);
         dx.Priority = 11;
+
+
         SwitchingTimeline(3);
         currentPDDuration = (float)currentPD.duration;
-        dx = GameObject.Find("CM_AimGrenade_Gameplay_03").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        dx = cam02;// GameObject.Find("CM_AimGrenade_Gameplay_03").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         dx.Priority = 13;
         yield return new WaitUntil(() => currentPD.time > 57.6f);
         SetCircle(grenade);
@@ -342,10 +385,10 @@ public class Player : ISingleton<Player>
         yield return new WaitUntil(() => currentPD.time > 58f);
         SwitchingTimeline(4);
         currentPDDuration = (float)currentPD.duration;
-        dx = GameObject.Find("CM_AimBlock_Gameplay_04").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        dx = cam03;//GameObject.Find("CM_AimBlock_Gameplay_04").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         dx.Priority = 13;
         yield return new WaitUntil(() => currentPD.time > 14);
-        SetCircle(GameObject.Find("Block"));
+        SetCircle(block);// GameObject.Find("Block"));
         currentPD.Pause();
         yield return new WaitUntil(() => !block.activeInHierarchy);
         currentPD.Resume();
@@ -377,6 +420,11 @@ public class Player : ISingleton<Player>
         for (int i = 0; i < heartRates.Count; i++)
         {
             heartRates[i].Init();
+            if (i == 0)
+                heartRates[0].gameObject.GetComponent<Slider>().value = 0.5f;
+            else
+
+                heartRates[1].gameObject.GetComponent<Slider>().value = 1f;
         }
         StartCoroutine(UIUpdate());
         StartCoroutine(GameplayUpdate());
@@ -514,6 +562,7 @@ public class Player : ISingleton<Player>
     bool uglyStop = false;
     #endregion
 
+    #region VFX
 
     Color originC;
     IEnumerator RedImageBlink()
@@ -538,9 +587,76 @@ public class Player : ISingleton<Player>
             yield return null;
         }
         redImageForLowHP.gameObject.SetActive(false);
-
         StartCoroutine(RedImageBlink());
     }
+    
+    public void ShakeCam()
+    {
+        StartCoroutine(ShakerShaker());
+        int rnd = Random.Range(0, characterDamagedClips.Count);
+        ForcedPlayerAudioPlay(characterDamagedClips[rnd]);
+        //playerASource.Play();
+    }
+    IEnumerator ShakerShaker()
+    {
+        Vector3 originValue = parentCam.transform.localEulerAngles;
+        if (!CB)
+            CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
+        CB.enabled = false;
+
+        //CameraShaker.Instance.Shake
+        int rndToGo = Random.Range(0, 3);
+        Vector3 val;
+        switch (rndToGo)
+        {
+            case 0:
+                val =// (pos.x > Screen.width / 2) ?
+                    new Vector3(0, 30f, 0);
+                break;
+            case 1:
+                val = new Vector3(30, 0, 0);
+                break;
+
+            case 2:
+                val = new Vector3(0, 50f, 0);
+                break;
+            default:
+                val = new Vector3(-20, 0, 0);
+                break;
+        }
+
+        StartCoroutine(GotHit());
+        //parentCam.transform.localEulerAngles += val / 2;
+        yield return null;
+        CameraShaker.Instance.ShakeOnce(4.0f, 4.0f, 1f, 1f);
+        //parentCam.transform.localEulerAngles += val / 2;
+        float timer = 0;
+        while (timer < 1f)
+        {
+            timer += Time.deltaTime;
+            parentCam.transform.localEulerAngles = Vector3.Lerp(parentCam.transform.localEulerAngles, originValue, Time.deltaTime * 2f);
+            yield return null;
+        }
+        CB.enabled = true;
+    }
+    IEnumerator GotHit()
+    {
+        //put alpha up to 25 then cut down in a second
+        redImageForDamaged.color = new Color(1, 0, 0, 0.25f);
+        //Should go Up to a number then go down back to zero again
+        //yield return new WaitUntil(() => currHealth < maxHealth / 2);
+
+        float timer = 1f, timerNow = 0f;
+        while (timerNow < timer)
+        {
+            timerNow += Time.deltaTime;
+            redImageForDamaged.color = Color.Lerp(redImageForDamaged.color, Color.clear, Time.deltaTime);
+            yield return null;
+        }
+        redImageForDamaged.color = Color.clear;
+    }
+    #endregion
+
 
     IEnumerator GameplayUpdate()
     {
@@ -576,14 +692,14 @@ public class Player : ISingleton<Player>
                         {
                             targetHit = hit.transform.gameObject;
                             pointHit = hit.point;
-
+                            Debug.Log(targetHit.name);
                             if (hit.transform.GetComponent<AI>())
                                 DamageShark(targetHit, pointHit);
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
                             else if (hit.transform.name == "Block" || hit.transform.name == "Grenade")
                                 hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
-                            else if (hit.transform.name == "Blob")
+                            else if (hit.transform.GetComponent<BulletScript>())
                             {
                                 hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
                                 DamageProps(targetHit, pointHit);
@@ -604,12 +720,12 @@ public class Player : ISingleton<Player>
                                 hit.transform.GetComponentInChildren<Destroyable>().OnHit();
                             else DamageProps(targetHit, pointHit);
                         }
-                        if (currBullet - 1 == 0) StartCoroutine(WorkAroundButton());
-                        else
-                        {
+                        //if (currBullet - 1 == 0) StartCoroutine(WorkAroundButton());
+                        //else
+                        //{
                             currBullet--;
                             Stats.Instance.TrackStats(0, 1);
-                        }
+                        //}
                     }
                     else
                     {
@@ -645,14 +761,6 @@ public class Player : ISingleton<Player>
     public void AddOxygen(float x)
     {   //Called from Interact_OxygenTank
         StartCoroutine(AddOx(x));
-    }
-
-    public void ShakeCam()
-    {
-        StartCoroutine(ShakerShaker());
-        int rnd = Random.Range(0, characterDamagedClips.Count);
-        ForcedPlayerAudioPlay(characterDamagedClips[rnd]);
-        //playerASource.Play();
     }
 
     #endregion
@@ -728,62 +836,7 @@ public class Player : ISingleton<Player>
         }
     }
 
-    IEnumerator ShakerShaker()
-    {
-        Vector3 originValue = parentCam.transform.localEulerAngles;
-        if (!CB)
-            CB = Camera.main.GetComponent<Cinemachine.CinemachineBrain>();
-        CB.enabled = false;
-
-        int rndToGo = Random.Range(0, 3);
-        Vector3 val;
-        switch (rndToGo)
-        {
-            case 0:
-                val =// (pos.x > Screen.width / 2) ?
-                    new Vector3(0, 30f, 0);
-                break;
-            case 1:
-                val = new Vector3(30, 0, 0);
-                break;
-
-            case 2:
-                val = new Vector3(0, 50f, 0);
-                break;
-            default:
-                val = new Vector3(-20, 0, 0);
-                break;
-        }
-
-        StartCoroutine(GotHit());
-        parentCam.transform.localEulerAngles += val / 2;
-        yield return null;
-        parentCam.transform.localEulerAngles += val / 2;
-        float timer = 0;
-        while (timer < 1f)
-        {
-            timer += Time.deltaTime;
-            parentCam.transform.localEulerAngles = Vector3.Lerp(parentCam.transform.localEulerAngles, originValue, Time.deltaTime * 2f);
-            yield return null;
-        }
-        CB.enabled = true;
-    }
-    IEnumerator GotHit()
-    {
-        //put alpha up to 25 then cut down in a second
-        redImageForDamaged.color = new Color(1, 0, 0, 0.25f);
-        //Should go Up to a number then go down back to zero again
-        //yield return new WaitUntil(() => currHealth < maxHealth / 2);
-
-        float timer = 1f, timerNow = 0f;
-        while (timerNow < timer)
-        {
-            timerNow += Time.deltaTime;
-            redImageForDamaged.color = Color.Lerp(redImageForDamaged.color, Color.clear, Time.deltaTime);
-            yield return null;
-        }
-        redImageForDamaged.color = Color.clear;
-    }
+ 
 
     #endregion
 
