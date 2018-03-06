@@ -698,19 +698,34 @@ public class Player : ISingleton<Player>
                             else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
                             else if (hit.transform.name == "Block" || hit.transform.name == "Grenade")
+                            {
+                                Debug.Log(hit.transform.GetComponent<MeshCollider>() + " " + hit.transform.GetComponent<BoxCollider>());
                                 hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
+                                
+                            }
                             else if (hit.transform.GetComponent<BulletScript>())
                             {
                                 hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
                                 DamageProps(targetHit, pointHit);
                             }
-                            else if (hit.transform.GetComponentInChildren<Shark>())
+                          
+                            else if (hit.transform.GetComponent<Shark>())
                             {
+
                                 Stats.Instance.TrackStats(1, 1);
                                 float rnd = Random.Range(50, 60);
                                 Stats.Instance.TrackStats(10, rnd);
                                 GainScore(rnd);
                                 hit.transform.GetComponentInChildren<Shark>().DeductCircleHealth();
+                            }
+                            else if (hit.transform.GetComponentInParent<Shark>())
+                            {
+                                Debug.Log("Weak point");
+                                Stats.Instance.TrackStats(1, 1);
+                                float rnd = Random.Range(50, 60);
+                                Stats.Instance.TrackStats(10, rnd);
+                                GainScore(rnd);
+                                hit.transform.GetComponentInParent<Shark>().DeductCircleHealth();
                             }
                             else if (hit.transform.GetComponent<TreasureChest>())
                                 hit.transform.GetComponent<TreasureChest>().OnHit();

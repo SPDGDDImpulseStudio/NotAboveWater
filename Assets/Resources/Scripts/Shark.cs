@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Shark : KeyObject {
-
-    public void Start()
-    {
-        col = this.GetComponent<Collider>();
-    }
+    
     public void Init()
     {
 
