@@ -164,13 +164,22 @@ public class Player : ISingleton<Player>
     }
     public void GainScore(float toShow)
     {
-        Stats.Instance.TrackStats(10, toShow);
+        float newScore = toShow;
+
+        if(currentComboCount > 0)
+        {
+            newScore *= (float)((currentComboCount * 0.1) + 1);
+
+            newScore = Mathf.RoundToInt(newScore);
+        }
+       
+        Stats.Instance.TrackStats(10, newScore);
         Vector3 pos = Input.mousePosition;
         pos.z = 0;
-        string toShowString = "+" + toShow.ToString();
+        string toShowString = "+" + newScore.ToString();
         totalScoreText.text =  Stats.Instance.gameScores.ToString();
         StartCoroutine(ScoreText(pos, toShowString));
-        StartCoroutine(AnimateText(toShow));
+        StartCoroutine(AnimateText(newScore));
     }
     bool scoring = false;
 
@@ -197,7 +206,6 @@ public class Player : ISingleton<Player>
     #region ComboFN
     bool comboCounting;
     int currentComboCount;
-    int currentHighestComboCount = 0;
     public void GainCombo()
     {
         StartCoroutine(ComboText());
@@ -205,6 +213,11 @@ public class Player : ISingleton<Player>
     IEnumerator ComboText()
     {
         currentComboCount++;
+        Stats.Instance.chainComboCURRENT8 = currentComboCount;
+        if (currentComboCount > Stats.Instance.chainComboMAX9)
+            Stats.Instance.chainComboMAX9 = currentComboCount;
+
+        Debug.Log(Stats.Instance.chainComboMAX9);
         comboText.color = Color.white;
         comboText.text = currentComboCount.ToString();
         StartCoroutine(PopUp());
@@ -217,9 +230,7 @@ public class Player : ISingleton<Player>
             yield return null;
         }
         comboText.gameObject.SetActive(false);
-
-        if (currentComboCount > currentHighestComboCount)
-            currentHighestComboCount = currentComboCount;
+        
         currentComboCount = 0;
         comboCounting = false;
     }
@@ -322,7 +333,6 @@ public class Player : ISingleton<Player>
     {
         titleCanvas.SetActive(false);
         transform.localPosition = new Vector3(0, 0, 0);
-        currentHighestComboCount = 0;
         Screen.SetResolution((int)originScreen.x, (int)originScreen.y, Screen.fullScreen);
 
         playables = FindObjectsOfType<PlayableDirector>();
@@ -498,7 +508,8 @@ public class Player : ISingleton<Player>
         {
             if (!canvases[i].GetComponent<SceneChanger>())
             {
-                go.transform.SetParent(canvases[i].transform);
+                go.transform.SetParent(canvases[i].transform.GetChild(0).transform);
+                go.transform.SetSiblingIndex(10);
                 break;
             }
         }
@@ -695,26 +706,29 @@ public class Player : ISingleton<Player>
                             Debug.Log(targetHit.name);
                             if (hit.transform.GetComponent<AI>())
                                 DamageShark(targetHit, pointHit);
-                            else if (hit.transform.GetComponent<InteractableObj>())                                   //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                            else if (hit.transform.GetComponent<InteractableObj>())
+                            {
+                                Stats.Instance.TrackStats(1, 1);
+                                //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
                                 hit.transform.GetComponent<InteractableObj>().Interact();
+                            }
                             else if (hit.transform.name == "Block" || hit.transform.name == "Grenade")
                             {
                                 Debug.Log(hit.transform.GetComponent<MeshCollider>() + " " + hit.transform.GetComponent<BoxCollider>());
                                 hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
-                                
+                                Stats.Instance.TrackStats(1, 1);
                             }
                             else if (hit.transform.GetComponent<BulletScript>())
                             {
+                                Stats.Instance.TrackStats(1, 1);
                                 hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
                                 DamageProps(targetHit, pointHit);
                             }
-                          
+
                             else if (hit.transform.GetComponent<Shark>())
                             {
-
                                 Stats.Instance.TrackStats(1, 1);
                                 float rnd = Random.Range(50, 60);
-                                Stats.Instance.TrackStats(10, rnd);
                                 GainScore(rnd);
                                 hit.transform.GetComponentInChildren<Shark>().DeductCircleHealth();
                             }
@@ -723,27 +737,28 @@ public class Player : ISingleton<Player>
                                 Debug.Log("Weak point");
                                 Stats.Instance.TrackStats(1, 1);
                                 float rnd = Random.Range(50, 60);
-                                Stats.Instance.TrackStats(10, rnd);
                                 GainScore(rnd);
                                 hit.transform.GetComponentInParent<Shark>().DeductCircleHealth();
                             }
                             else if (hit.transform.GetComponent<TreasureChest>())
+                            {
+                                Stats.Instance.TrackStats(1, 1);
                                 hit.transform.GetComponent<TreasureChest>().OnHit();
+                            }
                             else if (hit.transform.GetComponent<Boss>())
+                            {
                                 hit.transform.GetComponent<Boss>().OnHit();
+                            }
                             else if (hit.transform.GetComponentInChildren<Destroyable>())
+                            {
+                                Stats.Instance.TrackStats(1, 1);
                                 hit.transform.GetComponentInChildren<Destroyable>().OnHit();
+                            }
                             else DamageProps(targetHit, pointHit);
                         }
-                        //if (currBullet - 1 == 0) StartCoroutine(WorkAroundButton());
-                        //else
-                        //{
-                            currBullet--;
-                            Stats.Instance.TrackStats(0, 1);
-                        //}
-                    }
-                    else
-                    {
+                        currBullet--;
+                        Stats.Instance.TrackStats(0, 1);
+                    }else{
                         if (!gunASource.isPlaying) GunAudioPlay(emptyGunFire);
                     }
                 }

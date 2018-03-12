@@ -46,7 +46,7 @@ public class Boss : MonoBehaviour {
 
     public void InvulnerableTentacle(bool x)
     {
-        if ((someoneAttacking > 0 && x == true )|| (someoneAttacking == 0 &&x == false))
+        if ((someoneAttacking > 0 && x )|| (someoneAttacking == 0 && !x))
         {
             for (int i = 0; i < animatorTentacles.Count; i++)
             {
@@ -139,7 +139,6 @@ public class Boss : MonoBehaviour {
 
     public void OnHit()
     {
-        Stats.Instance.TrackStats(0, 1);
 
         if (someoneAttacking > 0) return;
         if (!aSource.isPlaying)
@@ -148,6 +147,8 @@ public class Boss : MonoBehaviour {
             aSource.clip = sfxBoss[x];
             aSource.Play();
         }
+        float rnd = Random.Range(50, 60);
+        Player.Instance.GainScore(rnd);
         Stats.Instance.TrackStats(1, 1);
 
         bossCurrHealth -= Random.Range(10f, 20f);

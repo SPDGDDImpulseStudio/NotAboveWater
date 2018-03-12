@@ -106,7 +106,10 @@ public class Tentacle : MonoBehaviour
         {
             if (SceneChanger.Instance.transitting || uglyStop)
             {
+                if (circle != null)
+                    circle.TurnOff();
                 StopTentacle();
+               
                 yield break;
             }
 
@@ -152,8 +155,8 @@ public class Tentacle : MonoBehaviour
                                 }
                                 currentTimer = 0f;
                                 attackTimer = Random.Range(3f, 6f);
+                                boss.AttackingUpdate();
                             }
-                            boss.AttackingUpdate();
 
                         }
                     }

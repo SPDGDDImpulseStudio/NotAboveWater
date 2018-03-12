@@ -60,13 +60,15 @@ public class Stats : ISingleton<Stats>
         }
     }
 
-    void SavePlayerPrefs(int x, float _score, float _accuracy, float _time, string name_)
+    void SavePlayerPrefs(int index, float _score, float _accuracy, float _time, string name_ , float treasure, float combo_)
     {
-        PlayerPrefs.SetFloat(GameManager.leaderboardScore + x.ToString(), _score);
-        PlayerPrefs.SetString(GameManager.leaderboardName + x.ToString(), name_);
-        PlayerPrefs.SetFloat(GameManager.leaderboardAccuracy + x.ToString(), _accuracy);
-        PlayerPrefs.SetFloat(GameManager.leaderboardTime + x.ToString(), _time);
-        PlayerPrefs.SetInt(GameManager.leaderboard + x.ToString(), 1);
+        PlayerPrefs.SetFloat(GameManager.leaderboardScore + index.ToString(), _score);
+        PlayerPrefs.SetString(GameManager.leaderboardName + index.ToString(), name_);
+        PlayerPrefs.SetFloat(GameManager.leaderboardAccuracy + index.ToString(), _accuracy);
+        PlayerPrefs.SetFloat(GameManager.leaderboardTime + index.ToString(), _time);
+        PlayerPrefs.SetInt(GameManager.leaderboard + index.ToString(), 1);
+        PlayerPrefs.SetFloat(GameManager.leaderboardTreasures + index.ToString(), treasure);
+        PlayerPrefs.SetFloat(GameManager.leaderboardCombo + index.ToString(), combo_);
         PlayerPrefs.Save();
     }
 
@@ -81,14 +83,14 @@ public class Stats : ISingleton<Stats>
                 if (GetPlayerPrefScore(i) < gameScores)
                 {
                     ReplaceRanking(i);
-                    SavePlayerPrefs(i, gameScores,accuracy, timeTaken3, _name);
+                    SavePlayerPrefs(i, gameScores,accuracy, timeTaken3, _name, secretCollected7, chainComboMAX9);
                     break;
                 }
                 else continue;
             }
             else
             {
-                SavePlayerPrefs(i, gameScores, accuracy, timeTaken3, _name);
+                SavePlayerPrefs(i, gameScores, accuracy, timeTaken3, _name, secretCollected7, chainComboMAX9);
                 break;
             }
         }
@@ -116,6 +118,15 @@ public class Stats : ISingleton<Stats>
         return PlayerPrefs.GetFloat(GameManager.leaderboardTime + i.ToString());
     }
 
+    float GetPlayerPrefTreasure(int i)
+    {
+        return PlayerPrefs.GetFloat(GameManager.leaderboardTreasures + i.ToString());
+    }
+    float GetPlayerPrefMaxCombo(int i)
+    {
+        return PlayerPrefs.GetFloat(GameManager.leaderboardCombo + i.ToString());
+    }
+
     public void ReplaceRanking(int currentIndex)
     {
         //if (currentIndex + 1 <= 5)
@@ -123,25 +134,34 @@ public class Stats : ISingleton<Stats>
         string _tempName = GetPlayerPrefName(currentIndex);
         float _tempScore = GetPlayerPrefScore(currentIndex),
         _tempAcc = GetPlayerPrefAcc(currentIndex),
-        _tempTime = GetPlayerPrefTime(currentIndex);
+        _tempTime = GetPlayerPrefTime(currentIndex),
+        _tempTreas = GetPlayerPrefTreasure(currentIndex),
+        _tempCombo = GetPlayerPrefMaxCombo(currentIndex);
+
         //Values Im pushing awayy TO, keeping it 
         string nextName = GetPlayerPrefName(currentIndex + 1);
         float nextScore = GetPlayerPrefScore(currentIndex + 1),
         nextAcc = GetPlayerPrefAcc(currentIndex + 1),
-        nextTime = GetPlayerPrefAcc(currentIndex + 1);
+        nextTime = GetPlayerPrefAcc(currentIndex + 1),
+        nextTrea = GetPlayerPrefTreasure(currentIndex + 1),
+        nextMaxCombo = GetPlayerPrefMaxCombo(currentIndex + 1);
         for (int j = currentIndex + 1; j < 5; j++)
         {
-            SavePlayerPrefs(j, _tempScore, _tempAcc ,_tempTime,_tempName);
+            SavePlayerPrefs(j, _tempScore, _tempAcc ,_tempTime,_tempName , _tempTreas, _tempCombo);
 
             _tempName = nextName;
             _tempScore = nextScore;
             _tempAcc = nextAcc;
             _tempTime = nextTime;
+            _tempCombo = nextMaxCombo;
+            _tempTreas = nextTrea;
 
             nextName = GetPlayerPrefName(j + 1);
             nextScore = GetPlayerPrefScore(j + 1);
             nextAcc = GetPlayerPrefAcc(j + 1);
             nextTime = GetPlayerPrefTime(j + 1);
+            nextMaxCombo = GetPlayerPrefMaxCombo(j + 1);
+            nextTrea = GetPlayerPrefTreasure(j + 1);
         }
         //   }
     }

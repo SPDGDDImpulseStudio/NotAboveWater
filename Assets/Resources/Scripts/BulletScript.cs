@@ -22,19 +22,17 @@ public class BulletScript : MonoBehaviour, PoolObject {
         if (circle)
         {
             circle.health--;
+            Pop();
             if (circle.health < 1)
             {
                 TurnOff();
-                Pop();
             }
         }
     }
 
     void Pop()
     {
-        Debug.Log("Pop");
         Player.Instance.GainScore(UnityEngine.Random.Range(95, 105)) ;
-        Player.Instance.GainCombo();
     }
     void FixedUpdate()
     {
@@ -86,7 +84,7 @@ public class BulletScript : MonoBehaviour, PoolObject {
     }
 
     Vector3 anyHow;
-    public  void Init()
+    public void Init()
     {
         gameObject.SetActive(true); 
     }

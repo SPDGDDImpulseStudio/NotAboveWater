@@ -167,7 +167,7 @@ namespace EZCameraShake
         public List<CameraShakeInstance> ShakeInstances
         { get { return new List<CameraShakeInstance>(cameraShakeInstances); } }
 
-        void OnDestroy()
+        void OnDisable()
         {
             instanceList.Remove(gameObject.name);
         }

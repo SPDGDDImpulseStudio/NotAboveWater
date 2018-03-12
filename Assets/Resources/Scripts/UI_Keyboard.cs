@@ -70,7 +70,7 @@ public class UI_Keyboard : MonoBehaviour
     {
         if(input.text.Length > 7)
         {
-            StartCoroutine(ChangeText("Please keep your name 8 characters long"));
+            StartCoroutine(ChangeText("Please keep your name 7 characters long"));
             input.text = input.text.Substring(0, input.text.Length - 1);
         }
     }
@@ -87,9 +87,15 @@ public class UI_Keyboard : MonoBehaviour
         {
             StartCoroutine(ChangeText("Please dont leave your name empty"));
             return;
+        }else if(input.text.Length < 3)
+        {
+            StartCoroutine(ChangeText("Please make sure your name contains at least 3 characters."));
+            return;
         }
+
+
         //This is where i save + plus continue fadeOut
-        
+
         SceneChanger.Instance.PostTypingName(input.text);
         this.gameObject.SetActive(false);
     }
