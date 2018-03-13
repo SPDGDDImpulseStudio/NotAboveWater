@@ -15,11 +15,13 @@ public class Destroyable : MonoBehaviour {
 
     [Tooltip("If u want to apply force when click on this thing")]
     public bool shootAway = false;
-    
+
+    public float scores = 100;
     public void OnHit()
     {
         gameObject.SetActive(false);
         afterPop.SetActive(true);
+        Player.Instance.GainScore(scores);
         if (shootAway)
         {
             for (int i = 0;i < rb.Count; i++)
