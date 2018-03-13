@@ -578,7 +578,7 @@ public class Player : ISingleton<Player>
         FindObjectOfType<Boss>().Init();
         currentPD.Play();
         playerCanvas.gameObject.SetActive(true);
-StartCoroutine(        GameplayUpdate());
+        StartCoroutine(GameplayUpdate());
 
     }
     IEnumerator CheapFadeToNextScene()
@@ -591,6 +591,7 @@ StartCoroutine(        GameplayUpdate());
     public void AssignTentacleList()
     {
         tentacles = new List<Tentacle>(FindObjectsOfType<Tentacle>());
+        Debug.Log(tentacles.Count);
         StartCoroutine(TriggerTentacles());
     }
 

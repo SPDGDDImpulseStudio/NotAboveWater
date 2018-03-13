@@ -76,11 +76,14 @@ public class Tentacle : MonoBehaviour
             DontDestroyOnLoad(go2);
         }
         //Debug.Log(circlePrefab.GetInstanceID());
-        StartCoroutine(GameplayUpdate());
         StartCoroutine(DebugUIUpdate());
         origin = this.transform.rotation;
         boss = FindObjectOfType<Boss>();
         //StartCoroutine(AIUpdate());
+    }
+    public void Init()
+    {
+        StartCoroutine(GameplayUpdate());
     }
     Quaternion origin;
     IEnumerator DebugUIUpdate()

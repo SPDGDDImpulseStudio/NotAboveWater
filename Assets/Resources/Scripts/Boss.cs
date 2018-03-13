@@ -36,7 +36,10 @@ public class Boss : MonoBehaviour {
 
         bossSlider = Player.Instance.bossHpSlider;
         bossSlider.gameObject.SetActive(true);
-
+        for ( int i = 0; i < tentacles.Count; i++)
+        {
+            tentacles[i].Init();
+        }
         StartCoroutine(HealthChecker());
         StartCoroutine(TriggerTen());
         StartCoroutine(BossHealthUpdate());

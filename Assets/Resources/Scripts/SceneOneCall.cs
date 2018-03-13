@@ -21,7 +21,10 @@ public class SceneOneCall : MonoBehaviour {
         Player.Instance.parentCam = currCamera.gameObject;  
         Player.Instance.CB = currCamera.gameObject.GetComponent<Cinemachine.CinemachineBrain>();
         Player.Instance.CallSceneOneFn(introPD, bossPD);
-	}
+
+        if (!Player.Instance.transform.root.GetComponent<EZCameraShake.CameraShaker>().enabled)
+            Player.Instance.transform.root.GetComponent<EZCameraShake.CameraShaker>().enabled = true;
+    }
 	
 	
 }
