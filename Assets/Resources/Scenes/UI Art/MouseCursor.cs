@@ -12,6 +12,7 @@ public class MouseCursor : MonoBehaviour
     void Start()
     {
         Cursor.SetCursor(defaultAimTexture, hotspot, curMode);
+        hotspot =new Vector2( defaultAimTexture.width/2 , defaultAimTexture.height/2);
     }
 
     public void CursorOnTarget(bool x)
@@ -29,6 +30,12 @@ public class MouseCursor : MonoBehaviour
         else
         Cursor.SetCursor(defaultAimTexture, hotspot, curMode);
 
+
+        timer += Time.deltaTime;
+        timer1 += 1 * Time.deltaTime;
+        if(Input.GetKeyDown(KeyCode.A))
+        Debug.Log(timer +  " " + timer1);
     }
+    float timer = 0, timer1 = 0;
 
 }

@@ -564,6 +564,7 @@ public class Player : ISingleton<Player>
     {
         currentPD = GameObject.Find("PlayableDirector_BossIntro").GetComponent<PlayableDirector>();
         yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
+        playerCanvas.gameObject.SetActive(false);
         currentPD.Play();
         float timex = (float) currentPD.duration;
         AssignTentacleList();
