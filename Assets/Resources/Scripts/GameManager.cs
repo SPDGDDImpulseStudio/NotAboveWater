@@ -75,7 +75,9 @@ public class GameManager : ISingleton<GameManager> {
     public const string leaderboardTreasures = leaderboard + "TREASURES";
 
     public const string leaderboardTime = leaderboard + "TIME";
-    
+
+    public const string leaderboardCombo = leaderboard + "COMBO";
+
     public float playerScore = 0;
 
     //Editor's

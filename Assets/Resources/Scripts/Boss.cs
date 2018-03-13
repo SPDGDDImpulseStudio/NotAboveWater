@@ -28,9 +28,15 @@ public class Boss : MonoBehaviour {
         tentacles = new List<Tentacle>(FindObjectsOfType<Tentacle>());
         
         if (!aSource) aSource = GetComponent<AudioSource>();
-        
+     
+    }
+
+    public void Init()
+    {
+
         bossSlider = Player.Instance.bossHpSlider;
         bossSlider.gameObject.SetActive(true);
+
         StartCoroutine(HealthChecker());
         StartCoroutine(TriggerTen());
         StartCoroutine(BossHealthUpdate());

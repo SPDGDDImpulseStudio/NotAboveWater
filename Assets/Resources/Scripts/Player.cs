@@ -25,6 +25,8 @@ public class Player : ISingleton<Player>
     public GameObject VFX_BulletSpark;
     public Image redImageForLowHP;
     public Image redImageForDamaged;
+    public Image reloadImage;
+    public Image oxygenLow;
 
     [Header("[AudioClips]")]
     public AudioClip gunFire;
@@ -34,12 +36,14 @@ public class Player : ISingleton<Player>
     [Header("[Various UI]")]
     public GameObject ammoCounterBar;
     public Slider compassSlider, oxygenBar, bossHpSlider;
-    public GameObject playerCanvas, titleCanvas, leaderboardUI, pauseMenuUI;
+    public GameObject playerCanvas, titleCanvas, endGameGO, pauseMenuUI;
     public Text reloadText, oxygenText, comboText;
     public GameObject circlePrefab;
     public Text totalScoreText;
     public Text animatedText;
 
+
+    public Text scoreText, nameText, timeText, accuracyText, combo_Text, treasureFoundText;
 
     [Header("[Player's Attributes]")]
 
@@ -66,6 +70,10 @@ public class Player : ISingleton<Player>
     public List<GameObject> blobs = new List<GameObject>();
     public GameObject grenade, block, parentCam, sharkEventGO, boxSuitGO;
     public Cinemachine.CinemachineVirtualCamera cam01, cam02, cam03;
+
+    
+
+
 
     #endregion
 
@@ -121,7 +129,7 @@ public class Player : ISingleton<Player>
         switch (sceneBuildIndex)
         {
             case 0: StartCoroutine(SceneZeroFunction()); break;
-            case 1: AssignTentacleList(); break;
+            case 1: StartCoroutine(SceneOneFunction()); break;
         }
     }
 
@@ -323,7 +331,8 @@ public class Player : ISingleton<Player>
         {
             playerCanvas.SetActive(false);
             titleCanvas.SetActive(true);
-            leaderboardUI.SetActive(true);
+            endGameGO.SetActive(true);
+            totalScoreText.text = "00000000";
         }
         bossHpSlider.gameObject.SetActive(false);
  
@@ -340,6 +349,8 @@ public class Player : ISingleton<Player>
         StartCoroutine(PlayerHax());
         StartCoroutine(SceneZeroEvents());
         StartCoroutine(RedImageBlink());
+        StartCoroutine(ReloadImage());
+        StartCoroutine(LowOxygen());
     }
     public bool skip;
     IEnumerator SceneZeroEvents()
@@ -406,6 +417,8 @@ public class Player : ISingleton<Player>
         currentPD = null;
         StartCoroutine(CheapFadeToNextScene());
     }
+
+  
     void SwitchingTimeline(int x)
     {
         if (playables.Length < 1) playables = FindObjectsOfType<PlayableDirector>();
@@ -491,7 +504,35 @@ public class Player : ISingleton<Player>
         SetCircle(blobs[nextNum]);
     }
 
+    public void CallFromStats(string _name, float scores, float accuracy, float treasures, float time, float combo)
+    {
+        nameText.text = _name;
 
+        scoreText.text = System.Math.Round(scores).ToString();
+        accuracyText.text = (System.Math.Round(accuracy, 2)* 100).ToString() + "%";
+        treasureFoundText.text = treasures.ToString();
+        float seconds, minutes;
+        seconds = Mathf.FloorToInt(time) % 60;
+        minutes = Mathf.FloorToInt(time) / 60;
+
+        if (seconds < 1) timeText.text = minutes.ToString() + ":00";
+        else if (seconds < 10) timeText.text = minutes.ToString() + ":0" + seconds;
+        else timeText.text = minutes.ToString() + ":" + seconds;
+        
+        combo_Text.text = combo.ToString();
+    }
+
+    public void CallStats(int i)
+    {
+        StartCoroutine(CheckForLeaderboard(i));
+    }
+    IEnumerator CheckForLeaderboard(int i)
+    {
+        yield return new WaitUntil(() => GetComponentInChildren<LeaderboardDesu>());
+        Debug.Log(i);
+        GetComponentInChildren<LeaderboardDesu>().currentInt = i;
+        GetComponentInChildren<LeaderboardDesu>().Display();
+    }
     public void CallCircleBlobEvent()
     {
         StartCoroutine(Timeline3Event());
@@ -518,6 +559,19 @@ public class Player : ISingleton<Player>
 
     #endregion
     #region BossFight
+
+    IEnumerator SceneOneFunction()
+    {
+        currentPD = GameObject.Find("PlayableDirector_BossIntro").GetComponent<PlayableDirector>();
+        yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
+        currentPD.Play();
+        float timex = (float) currentPD.duration;
+        AssignTentacleList();
+        yield return new WaitUntil(() => currentPD.time + 1 > timex);
+        currentPD = GameObject.Find("PlayableDirector_BossFight").GetComponent<PlayableDirector>();
+        FindObjectOfType<Boss>().Init();
+        currentPD.Play();
+    }
     IEnumerator CheapFadeToNextScene()
     {
         yield return new WaitUntil(() => currentPD == null);
@@ -600,7 +654,60 @@ public class Player : ISingleton<Player>
         redImageForLowHP.gameObject.SetActive(false);
         StartCoroutine(RedImageBlink());
     }
-    
+
+    IEnumerator LowOxygen()
+    {
+        yield return new WaitUntil(() => currOxygen / maxOxygen < 0.5);
+        //Lerp between Color.white <==> Color.red
+        bool b = false;
+        float speed =3f;
+        while (currOxygen / maxOxygen < 0.5)
+        {
+            speed = 1 + maxOxygen / currOxygen;
+            if (b)
+            {
+                oxygenLow.color = Color.Lerp(oxygenLow.color, Color.white, Time.deltaTime*speed);
+                if (oxygenLow.color.b > 0.9f) b = !b;
+            }
+            else
+            {
+                oxygenLow.color = Color.Lerp(oxygenLow.color, Color.red, Time.deltaTime*speed);
+                if (oxygenLow.color.b < 0.1f) b = !b;
+            }
+            yield return null;
+        }
+        oxygenLow.color = Color.white;
+        StartCoroutine(LowOxygen());
+
+    }
+    IEnumerator ReloadImage()
+    {
+        yield return new WaitUntil(() => currBullet < 1);
+        bool b = false;
+        reloadImage.gameObject.SetActive(true);
+        reloadImage.color = Color.white;
+        Color x = Color.white;
+        x.a = 0;
+        while (currBullet < 1)
+        {
+            if (b)
+            {
+                reloadImage.color = Color.Lerp(reloadImage.color, Color.white, Time.deltaTime);
+                if (reloadImage.color.a > 0.8f) b = !b;
+            }
+            else
+            {
+                reloadImage.color = Color.Lerp(reloadImage.color,Color.clear, Time.deltaTime);
+                if (reloadImage.color.a < 0.4f) b = !b;
+            }
+
+            yield return null;
+        }
+
+        reloadImage.gameObject.SetActive(false);
+        StartCoroutine(ReloadImage());
+    }
+
     public void ShakeCam()
     {
         StartCoroutine(ShakerShaker());
@@ -682,88 +789,97 @@ public class Player : ISingleton<Player>
 
             if (SceneChanger.Instance.transitting && !playerCanvas.activeInHierarchy) yield break;
             Stats.Instance.timeTaken3 += 1 * Time.deltaTime;
-
-            if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
-            if (Input.GetMouseButton(0))
+            if (playerCanvas.activeInHierarchy)
             {
-                if (shootTimerNow > shootEvery && !reloading)
+                if (shootTimerNow < shootEvery) shootTimerNow += Time.deltaTime;
+                if (Input.GetMouseButton(0))
                 {
-                    RaycastHit hit;
-                    Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    Debug.DrawRay(point.origin, point.direction * 100f, Color.red, 1f);
-                    if (currBullet > 0)
+                    if (shootTimerNow > shootEvery && !reloading)
                     {
-                        Stats.Instance.TrackStats(0, 1);
-
-                        bullets[(maxBullet - currBullet)].gameObject.SetActive(false);
-                        shootTimerNow = 0;
-                        GunAudioPlay(gunFire);
-
-                        if (Physics.Raycast(this.transform.position, point.direction, out hit))
+                        RaycastHit hit;
+                        Ray point = Camera.main.ScreenPointToRay(Input.mousePosition);
+                        Debug.DrawRay(point.origin, point.direction * 100f, Color.red, 1f);
+                        if (currBullet > 0)
                         {
-                            targetHit = hit.transform.gameObject;
-                            pointHit = hit.point;
-                            Debug.Log(targetHit.name);
-                            if (hit.transform.GetComponent<AI>())
-                                DamageShark(targetHit, pointHit);
-                            else if (hit.transform.GetComponent<InteractableObj>())
-                            {
-                                Stats.Instance.TrackStats(1, 1);
-                                //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
-                                hit.transform.GetComponent<InteractableObj>().Interact();
-                            }
-                            else if (hit.transform.name == "Block" || hit.transform.name == "Grenade")
-                            {
-                                Debug.Log(hit.transform.GetComponent<MeshCollider>() + " " + hit.transform.GetComponent<BoxCollider>());
-                                hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
-                                Stats.Instance.TrackStats(1, 1);
-                            }
-                            else if (hit.transform.GetComponent<BulletScript>())
-                            {
-                                Stats.Instance.TrackStats(1, 1);
-                                hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
-                                DamageProps(targetHit, pointHit);
-                            }
+                            Stats.Instance.TrackStats(0, 1);
 
-                            else if (hit.transform.GetComponent<Shark>())
+                            bullets[(maxBullet - currBullet)].gameObject.SetActive(false);
+                            shootTimerNow = 0;
+                            GunAudioPlay(gunFire);
+
+                            if (Physics.Raycast(this.transform.position, point.direction, out hit))
                             {
-                                Stats.Instance.TrackStats(1, 1);
-                                float rnd = Random.Range(50, 60);
-                                GainScore(rnd);
-                                hit.transform.GetComponentInChildren<Shark>().DeductCircleHealth();
+                                targetHit = hit.transform.gameObject;
+                                pointHit = hit.point;
+                                Debug.Log(targetHit.name);
+                                if (hit.transform.GetComponent<AI>())
+                                    DamageShark(targetHit, pointHit);
+                                else if (hit.transform.GetComponent<InteractableObj>())
+                                {
+                                    Stats.Instance.TrackStats(1, 1);
+                                    //Temporarily for detecting walls and etc (not shark). will update for detecting more precise name e.g tags 
+                                    hit.transform.GetComponent<InteractableObj>().Interact();
+                                }
+                                else if (hit.transform.name == "Block" || hit.transform.name == "Grenade")
+                                {
+                                    Debug.Log(hit.transform.GetComponent<MeshCollider>() + " " + hit.transform.GetComponent<BoxCollider>());
+                                    hit.transform.GetComponent<KeyObject>().DeductCircleHealth();
+                                    Stats.Instance.TrackStats(1, 1);
+                                }
+                                else if (hit.transform.GetComponent<BulletScript>())
+                                {
+                                    Stats.Instance.TrackStats(1, 1);
+                                    hit.transform.GetComponent<BulletScript>().DeductCircleHealth();
+                                    DamageProps(targetHit, pointHit);
+                                }
+                                else if (hit.transform.GetComponent<Tentacle>())
+                                {
+                                    Stats.Instance.TrackStats(1, 1);
+
+                                    hit.transform.GetComponentInChildren<Tentacle>().OnHit();
+                                }
+                                else if (hit.transform.GetComponent<Shark>())
+                                {
+                                    Stats.Instance.TrackStats(1, 1);
+                                    float rnd = Random.Range(50, 60);
+                                    GainScore(rnd);
+                                    hit.transform.GetComponentInChildren<Shark>().DeductCircleHealth();
+                                }
+                                else if (hit.transform.GetComponentInParent<Shark>())
+                                {
+                                    Debug.Log("Weak point");
+                                    Stats.Instance.TrackStats(1, 1);
+                                    float rnd = Random.Range(50, 60);
+                                    GainScore(rnd);
+                                    hit.transform.GetComponentInParent<Shark>().DeductCircleHealth();
+                                }
+                                else if (hit.transform.GetComponent<TreasureChest>())
+                                {
+                                    Stats.Instance.TrackStats(1, 1);
+                                    hit.transform.GetComponent<TreasureChest>().OnHit();
+                                }
+                                else if (hit.transform.GetComponent<Boss>())
+                                {
+                                    hit.transform.GetComponent<Boss>().OnHit();
+                                }
+                                else if (hit.transform.GetComponentInChildren<Destroyable>())
+                                {
+                                    Stats.Instance.TrackStats(1, 1);
+                                    hit.transform.GetComponentInChildren<Destroyable>().OnHit();
+                                }
+                                else DamageProps(targetHit, pointHit);
                             }
-                            else if (hit.transform.GetComponentInParent<Shark>())
-                            {
-                                Debug.Log("Weak point");
-                                Stats.Instance.TrackStats(1, 1);
-                                float rnd = Random.Range(50, 60);
-                                GainScore(rnd);
-                                hit.transform.GetComponentInParent<Shark>().DeductCircleHealth();
-                            }
-                            else if (hit.transform.GetComponent<TreasureChest>())
-                            {
-                                Stats.Instance.TrackStats(1, 1);
-                                hit.transform.GetComponent<TreasureChest>().OnHit();
-                            }
-                            else if (hit.transform.GetComponent<Boss>())
-                            {
-                                hit.transform.GetComponent<Boss>().OnHit();
-                            }
-                            else if (hit.transform.GetComponentInChildren<Destroyable>())
-                            {
-                                Stats.Instance.TrackStats(1, 1);
-                                hit.transform.GetComponentInChildren<Destroyable>().OnHit();
-                            }
-                            else DamageProps(targetHit, pointHit);
+                            currBullet--;
+                            Stats.Instance.TrackStats(0, 1);
                         }
-                        currBullet--;
-                        Stats.Instance.TrackStats(0, 1);
-                    }else{
-                        if (!gunASource.isPlaying) GunAudioPlay(emptyGunFire);
+                        else
+                        {
+                            if (!gunASource.isPlaying) GunAudioPlay(emptyGunFire);
+                        }
                     }
                 }
+                if (Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1)) StartCoroutine(Reload());
             }
-            if (Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1)) StartCoroutine(Reload());
             yield return null;
         }
     }
@@ -814,6 +930,7 @@ public class Player : ISingleton<Player>
         }
     }
     bool reloading = false;
+   
     IEnumerator Reload()
     {
         if (reloading) yield break;
@@ -921,29 +1038,4 @@ public class Player : ISingleton<Player>
     #endregion
 
 
-
-    #region Obsolete
-
-    IEnumerator HardcodedDisgustingEvents()
-    {
-        yield return new WaitUntil(() => currentPD.time > 16f);
-        //Shoot At Door
-        currentPD.Pause();
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        currentPD.Resume();
-        yield return new WaitUntil(() => currentPD.time > 18f);
-        currentPD.Pause();
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        currentPD.Resume();
-        yield return new WaitUntil(() => currentPD.time > 37f);
-        currentPD.Pause();
-        yield return new WaitUntil(() => Input.anyKeyDown);
-        currentPD.Resume();
-
-        yield return new WaitUntil(() => currentPD.time > 50f);
-        //Pop circle on it but dont kill it
-        Debug.Log("Shark");
-    }
-
-    #endregion
 }

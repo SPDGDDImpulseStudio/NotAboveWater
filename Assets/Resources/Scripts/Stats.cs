@@ -84,6 +84,8 @@ public class Stats : ISingleton<Stats>
                 {
                     ReplaceRanking(i);
                     SavePlayerPrefs(i, gameScores,accuracy, timeTaken3, _name, secretCollected7, chainComboMAX9);
+                    Player.Instance.CallFromStats(_name, gameScores, accuracy, secretCollected7, timeTaken3, chainComboMAX9);
+                    Player.Instance.CallStats(i);
                     break;
                 }
                 else continue;
@@ -91,6 +93,7 @@ public class Stats : ISingleton<Stats>
             else
             {
                 SavePlayerPrefs(i, gameScores, accuracy, timeTaken3, _name, secretCollected7, chainComboMAX9);
+                Player.Instance.CallFromStats(_name, gameScores, accuracy, secretCollected7, timeTaken3, chainComboMAX9);
                 break;
             }
         }
