@@ -563,8 +563,8 @@ public class Player : ISingleton<Player>
     IEnumerator SceneOneFunction()
     {
         currentPD = GameObject.Find("PlayableDirector_BossIntro").GetComponent<PlayableDirector>();
-        yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
         playerCanvas.gameObject.SetActive(false);
+        yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
         currentPD.Play();
         float timex = (float) currentPD.duration;
         AssignTentacleList();
@@ -572,6 +572,9 @@ public class Player : ISingleton<Player>
         currentPD = GameObject.Find("PlayableDirector_BossFight").GetComponent<PlayableDirector>();
         FindObjectOfType<Boss>().Init();
         currentPD.Play();
+        playerCanvas.gameObject.SetActive(true);
+StartCoroutine(        GameplayUpdate());
+
     }
     IEnumerator CheapFadeToNextScene()
     {
