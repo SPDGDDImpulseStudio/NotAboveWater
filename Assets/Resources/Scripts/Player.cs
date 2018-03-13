@@ -129,7 +129,7 @@ public class Player : ISingleton<Player>
         switch (sceneBuildIndex)
         {
             case 0: StartCoroutine(SceneZeroFunction()); break;
-            case 1: StartCoroutine(SceneOneFunction()); break;
+            //case 1: StartCoroutine(SceneOneFunction()); break;
         }
     }
 
@@ -560,16 +560,21 @@ public class Player : ISingleton<Player>
     #endregion
     #region BossFight
 
-    IEnumerator SceneOneFunction()
+    public void CallSceneOneFn(PlayableDirector x, PlayableDirector y)
     {
-        currentPD = GameObject.Find("PlayableDirector_BossIntro").GetComponent<PlayableDirector>();
+        StartCoroutine(SceneOneFunction(x,y));
+    }
+
+    IEnumerator SceneOneFunction(PlayableDirector x, PlayableDirector y)
+    {
+        currentPD = x;
         playerCanvas.gameObject.SetActive(false);
         yield return new WaitUntil(() => !SceneChanger.Instance.transitting);
         currentPD.Play();
         float timex = (float) currentPD.duration;
         AssignTentacleList();
         yield return new WaitUntil(() => currentPD.time + 1 > timex);
-        currentPD = GameObject.Find("PlayableDirector_BossFight").GetComponent<PlayableDirector>();
+        currentPD = y;
         FindObjectOfType<Boss>().Init();
         currentPD.Play();
         playerCanvas.gameObject.SetActive(true);

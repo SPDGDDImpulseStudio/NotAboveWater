@@ -36,9 +36,10 @@ public class PlayerCallerXD : MonoBehaviour {
         {
             List<Camera> z = new List<Camera>(FindObjectsOfType<Camera>());
             Camera g = z.Find(p => (!p.GetComponentInChildren<Player>() && p.name == "Main Camera"));
+            //new Main Camera spawn in the scene
             Player.Instance.transform.SetParent(g.transform);
             Camera n = z.Find(p => (!p.GetComponentInChildren<Player>() && p.name == "Main Camera"));
-
+            //old Main Camera brought from previous scene
             Destroy(n.transform.root.gameObject);
 
             DontDestroyOnLoad(g.transform.root.gameObject);
