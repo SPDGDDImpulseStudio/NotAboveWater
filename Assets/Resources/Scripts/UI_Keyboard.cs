@@ -20,9 +20,9 @@ public class UI_Keyboard : MonoBehaviour
     public void ClickKey(string character)
     {
         //Debug.Log(character);
-        if (input.text.Length > 7)
+        if (input.text.Length >10)
         {
-            StartCoroutine(ChangeText("Please keep your name 8 characters long"));
+            StartCoroutine(ChangeText("Please keep your name 10 characters long"));
             return;
         }
         input.text += character;
@@ -32,6 +32,19 @@ public class UI_Keyboard : MonoBehaviour
     {
         RefreshKeys();
         lowerCased = !lowerCased;
+    }
+
+    void Awake()
+    {
+        originalText = _text.text;
+        string Q = letters[0].GetComponentInChildren<Text>().text;
+        lowerCased = (letters[0].GetComponentInChildren<Text>().text == Q.ToLower()) ? true : false;
+        for (int i = 0; i < letters.Count; i++)
+        {
+            allText.Add(letters[i].GetComponentInChildren<Text>());
+            allBtn.Add(letters[i].GetComponentInChildren<Button>());
+        }
+        RefreshKeys();
     }
     void RefreshKeys()
     {
@@ -56,21 +69,16 @@ public class UI_Keyboard : MonoBehaviour
 
     void OnEnable()
     {
-        originalText = _text.text;
-        string Q = letters[0].GetComponentInChildren<Text>().text;
-        lowerCased = (letters[0].GetComponentInChildren<Text>().text == Q.ToLower()) ? true : false;
-        for (int i = 0; i < letters.Count; i++)
-        {
-            allText.Add(letters[i].GetComponentInChildren<Text>());
-            allBtn.Add(letters[i].GetComponentInChildren<Button>());
-        }
-        RefreshKeys();
+        
+   
+            input.text = "";
+        
     }
     public void TypingName()    
     {
-        if(input.text.Length > 7)
+        if(input.text.Length > 10)
         {
-            StartCoroutine(ChangeText("Please keep your name 7 characters long"));
+            StartCoroutine(ChangeText("Please keep your name 10 characters long"));
             input.text = input.text.Substring(0, input.text.Length - 1);
         }
     }

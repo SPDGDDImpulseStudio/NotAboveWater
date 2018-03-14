@@ -9,9 +9,14 @@ public class heartrateScript : MonoBehaviour
     public Image spr_heartRate;
     public List<Sprite> images;
     float originValue;
-    void OnEnable()
+    void Awake()
     {
         originValue = heartRate.value;
+    }
+
+    void OnEnable()
+    {
+        Init();
     }
     public void Init()
     {

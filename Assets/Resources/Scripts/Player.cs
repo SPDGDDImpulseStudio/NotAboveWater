@@ -513,10 +513,14 @@ public class Player : ISingleton<Player>
 
     public void CallFromStats(string _name, float scores, float accuracy, float treasures, float time, float combo)
     {
+        StartCoroutine(EndScene(_name, scores, accuracy, treasures, time, combo));
+    }
+    IEnumerator EndScene(string _name, float scores, float accuracy, float treasures, float time, float combo)
+    {
+        yield return new WaitUntil(() => nameText.gameObject.activeInHierarchy); 
         nameText.text = _name;
-
         scoreText.text = System.Math.Round(scores).ToString();
-        accuracyText.text = (System.Math.Round(accuracy, 2)* 100).ToString() + "%";
+        accuracyText.text = (System.Math.Round(accuracy, 2) * 100).ToString() + "%";
         treasureFoundText.text = treasures.ToString();
         float seconds, minutes;
         seconds = Mathf.FloorToInt(time) % 60;
@@ -525,10 +529,9 @@ public class Player : ISingleton<Player>
         if (seconds < 1) timeText.text = minutes.ToString() + ":00";
         else if (seconds < 10) timeText.text = minutes.ToString() + ":0" + seconds;
         else timeText.text = minutes.ToString() + ":" + seconds;
-        
+
         combo_Text.text = combo.ToString();
     }
-
     public void CallStats(int i)
     {
         StartCoroutine(CheckForLeaderboard(i));
