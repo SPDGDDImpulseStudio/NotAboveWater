@@ -87,7 +87,14 @@ public class Player : ISingleton<Player>
         bullets = new List<Image>(ammoCounterBar.GetComponentsInChildren<Image>());
         heartRates = new List<heartrateScript>(playerCanvas.GetComponentsInChildren<heartrateScript>());
         reloadTime = reloadingClip.length;
+        for(int i = 0; i < heartRates.Count; i++)
+        {
+            if(i == 0)
+            heartRates[i].gameObject.GetComponent<Slider>().value = 1f;
+            else
 
+                heartRates[i].gameObject.GetComponent<Slider>().value = 0.5f;
+        }
         #region VFX POOL
 
         GameObject parentOf = new GameObject();
